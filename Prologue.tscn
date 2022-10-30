@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://5p11vd73pk6j"]
+
+[ext_resource type="Script" path="res://Prologue.gd" id="1_lryj6"]
+[ext_resource type="Texture2D" uid="uid://p15cw28d41ue" path="res://PrologueBack.png" id="2_pk5pk"]
+[ext_resource type="AudioStream" uid="uid://5pom84860h7m" path="res://Prologue.wav" id="2_v0g4d"]
+
+[sub_resource type="SystemFont" id="SystemFont_ihnli"]
+font_names = PackedStringArray("Arial")
+
+[node name="Prologue" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lryj6")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.160784, 0.160784, 0.160784, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -420.0
+offset_bottom = 420.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_pk5pk")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -600.0
+offset_top = -300.0
+offset_right = 600.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("SystemFont_ihnli")
+theme_override_font_sizes/font_size = 64
+text = "AAAAAAAAAAAAAAAAAAAAAAAAA"
+autowrap_mode = 3
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_v0g4d")
+volume_db = -3.0
+autoplay = true

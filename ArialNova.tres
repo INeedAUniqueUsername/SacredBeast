@@ -1,0 +1,4 @@
+[gd_resource type="SystemFont" format=3 uid="uid://bg67fe8v36op0"]
+
+[resource]
+font_names = PackedStringArray("Arial Nova", "Arial")

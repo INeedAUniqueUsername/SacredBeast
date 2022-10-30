@@ -1,0 +1,142 @@
+[gd_scene load_steps=9 format=3 uid="uid://lmjn7jckdlmt"]
+
+[ext_resource type="Texture2D" uid="uid://c04238fp3rc0d" path="res://RedTileGlow.png" id="1_mhbu7"]
+[ext_resource type="Script" path="res://TileGlow.gd" id="2_6ya7x"]
+
+[sub_resource type="Animation" id="Animation_1kua1"]
+resource_name = "Appear"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particles:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.294556),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_qdhy5"]
+resource_name = "Disappear"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particles:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0, 0, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_s7qmv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particles:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hdb73"]
+_data = {
+"Appear": SubResource("Animation_1kua1"),
+"Disappear": SubResource("Animation_qdhy5"),
+"RESET": SubResource("Animation_s7qmv")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_16pgg"]
+albedo_color = Color(1, 0, 0, 1)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 0.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_h4qcb"]
+material = SubResource("StandardMaterial3D_16pgg")
+size = Vector2(0.063, 0.063)
+orientation = 2
+
+[node name="TileGlow" type="Node3D"]
+script = ExtResource("2_6ya7x")
+
+[node name="Sprite" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0)
+pixel_size = 0.0313
+axis = 1
+alpha_cut = 2
+texture_filter = 2
+texture = ExtResource("1_mhbu7")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Appear"
+libraries = {
+"": SubResource("AnimationLibrary_hdb73")
+}
+
+[node name="Particles" type="CPUParticles3D" parent="."]
+mesh = SubResource("PlaneMesh_h4qcb")
+emission_shape = 4
+emission_points = PackedVector3Array(0.328, 0, 0, 0.328, 0, -0.328, 0.328, 0, 0.328, -0.328, 0, 0, -0.328, 0, -0.328, -0.328, 0, 0.328, 0, 0, -0.328, 0, 0, 0.328)
+gravity = Vector3(0, 2.5, 0)

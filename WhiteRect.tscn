@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://d3p4pdf616e82"]
+
+[ext_resource type="Texture2D" uid="uid://b2hr804ao0wdi" path="res://WhiteRect.png" id="1_st4t2"]
+
+[node name="NinePatchRect" type="NinePatchRect"]
+show_behind_parent = true
+texture_filter = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_st4t2")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1

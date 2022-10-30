@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://do1348w043dyd"]
+
+[ext_resource type="Texture2D" uid="uid://csfuiqrdo5x27" path="res://WhiteTile.png" id="1_yw1kg"]
+[ext_resource type="Texture2D" uid="uid://cwgro766umfwg" path="res://BlackTile.png" id="2_2v5ir"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o37ku"]
+albedo_texture = ExtResource("1_yw1kg")
+texture_filter = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7oibu"]
+material = SubResource("StandardMaterial3D_o37ku")
+size = Vector2(1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_moery"]
+size = Vector3(1, 0.5, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y5u3a"]
+albedo_texture = ExtResource("2_2v5ir")
+texture_filter = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_6pyc2"]
+material = SubResource("StandardMaterial3D_y5u3a")
+size = Vector2(1, 1)
+
+[node name="GroundTiles" type="Node"]
+
+[node name="WhiteTile" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_7oibu")
+skeleton = NodePath("StaticBody")
+
+[node name="StaticBody" type="StaticBody3D" parent="WhiteTile"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WhiteTile/StaticBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("BoxShape3D_moery")
+
+[node name="BlackTile" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_6pyc2")
+skeleton = NodePath("StaticBody")
+
+[node name="StaticBody" type="StaticBody3D" parent="BlackTile"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BlackTile/StaticBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("BoxShape3D_moery")
