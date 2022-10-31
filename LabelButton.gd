@@ -1,4 +1,5 @@
 extends Label
+class_name LabelButton
 
 @export var clickable := true
 var texture : Texture:
@@ -13,10 +14,11 @@ var hover := false
 var pressed := false
 signal clicked
 func updateTexture():
-	if hover:
-		texture = {true:orange, false:yellow}[pressed]
-	else:
-		texture = idle
+	if clickable:
+		if hover:
+			texture = {true:orange, false:yellow}[pressed]
+			return
+	texture = idle
 func _ready():
 	mouse_entered.connect(func():
 		hover = true

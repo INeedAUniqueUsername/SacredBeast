@@ -1,13 +1,26 @@
 extends Node3D
+class_name TallyChar
 
-
+const Tally = preload("res://Common.gd").Tally
 
 const TileGlow = preload("res://TileGlow.tscn")
 
 @export_enum(Joe, Rob, Andrew, Zubin, Ross) var tally
 
+const MoveInfo = preload("res://Moves.gd").MoveInfo
+var move_list : Array = []
+
 signal moved
+var is_selected = false
 func _ready():
+	move_list = {
+		Tally.Joe: [Moves.JoeHawley],
+		Tally.Rob: [],
+		Tally.Andrew: [],
+		Tally.Zubin: [],
+		Tally.Ross: []
+	}[tally]
+	
 	create_floor_glow()
 	$Area.input_event.connect(func(camera, event: InputEvent, a, b, c):
 		if event.is_pressed():
@@ -15,7 +28,6 @@ func _ready():
 				self.deselect()
 			else:
 				self.select()
-			
 	)
 signal deselected
 signal selected
@@ -24,11 +36,12 @@ signal selected
 func create_floor_glow():
 	var t = TileGlow.instantiate()
 	t.global_position = global_position
+	t.set_emitting_selected(self)
 	world.add_child.call_deferred(t)
 	
 	moved.connect(t.dismiss)
-	
-var is_selected = true
+	selected.connect(t.set_emitting_selected.bind(self))
+	deselected.connect(t.set_emitting_selected.bind(self))
 func deselect():
 	is_selected = false
 	deselected.emit()
@@ -44,23 +57,20 @@ func select():
 	var move_to := func move_to(t: Node3D):
 		if !seen.has(t.global_position):
 			return
-			
-		
 		self.moved.emit()
 		var path = t.get_tile_path()
 		for k in seen.values():
+			k.clickable = false
 			if path.has(k):
 				continue
 			k.dismiss()
 		seen.clear()
-		
-		var tw = get_tree().create_tween()
-		tw.tween_property(self, "global_position", t.global_position, 1)
-		tw.play()
 		for x in path:
+			var tw = get_tree().create_tween()
+			tw.tween_property(self, "global_position", x.global_position, 1/3.0)
+			tw.play()
 			tw.finished.connect(x.dismiss)
-			
-		await tw.finished
+			await tw.finished
 		
 		create_floor_glow()
 	var create_tile := func(v: Vector3, delay:float, parent:Node3D):
@@ -68,7 +78,9 @@ func select():
 		add_child(timer)
 		timer.wait_time = delay
 		timer.start()
+		
 		selected.connect(timer.queue_free)
+		deselected.connect(timer.queue_free)
 		
 		var t = preload("res://TileStep.tscn").instantiate()
 		t.tree_exited.connect(timer.queue_free)
@@ -105,5 +117,21 @@ func select():
 	var start = seen[global_position]
 	start.tree_entered.connect(start.queue_free)
 	seen.erase(global_position)
+func use_move(m):
+	if m == Moves.JoeHawley:
+		
+		var TileTarget = preload("res://TileTarget.tscn")
+		
+		var forward = global_position + global_transform.basis.x
+		var tt = TileTarget.instantiate()
+		tt.global_position = forward
+		world.add_child(tt)
+		
+		
+		$Anim.play("Punch")
+		await $Anim.animation_finished
+		$Anim.play("Idle")
+		return
+	pass
 func _process(delta):
 	pass

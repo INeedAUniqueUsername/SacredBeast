@@ -8,12 +8,32 @@
 
 config_version=5
 
+_global_script_classes=[{
+"base": "Label",
+"class": &"LabelButton",
+"language": &"GDScript",
+"path": "res://LabelButton.gd"
+}, {
+"base": "Node3D",
+"class": &"TallyChar",
+"language": &"GDScript",
+"path": "res://Tally.gd"
+}]
+_global_script_class_icons={
+"LabelButton": "",
+"TallyChar": ""
+}
+
 [application]
 
 config/name="SacredBeast"
-run/main_scene="res://TitleScreen.tscn"
+run/main_scene="res://World.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Moves="*res://Moves.tscn"
 
 [display]
 

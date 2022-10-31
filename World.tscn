@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bp7dfgbklu6gp"]
+[gd_scene load_steps=40 format=3 uid="uid://bp7dfgbklu6gp"]
 
 [ext_resource type="Script" path="res://Battle.gd" id="1_b8anq"]
 [ext_resource type="Texture2D" uid="uid://csfuiqrdo5x27" path="res://WhiteTile.png" id="1_prg36"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://c0icq8tocciix" path="res://RedRect.png" id="4_2ckxh"]
 [ext_resource type="Texture2D" uid="uid://cm5yyvoxpbps3" path="res://Background.png" id="4_l60l7"]
 [ext_resource type="Texture2D" uid="uid://jd7318nrhx5n" path="res://DustParticle.png" id="4_qfor8"]
+[ext_resource type="Script" path="res://Camera.gd" id="4_t3y6g"]
 [ext_resource type="Script" path="res://Tally.gd" id="5_ik2l4"]
 [ext_resource type="AudioStream" uid="uid://dsprmgxy7v8k2" path="res://BananaMan.mp3" id="13_ur3b8"]
 
@@ -127,9 +128,25 @@ tracks/0/keys = {
 "values": [0]
 }
 
+[sub_resource type="Animation" id="Animation_vx0ty"]
+resource_name = "Punch"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [2, 3]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_64v4p"]
 _data = {
 "Idle": SubResource("Animation_4fiss"),
+"Punch": SubResource("Animation_vx0ty"),
 "RESET": SubResource("Animation_o0hbn")
 }
 
@@ -207,6 +224,7 @@ data = {
 
 [node name="Camera3D" type="Camera3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 3, 5)
+script = ExtResource("4_t3y6g")
 
 [node name="CPUParticles3D" type="CPUParticles3D" parent="World"]
 amount = 32
@@ -235,12 +253,12 @@ tally = 0
 
 [node name="Sprite" type="Sprite3D" parent="World/Joe"]
 centered = false
-offset = Vector2(-16, 0)
+offset = Vector2(-32, 0)
 pixel_size = 0.0313
 alpha_cut = 2
 texture_filter = 2
 texture = ExtResource("3_67nlm")
-hframes = 2
+hframes = 4
 
 [node name="Anim" type="AnimationPlayer" parent="World/Joe"]
 autoplay = "Idle"
@@ -297,7 +315,7 @@ vertical_alignment = 1
 
 [node name="Act" type="Label" parent="UI/Tally"]
 offset_left = 240.0
-offset_right = 368.0
+offset_right = 432.0
 offset_bottom = 64.0
 mouse_filter = 0
 theme_override_colors/font_color = Color(0, 0, 0, 1)

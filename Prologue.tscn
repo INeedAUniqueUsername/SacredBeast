@@ -1,11 +1,109 @@
-[gd_scene load_steps=5 format=3 uid="uid://5p11vd73pk6j"]
+[gd_scene load_steps=11 format=3 uid="uid://5p11vd73pk6j"]
 
 [ext_resource type="Script" path="res://Prologue.gd" id="1_lryj6"]
 [ext_resource type="Texture2D" uid="uid://p15cw28d41ue" path="res://PrologueBack.png" id="2_pk5pk"]
 [ext_resource type="AudioStream" uid="uid://5pom84860h7m" path="res://Prologue.wav" id="2_v0g4d"]
 
+[sub_resource type="Animation" id="Animation_1ycg5"]
+resource_name = "Zoom"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1.2, 1),
+"update": 0,
+"values": [Vector2(4, 4), Vector2(8, 8)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.5708]
+}
+
+[sub_resource type="Animation" id="Animation_ifeiy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2, 2)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8olc8"]
+_data = {
+"RESET": SubResource("Animation_ifeiy"),
+"Zoom": SubResource("Animation_1ycg5")
+}
+
 [sub_resource type="SystemFont" id="SystemFont_ihnli"]
 font_names = PackedStringArray("Arial")
+
+[sub_resource type="Animation" id="Animation_oma74"]
+resource_name = "Disappear"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_iud6h"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lof6i"]
+_data = {
+"Disappear": SubResource("Animation_oma74"),
+"RESET": SubResource("Animation_iud6h")
+}
 
 [node name="Prologue" type="Control"]
 layout_mode = 3
@@ -16,16 +114,46 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lryj6")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="Control" parent="."]
 modulate = Color(0.160784, 0.160784, 0.160784, 1)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -420.0
-offset_bottom = 420.0
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="TextureRect" type="Sprite2D" parent="TextureRect"]
+scale = Vector2(2, 2)
 texture = ExtResource("2_pk5pk")
+
+[node name="TextureRect2" type="Sprite2D" parent="TextureRect/TextureRect"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_pk5pk")
+
+[node name="TextureRect3" type="Sprite2D" parent="TextureRect/TextureRect/TextureRect2"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_pk5pk")
+
+[node name="TextureRect4" type="Sprite2D" parent="TextureRect/TextureRect/TextureRect2/TextureRect3"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_pk5pk")
+
+[node name="TextureRect5" type="Sprite2D" parent="TextureRect/TextureRect/TextureRect2/TextureRect3/TextureRect4"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_pk5pk")
+
+[node name="TextureRect6" type="Sprite2D" parent="TextureRect/TextureRect/TextureRect2/TextureRect3/TextureRect4/TextureRect5"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_pk5pk")
+
+[node name="Anim" type="AnimationPlayer" parent="TextureRect"]
+autoplay = "Zoom"
+libraries = {
+"": SubResource("AnimationLibrary_8olc8")
+}
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 8
@@ -48,3 +176,8 @@ autowrap_mode = 3
 stream = ExtResource("2_v0g4d")
 volume_db = -3.0
 autoplay = true
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_lof6i")
+}

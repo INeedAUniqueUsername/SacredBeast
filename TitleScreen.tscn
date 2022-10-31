@@ -285,7 +285,6 @@ script = ExtResource("1_jgtls")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 visible = false
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -306,7 +305,6 @@ libraries = {
 
 [node name="Sky" type="TextureRect" parent="."]
 modulate = Color(0.364706, 0.796078, 1, 1)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -315,12 +313,13 @@ grow_vertical = 2
 texture = SubResource("Texture2D_0icj2")
 
 [node name="Main" type="Control" parent="."]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -1080.0
-offset_bottom = -1080.0
+offset_right = 3840.0
+offset_bottom = 1080.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -331,16 +330,11 @@ libraries = {
 }
 
 [node name="Title" type="TextureRect" parent="Main"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 1920.0
+offset_bottom = 1080.0
 texture = ExtResource("4_8hy8p")
 
 [node name="Button" type="Button" parent="Main"]
-layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.76
 anchor_top = 0.8
@@ -367,19 +361,21 @@ libraries = {
 }
 
 [node name="CloudsLower" type="TextureRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 3840.0
+offset_bottom = 2160.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_3p1ea")
 
 [node name="Park" type="TextureRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 3840.0
+offset_bottom = 2160.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("4_7t6l7")

@@ -6,10 +6,16 @@ var parent : Node3D
 func _ready():
 	$Area.mouse_entered.connect(anim.bind("Hover"))
 	$Area.mouse_exited.connect(anim.bind("Rest"))
+	
+	var prev_pressed = false
 	$Area.input_event.connect(func(camera, event, a, b, c):
-		if event.is_pressed():
-			self.clicked.emit()
+		if event is InputEventMouseButton:
+			var pressed = event.is_pressed()
+			if pressed:
+				self.clicked.emit()
+			prev_pressed = pressed
 		)
+		
 	if parent:
 		parent.tree_exited.connect(func():self.parent = null)
 
@@ -36,4 +42,8 @@ func get_tile_path() -> Array[Node3D]:
 var dismissed := false
 func dismiss():
 	dismissed = true
+	clickable = false
 	$Anim.play("Disappear")
+var clickable:bool:
+	get: return $Area.input_ray_pickable
+	set(b): $Area.input_ray_pickable = b
