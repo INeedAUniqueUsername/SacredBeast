@@ -118,12 +118,15 @@ func show_walk():
 		if disp.length() > radius:
 			break
 		
+		
 		var tile = create_tile.call(p, (abs(disp.x) + abs(disp.z))/4.0, seen[p])
 		
 		seen[p] = tile
 		for offset in dirs:
 			var q = p + offset
 			if q in seen:
+				continue
+			if !has_ground(q):
 				continue
 			seen[q] = tile
 			next.push_back(q)
@@ -177,3 +180,15 @@ func use_move(m):
 	pass
 func _process(delta):
 	pass
+
+
+func has_ground(pos: Vector3):
+	var param = PhysicsPointQueryParameters3D.new()
+	param.position = pos + Vector3(0, -0.1, 0)
+	param.collide_with_areas = false
+	param.collide_with_bodies = true
+	param.exclude = []
+	param.collision_mask = -1
+	for hit in get_world_3d().direct_space_state.intersect_point(param):
+		return true
+	return false
