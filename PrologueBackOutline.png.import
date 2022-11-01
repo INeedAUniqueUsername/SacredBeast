@@ -2,22 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctslchegoo2si"
-path.s3tc="res://.godot/imported/Misery.png-9b7a4a05fdfffdc6380636c0cc8d9671.s3tc.ctex"
-path.etc2="res://.godot/imported/Misery.png-9b7a4a05fdfffdc6380636c0cc8d9671.etc2.ctex"
+uid="uid://crynh6oo67jqr"
+path="res://.godot/imported/PrologueBackOutline.png-9c5472896407265f0400f5e00cb9f397.ctex"
 metadata={
-"imported_formats": ["s3tc", "etc2"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://Misery.png"
-dest_files=["res://.godot/imported/Misery.png-9b7a4a05fdfffdc6380636c0cc8d9671.s3tc.ctex", "res://.godot/imported/Misery.png-9b7a4a05fdfffdc6380636c0cc8d9671.etc2.ctex"]
+source_file="res://PrologueBackOutline.png"
+dest_files=["res://.godot/imported/PrologueBackOutline.png-9c5472896407265f0400f5e00cb9f397.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/bptc_ldr=0

@@ -10,6 +10,16 @@ const TileGlow = preload("res://TileGlow.tscn")
 const MoveInfo = preload("res://Moves.gd").MoveInfo
 var move_list : Array = []
 
+var tallyName: String:
+	get:
+		return {
+			Tally.Joe: "Joe Hawley",
+			Tally.Rob: "Rob Cantor",
+			Tally.Andrew: "Andrew Horowitz",
+			Tally.Zubin: "Zubin Sedghi",
+			Tally.Ross: "Ross Federman"	
+		}[tally]
+
 signal moved
 var is_selected = false
 func _ready():
@@ -124,13 +134,18 @@ const HitDesc = preload("res://HitDesc.gd")
 func use_move(m):
 	if m == Moves.JoeHawley:
 		
-		var TileTarget = preload("res://TileTarget.tscn")
+		#var TileTarget = preload("res://TileTarget.tscn")
+		#var forward = global_position + global_transform.basis.x
+		#var tt = TileTarget.instantiate()
+		#tt.global_position = forward
+		#world.add_child(tt)
 		
-		var forward = global_position + global_transform.basis.x
-		var tt = TileTarget.instantiate()
-		tt.global_position = forward
-		world.add_child(tt)
-		
+		var a = AudioStreamPlayer3D.new()
+		add_child(a)
+		a.stream = preload("res://Sounds/JoeHawleyJoeHawley.wav")
+		a.global_position = global_position + Vector3(0, 1, 0)
+		a.play()
+		a.finished.connect(a.queue_free)
 		
 		$Anim.play("Punch")
 		await $Anim.animation_finished
@@ -151,7 +166,7 @@ func use_move(m):
 		).filter(func(h):
 			return h.is_in_group("Hitbox")
 		).map(func(h):
-			h.get_parent().take_damage(HitDesc.new(self, forward, 10))
+			h.get_parent().take_damage(HitDesc.new(self, param.position, 10))
 		)
 		
 		await get_tree().create_timer(0.5).timeout

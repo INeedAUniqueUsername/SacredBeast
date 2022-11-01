@@ -1,9 +1,118 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmhwqilnv0mhf"]
+[gd_scene load_steps=5 format=3 uid="uid://cmhwqilnv0mhf"]
 
 [ext_resource type="SystemFont" uid="uid://bg67fe8v36op0" path="res://ArialNova.tres" id="1_r5c03"]
 
-[node name="Label3D" type="Label3D"]
+[sub_resource type="Animation" id="Animation_1l6a3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label3D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Label3D:outline_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_choh6"]
+resource_name = "Rise"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0.5, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label3D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.99996, 1.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Label3D:outline_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1, 1.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1.3),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w8ppw"]
+_data = {
+"RESET": SubResource("Animation_1l6a3"),
+"Rise": SubResource("Animation_choh6")
+}
+
+[node name="ActionText" type="Node3D"]
+
+[node name="Label3D" type="Label3D" parent="."]
+alpha_cut = 2
+outline_modulate = Color(0, 0, 0, 0)
 text = "JOE HAWLEY"
 font = ExtResource("1_r5c03")
-font_size = 64
+font_size = 80
 outline_size = 32
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Rise"
+libraries = {
+"": SubResource("AnimationLibrary_w8ppw")
+}

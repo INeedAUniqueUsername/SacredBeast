@@ -1,0 +1,126 @@
+[gd_scene load_steps=9 format=3 uid="uid://da5eo5s87aves"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hduss"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_arubk"]
+material = SubResource("StandardMaterial3D_hduss")
+size = Vector2(0.2, 0.2)
+
+[sub_resource type="Curve" id="Curve_uvvp1"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.28313, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g4sic"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_fxmld"]
+material = SubResource("StandardMaterial3D_g4sic")
+size = Vector2(0.2, 0.2)
+
+[sub_resource type="Animation" id="Animation_nkekl"]
+resource_name = "Appear"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Black:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("White:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_1ihwp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Black:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("White:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_uulra"]
+_data = {
+"Appear": SubResource("Animation_nkekl"),
+"RESET": SubResource("Animation_1ihwp")
+}
+
+[node name="DeathParticles" type="Node3D"]
+
+[node name="White" type="CPUParticles3D" parent="."]
+amount = 32
+one_shot = true
+explosiveness = 0.25
+mesh = SubResource("QuadMesh_arubk")
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 4.0
+linear_accel_min = -4.0
+linear_accel_max = -4.0
+scale_amount_curve = SubResource("Curve_uvvp1")
+
+[node name="Black" type="CPUParticles3D" parent="."]
+amount = 32
+one_shot = true
+explosiveness = 0.25
+mesh = SubResource("QuadMesh_fxmld")
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 4.0
+linear_accel_min = -4.0
+linear_accel_max = -4.0
+scale_amount_curve = SubResource("Curve_uvvp1")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_uulra")
+}
