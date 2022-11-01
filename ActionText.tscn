@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cmhwqilnv0mhf"]
+
+[ext_resource type="SystemFont" uid="uid://bg67fe8v36op0" path="res://ArialNova.tres" id="1_r5c03"]
+
+[node name="Label3D" type="Label3D"]
+text = "JOE HAWLEY"
+font = ExtResource("1_r5c03")
+font_size = 64
+outline_size = 32

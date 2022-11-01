@@ -48,7 +48,8 @@ func deselect():
 func select():
 	is_selected = true
 	selected.emit()
-	
+	show_walk()
+func show_walk():
 	const dirs = [Vector3(0, 0, 1), Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(-1, 0, 0)]
 	
 	var seen = {global_position:null}
@@ -65,6 +66,7 @@ func select():
 				continue
 			k.dismiss()
 		seen.clear()
+		next.clear()
 		for x in path:
 			var tw = get_tree().create_tween()
 			tw.tween_property(self, "global_position", x.global_position, 1/3.0)
@@ -73,6 +75,7 @@ func select():
 			await tw.finished
 		
 		create_floor_glow()
+		self.show_walk()
 	var create_tile := func(v: Vector3, delay:float, parent:Node3D):
 		var timer = Timer.new()
 		add_child(timer)
@@ -117,6 +120,7 @@ func select():
 	var start = seen[global_position]
 	start.tree_entered.connect(start.queue_free)
 	seen.erase(global_position)
+const HitDesc = preload("res://HitDesc.gd")
 func use_move(m):
 	if m == Moves.JoeHawley:
 		
@@ -130,6 +134,29 @@ func use_move(m):
 		
 		$Anim.play("Punch")
 		await $Anim.animation_finished
+		
+		var param = PhysicsPointQueryParameters3D.new()
+		param.position = $Punch.global_position
+		param.collide_with_areas = true
+		param.collide_with_bodies = false
+		param.exclude = []
+		param.collision_mask = -1
+		
+		var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
+		
+		
+		
+		hit = hit.map(func(h):
+			return h.collider
+		).filter(func(h):
+			return h.is_in_group("Hitbox")
+		).map(func(h):
+			h.get_parent().take_damage(HitDesc.new(self, forward, 10))
+		)
+		
+		await get_tree().create_timer(0.5).timeout
+		
+		
 		$Anim.play("Idle")
 		return
 	pass

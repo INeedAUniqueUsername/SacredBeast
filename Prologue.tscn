@@ -1,8 +1,35 @@
-[gd_scene load_steps=11 format=3 uid="uid://5p11vd73pk6j"]
+[gd_scene load_steps=12 format=3 uid="uid://5p11vd73pk6j"]
 
 [ext_resource type="Script" path="res://Prologue.gd" id="1_lryj6"]
 [ext_resource type="Texture2D" uid="uid://p15cw28d41ue" path="res://PrologueBack.png" id="2_pk5pk"]
 [ext_resource type="AudioStream" uid="uid://5pom84860h7m" path="res://Prologue.wav" id="2_v0g4d"]
+
+[sub_resource type="Animation" id="Animation_ifeiy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2, 2)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
 
 [sub_resource type="Animation" id="Animation_1ycg5"]
 resource_name = "Zoom"
@@ -31,33 +58,6 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [0.0, 1.5708]
-}
-
-[sub_resource type="Animation" id="Animation_ifeiy"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("TextureRect:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(2, 2)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("TextureRect:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8olc8"]
@@ -99,8 +99,24 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_fe34g"]
+resource_name = "Appear"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lof6i"]
 _data = {
+"Appear": SubResource("Animation_fe34g"),
 "Disappear": SubResource("Animation_oma74"),
 "RESET": SubResource("Animation_iud6h")
 }
@@ -116,7 +132,7 @@ script = ExtResource("1_lryj6")
 
 [node name="TextureRect" type="Control" parent="."]
 modulate = Color(0.160784, 0.160784, 0.160784, 1)
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -156,6 +172,7 @@ libraries = {
 }
 
 [node name="Label" type="Label" parent="."]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -178,6 +195,7 @@ volume_db = -3.0
 autoplay = true
 
 [node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Appear"
 libraries = {
 "": SubResource("AnimationLibrary_lof6i")
 }

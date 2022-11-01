@@ -14,10 +14,12 @@ func _ready():
 			if pressed:
 				self.clicked.emit()
 			prev_pressed = pressed
-		)
-		
+	)
 	if parent:
-		parent.tree_exited.connect(func():self.parent = null)
+		parent.tree_exited.connect(func():
+			if self.parent == parent:
+				self.parent = null
+		)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

@@ -4,6 +4,10 @@ extends Node
 var selectedTally = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	
+	for enemy in get_tree().get_nodes_in_group("Enemy"):
+		enemy.took_damage.connect(func(h): $World/Camera.shake())
+	
 	var tallyHall = get_tree().get_nodes_in_group("Tally")
 	for tally in tallyHall:
 		
