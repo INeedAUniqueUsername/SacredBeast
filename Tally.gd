@@ -96,14 +96,15 @@ func show_walk():
 		deselected.connect(timer.queue_free)
 		
 		var t = preload("res://TileStep.tscn").instantiate()
-		t.tree_exited.connect(timer.queue_free)
+		t.global_position = v
+		t.parent = parent
+		
+		#t.tree_exited.connect(timer.queue_free)
 		timer.timeout.connect(func():
 			timer.queue_free()
 			if !is_instance_valid(t):
 				return
-			t.global_position = v
-			t.parent = parent
-			world.add_child.call_deferred(t)
+			world.add_child(t)
 			selected.connect(t.dismiss)
 			deselected.connect(t.dismiss)
 			t.clicked.connect(move_to.bind(t))
@@ -117,21 +118,18 @@ func show_walk():
 		var disp := (p - global_position) as Vector3
 		if disp.length() > radius:
 			break
-		
-		
-		var tile = create_tile.call(p, (abs(disp.x) + abs(disp.z))/4.0, seen[p])
-		
+		var tile = create_tile.call(p, (abs(disp.x) + abs(disp.z))/8.0, seen[p])
 		seen[p] = tile
 		for offset in dirs:
 			var q = p + offset
-			if q in seen:
+			if seen.has(q):
 				continue
 			if !has_ground(q):
 				continue
 			seen[q] = tile
 			next.push_back(q)
-	var start = seen[global_position]
-	start.tree_entered.connect(start.queue_free)
+	
+	seen[global_position].queue_free()
 	seen.erase(global_position)
 const HitDesc = preload("res://HitDesc.gd")
 func use_move(m):

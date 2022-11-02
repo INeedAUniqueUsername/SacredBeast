@@ -15,6 +15,8 @@ func _ready():
 				self.clicked.emit()
 			prev_pressed = pressed
 	)
+	if !is_instance_valid(parent):
+		parent = null
 	if parent:
 		parent.tree_exited.connect(func():
 			if self.parent == parent:
