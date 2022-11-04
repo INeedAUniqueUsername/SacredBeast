@@ -43,7 +43,12 @@ func _ready():
 			await selectedTally.use_move(m)
 			)
 	for enemy in get_tree().get_nodes_in_group("Enemy"):
+		enemy.died.connect(func():
+			showMessage(str(enemy.name) + " fell!")
+		)
+		
 		enemy.took_damage.connect(func(h):
+			showMessage(str(enemy.name) + " took the hit!")	
 			var at = ActionText.instantiate()
 			at.global_position = h.pos + Vector3(0, 0.5, 1)
 			$World.add_child(at)

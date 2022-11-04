@@ -28,7 +28,7 @@ size = Vector2(1, 1)
 mesh = SubResource("PlaneMesh_7oibu")
 skeleton = NodePath("StaticBody")
 
-[node name="StaticBody" type="StaticBody3D" parent="WhiteTile"]
+[node name="StaticBody" type="StaticBody3D" parent="WhiteTile" groups=["Ground"]]
 input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WhiteTile/StaticBody"]
@@ -39,7 +39,7 @@ shape = SubResource("BoxShape3D_moery")
 mesh = SubResource("PlaneMesh_6pyc2")
 skeleton = NodePath("StaticBody")
 
-[node name="StaticBody" type="StaticBody3D" parent="BlackTile"]
+[node name="StaticBody" type="StaticBody3D" parent="BlackTile" groups=["Ground"]]
 input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BlackTile/StaticBody"]

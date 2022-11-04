@@ -1,0 +1,116 @@
+[gd_scene load_steps=10 format=3 uid="uid://ccsyustoubmrd"]
+
+[ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
+[ext_resource type="Texture2D" uid="uid://drvq4c3wp07ra" path="res://Cannibal.png" id="2_nmix7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pwerb"]
+size = Vector3(2, 2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7xkwx"]
+size = Vector3(2.8, 2, 1.8)
+
+[sub_resource type="Animation" id="Animation_u15py"]
+resource_name = "Die"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_qosfy"]
+resource_name = "Hurt"
+length = 1.5
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.987576, 1.08758, 1.18758, 1.28758, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), Vector3(0, 0.1, 0), Vector3(0, -0.1, 0), Vector3(0, 0.1, 0), Vector3(0, -0.1, 0), Vector3(0, 0.05, 0), Vector3(0, -0.05, 0), Vector3(0, 0.05, 0), Vector3(0, -0.05, 0), Vector3(0, 0.025, 0), Vector3(0, -0.025, 0), Vector3(0, 0.025, 0), Vector3(0, -0.025, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_q7g64"]
+resource_name = "Idle"
+length = 1.6
+loop_mode = 1
+
+[sub_resource type="Animation" id="Animation_fa25n"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8155p"]
+_data = {
+"Die": SubResource("Animation_u15py"),
+"Hurt": SubResource("Animation_qosfy"),
+"Idle": SubResource("Animation_q7g64"),
+"RESET": SubResource("Animation_fa25n")
+}
+
+[node name="Cannibal" type="Node3D" groups=["Enemy"]]
+script = ExtResource("1_xevfi")
+
+[node name="Sprite" type="Sprite3D" parent="."]
+visibility_range_begin = 4.0
+visibility_range_begin_margin = 2.0
+visibility_range_fade_mode = 1
+centered = false
+offset = Vector2(-40, 0)
+pixel_size = 0.0313
+alpha_cut = 2
+texture_filter = 2
+texture = ExtResource("2_nmix7")
+
+[node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_pwerb")
+
+[node name="NoWalk" type="Area3D" parent="." groups=["NoWalk"]]
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NoWalk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_7xkwx")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_8155p")
+}

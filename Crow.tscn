@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://b0e1cghfsl4rk"]
+
+[ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
+[ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Crow.png" id="2_bwb00"]
+[ext_resource type="AnimationLibrary" uid="uid://clt76rg56nu4l" path="res://CommonEnemyAnim.tres" id="3_he4xx"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3skce"]
+size = Vector3(2, 2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7xkwx"]
+size = Vector3(2.8, 2, 1.8)
+
+[node name="Crow" type="Node3D" groups=["Enemy"]]
+script = ExtResource("1_xevfi")
+
+[node name="Sprite" type="Sprite3D" parent="."]
+visibility_range_begin = 4.0
+visibility_range_begin_margin = 2.0
+visibility_range_fade_mode = 1
+centered = false
+offset = Vector2(-32, 0)
+pixel_size = 0.0313
+alpha_cut = 2
+texture_filter = 2
+texture = ExtResource("2_bwb00")
+
+[node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_3skce")
+
+[node name="NoWalk" type="Area3D" parent="." groups=["NoWalk"]]
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NoWalk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_7xkwx")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+libraries = {
+"": ExtResource("3_he4xx")
+}

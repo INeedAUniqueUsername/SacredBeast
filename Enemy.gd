@@ -1,6 +1,6 @@
 extends Node3D
 
-
+signal died
 signal took_damage(hitDesc)
 func take_damage(hitDesc):
 	took_damage.emit(hitDesc)
@@ -11,6 +11,7 @@ func take_damage(hitDesc):
 	pass
 @onready var world = get_tree().get_first_node_in_group("World")
 func die():
+	died.emit()
 	var a = AudioStreamPlayer3D.new()
 	world.add_child(a)
 	a.stream = preload("res://Sounds/enemy_die.wav")
