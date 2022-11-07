@@ -16,8 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://b0e1cghfsl4rk" path="res://Crow.tscn" id="8_5n1wp"]
 [ext_resource type="PackedScene" uid="uid://dikvs7wqf70oe" path="res://Misery.tscn" id="9_bfpbp"]
 [ext_resource type="PackedScene" uid="uid://ccsyustoubmrd" path="res://Cannibal.tscn" id="13_p0l7c"]
-[ext_resource type="AudioStream" uid="uid://dsprmgxy7v8k2" path="res://BananaMan.mp3" id="13_ur3b8"]
 [ext_resource type="PackedScene" uid="uid://dasha0svfbiho" path="res://Fate.tscn" id="14_icrtb"]
+[ext_resource type="AudioStream" uid="uid://d3yl43ph0jxyr" path="res://Music/BananaMan.mp3" id="18_u5yv7"]
 
 [sub_resource type="Animation" id="Animation_21kyi"]
 resource_name = "Intro"
@@ -790,6 +790,6 @@ libraries = {
 }
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("13_ur3b8")
+stream = ExtResource("18_u5yv7")
 volume_db = -8.0
 autoplay = true

@@ -9,6 +9,41 @@
 config_version=5
 
 _global_script_classes=[{
+"base": "Node",
+"class": &"CustomRunner",
+"language": &"GDScript",
+"path": "res://addons/CustomRunner/CustomRunner.gd"
+}, {
+"base": "Node",
+"class": &"GDShellCommand",
+"language": &"GDScript",
+"path": "res://addons/gdshell/scripts/gdshell_command.gd"
+}, {
+"base": "RefCounted",
+"class": &"GDShellCommandDB",
+"language": &"GDScript",
+"path": "res://addons/gdshell/scripts/gdshell_command_db.gd"
+}, {
+"base": "RefCounted",
+"class": &"GDShellCommandParser",
+"language": &"GDScript",
+"path": "res://addons/gdshell/scripts/gdshell_command_parser.gd"
+}, {
+"base": "Node",
+"class": &"GDShellCommandRunner",
+"language": &"GDScript",
+"path": "res://addons/gdshell/scripts/gdshell_command_runner.gd"
+}, {
+"base": "Node",
+"class": &"GDShellMain",
+"language": &"GDScript",
+"path": "res://addons/gdshell/scripts/gdshell_main.gd"
+}, {
+"base": "Control",
+"class": &"GDShellUIHandler",
+"language": &"GDScript",
+"path": "res://addons/gdshell/scripts/gdshell_ui_handler.gd"
+}, {
 "base": "Label",
 "class": &"LabelButton",
 "language": &"GDScript",
@@ -20,6 +55,13 @@ _global_script_classes=[{
 "path": "res://Tally.gd"
 }]
 _global_script_class_icons={
+"CustomRunner": "",
+"GDShellCommand": "res://addons/gdshell/icon.png",
+"GDShellCommandDB": "res://addons/gdshell/icon.png",
+"GDShellCommandParser": "res://addons/gdshell/icon.png",
+"GDShellCommandRunner": "res://addons/gdshell/icon.png",
+"GDShellMain": "res://addons/gdshell/icon.png",
+"GDShellUIHandler": "res://addons/gdshell/icon.png",
 "LabelButton": "",
 "TallyChar": ""
 }
@@ -34,6 +76,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Moves="*res://Moves.tscn"
+GDShell="*res://addons/gdshell/scripts/gdshell_main.gd"
 
 [display]
 
@@ -43,3 +86,7 @@ window/size/viewport_height=1080
 [dotnet]
 
 project/assembly_name="Good&Evil"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdshell/plugin.cfg")
