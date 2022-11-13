@@ -1,5 +1,6 @@
 extends Node3D
 
+@export var title: String
 signal died
 signal took_damage(hitDesc)
 func take_damage(hitDesc):

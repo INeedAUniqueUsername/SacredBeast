@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://d24ddtc3qyfma"]
 
-[ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Bird.png" id="1_jaion"]
+[ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Crow.png" id="1_jaion"]
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="AnimationLibrary" uid="uid://clt76rg56nu4l" path="res://CommonEnemyAnim.tres" id="3_he4xx"]
 
@@ -10,8 +10,9 @@ size = Vector3(2, 2, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_7xkwx"]
 size = Vector3(2.8, 2, 1.8)
 
-[node name="Bird" type="Node3D" groups=["Enemy"]]
+[node name="Crow" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
+title = "Crow"
 
 [node name="Sprite" type="Sprite3D" parent="."]
 centered = false

@@ -1,7 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://ccsyustoubmrd"]
+[gd_scene load_steps=10 format=3 uid="uid://dmj2xq1t2kyw2"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
-[ext_resource type="Texture2D" uid="uid://drvq4c3wp07ra" path="res://Cannibal.png" id="2_nmix7"]
+[ext_resource type="Texture2D" uid="uid://b2kkddggk66wp" path="res://Erlking.png" id="2_fxocs"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pwerb"]
 size = Vector3(2, 2, 1)
@@ -82,20 +82,20 @@ _data = {
 "RESET": SubResource("Animation_fa25n")
 }
 
-[node name="Cannibal" type="Node3D" groups=["Enemy"]]
+[node name="Erlking" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-title = "Cannibal"
+title = "Erlking"
 
 [node name="Sprite" type="Sprite3D" parent="."]
 visibility_range_begin = 4.0
 visibility_range_begin_margin = 2.0
 visibility_range_fade_mode = 1
 centered = false
-offset = Vector2(-40, 0)
-pixel_size = 0.0313
+offset = Vector2(-1200, 0)
+pixel_size = 0.001
 alpha_cut = 2
 texture_filter = 2
-texture = ExtResource("2_nmix7")
+texture = ExtResource("2_fxocs")
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
 input_ray_pickable = false
