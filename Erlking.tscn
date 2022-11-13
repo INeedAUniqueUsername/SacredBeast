@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dmj2xq1t2kyw2"]
+[gd_scene load_steps=11 format=3 uid="uid://dmj2xq1t2kyw2"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="Texture2D" uid="uid://b2kkddggk66wp" path="res://Erlking.png" id="2_fxocs"]
+[ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://EnemyAuraDouble.tscn" id="3_ynfke"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pwerb"]
 size = Vector3(2, 2, 1)
@@ -44,8 +45,19 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_q7g64"]
 resource_name = "Idle"
-length = 1.6
 loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
 
 [sub_resource type="Animation" id="Animation_fa25n"]
 length = 0.001
@@ -73,6 +85,18 @@ tracks/1/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8155p"]
 _data = {
@@ -94,8 +118,9 @@ centered = false
 offset = Vector2(-1200, 0)
 pixel_size = 0.001
 alpha_cut = 2
-texture_filter = 2
+texture_filter = 1
 texture = ExtResource("2_fxocs")
+hframes = 2
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
 input_ray_pickable = false
@@ -112,6 +137,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("BoxShape3D_7xkwx")
 
 [node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
 libraries = {
 "": SubResource("AnimationLibrary_8155p")
 }
+
+[node name="Aura" parent="." instance=ExtResource("3_ynfke")]

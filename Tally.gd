@@ -19,7 +19,6 @@ var tallyName: String:
 			Tally.Zubin: "Zubin Sedghi",
 			Tally.Ross: "Ross Federman"	
 		}[tally]
-
 signal moved
 var is_selected = false
 func _ready():
@@ -47,6 +46,8 @@ signal selected
 
 func create_floor_glow():
 	var t = TileGlow.instantiate()
+	var tc = t.TileColor
+	t.color = [tc.Red, tc.Yellow, tc.Green, tc.Blue, tc.Gray][tally]
 	t.global_position = global_position
 	t.set_emitting_selected(self)
 	world.add_child.call_deferred(t)
@@ -60,7 +61,7 @@ func deselect():
 func select():
 	is_selected = true
 	selected.emit()
-	show_walk()
+	#show_walk()
 
 var is_moving = false
 func show_walk():
@@ -120,6 +121,7 @@ func show_walk():
 			t.clicked.connect(move_to.bind(t))	
 		)
 		
+		timer.timeout.connect(timer.queue_free)
 		return t
 	
 	var radius = 4

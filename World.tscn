@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://h6okspmcxfhq"]
+[gd_scene load_steps=57 format=3 uid="uid://h6okspmcxfhq"]
 
 [ext_resource type="Script" path="res://Battle.gd" id="1_b8anq"]
 [ext_resource type="Texture2D" uid="uid://csfuiqrdo5x27" path="res://WhiteTile.png" id="1_prg36"]
@@ -20,54 +20,167 @@
 [ext_resource type="PackedScene" uid="uid://dmj2xq1t2kyw2" path="res://Erlking.tscn" id="15_pfo1m"]
 [ext_resource type="AudioStream" uid="uid://d3yl43ph0jxyr" path="res://Music/BananaMan.mp3" id="18_u5yv7"]
 
-[sub_resource type="Animation" id="Animation_21kyi"]
-resource_name = "Intro"
-length = 7.0
-step = 0.5
+[sub_resource type="Animation" id="Animation_wnq3l"]
+resource_name = "PlayerTurn"
+length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("World/Particles:emitting")
+tracks/0/path = NodePath("Turn:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 6),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [false, true]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Intro:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5, 3, 3.5),
+"times": PackedFloat32Array(0, 0.2, 1.4, 1.6),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Turn/Msg:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["Tally Turn"]
+}
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Intro/LevelTitle:visible_ratio")
+tracks/2/path = NodePath("Turn/Msg:visible_ratio")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.5, 1.5),
+"times": PackedFloat32Array(0.4, 0.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [0.0, 1.0]
 }
-tracks/3/type = "method"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Intro")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(3.5),
+
+[sub_resource type="Animation" id="Animation_4o4q0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Turn:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Turn/Msg:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["Tally Turn"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Turn/Msg:visible_ratio")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_x63lx"]
+resource_name = "EnemyTurn"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Turn:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 1.4, 1.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Turn/Msg:text")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["Enemy Turn"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Turn/Msg:visible_ratio")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.4, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xfebr"]
+_data = {
+"EnemyTurn": SubResource("Animation_x63lx"),
+"PlayerTurn": SubResource("Animation_wnq3l"),
+"RESET": SubResource("Animation_4o4q0")
+}
+
+[sub_resource type="Animation" id="Animation_q4bl7"]
+resource_name = "Intro"
+length = 2.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("LevelTitle:visible_ratio")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3, 1.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(2.1),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -75,49 +188,37 @@ tracks/3/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_q3lah"]
+[sub_resource type="Animation" id="Animation_sxcdh"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("World/Particles:emitting")
+tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Intro:modulate")
+tracks/1/path = NodePath("LevelTitle:visible_ratio")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Intro/LevelTitle:visible_ratio")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [1.0]
+"values": [0.0]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_xfebr"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m2302"]
 _data = {
-"Intro": SubResource("Animation_21kyi"),
-"RESET": SubResource("Animation_q3lah")
+"Intro": SubResource("Animation_q4bl7"),
+"RESET": SubResource("Animation_sxcdh")
 }
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o37ku"]
@@ -427,13 +528,49 @@ _data = {
 [node name="Node" type="Node"]
 script = ExtResource("1_b8anq")
 
-[node name="Anim" type="AnimationPlayer" parent="."]
-autoplay = "Intro"
+[node name="Turn" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Msg" type="Label" parent="Turn"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -80.0
+offset_right = 320.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_w3kyq")
+theme_override_font_sizes/font_size = 80
+text = "Tally Turn"
+horizontal_alignment = 1
+vertical_alignment = 1
+visible_characters = 0
+visible_ratio = 0.0
+
+[node name="NinePatchRect" parent="Turn/Msg" instance=ExtResource("2_myrce")]
+layout_mode = 1
+
+[node name="Anim" type="AnimationPlayer" parent="Turn"]
+root_node = NodePath("../..")
 libraries = {
 "": SubResource("AnimationLibrary_xfebr")
 }
 
 [node name="Intro" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -443,6 +580,7 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="LevelTitle" type="Label" parent="Intro"]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -460,8 +598,17 @@ theme_override_font_sizes/font_size = 80
 text = "Level 1: Banana Man"
 horizontal_alignment = 1
 vertical_alignment = 1
+visible_characters = 0
+visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="Intro/LevelTitle" instance=ExtResource("2_myrce")]
+layout_mode = 1
+
+[node name="Anim" type="AnimationPlayer" parent="Intro"]
+autoplay = "Intro"
+libraries = {
+"": SubResource("AnimationLibrary_m2302")
+}
 
 [node name="World" type="Node3D" parent="." groups=["World"]]
 
@@ -476,7 +623,7 @@ data = {
 }
 
 [node name="Camera" type="Camera3D" parent="World"]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 3, 6)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 4, 6)
 attributes = SubResource("CameraAttributesPractical_4el7p")
 h_offset = 1.0
 size = 7.0
@@ -577,7 +724,7 @@ libraries = {
 "": SubResource("AnimationLibrary_fot7f")
 }
 
-[node name="Particles" type="CPUParticles3D" parent="World"]
+[node name="Smoke" type="CPUParticles3D" parent="World"]
 emitting = false
 amount = 32
 mesh = SubResource("PlaneMesh_q1rla")
@@ -627,6 +774,7 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="Message" type="Label" parent="UI"]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 1.0
@@ -646,6 +794,7 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="UI/Message" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="UI/Message"]
 libraries = {
@@ -653,7 +802,7 @@ libraries = {
 }
 
 [node name="Tally" type="Control" parent="UI"]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -663,6 +812,7 @@ mouse_filter = 1
 script = ExtResource("1_quljh")
 
 [node name="Name" type="Label" parent="UI/Tally"]
+layout_mode = 0
 offset_right = 240.0
 offset_bottom = 64.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -673,9 +823,11 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NinePatchRect" parent="UI/Tally/Name" instance=ExtResource("2_myrce")]
+layout_mode = 1
 texture = ExtResource("4_2ckxh")
 
 [node name="Info" type="Label" parent="UI/Tally"]
+layout_mode = 0
 offset_top = 64.0
 offset_right = 240.0
 offset_bottom = 320.0
@@ -686,8 +838,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NinePatchRect" parent="UI/Tally/Info" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Act" type="Label" parent="UI/Tally"]
+layout_mode = 0
 offset_left = 240.0
 offset_right = 432.0
 offset_bottom = 64.0
@@ -701,9 +855,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/Act" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="MoveList" type="Control" parent="UI/Tally"]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 0
 offset_left = 240.0
 offset_top = 64.0
@@ -711,6 +866,7 @@ offset_right = 240.0
 offset_bottom = 64.0
 
 [node name="Move1" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_right = 384.0
 offset_bottom = 64.0
 mouse_filter = 0
@@ -723,8 +879,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move1" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Move2" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_top = 64.0
 offset_right = 384.0
 offset_bottom = 128.0
@@ -738,8 +896,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move2" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Move3" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_top = 128.0
 offset_right = 384.0
 offset_bottom = 192.0
@@ -753,8 +913,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move3" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Move4" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_top = 192.0
 offset_right = 384.0
 offset_bottom = 256.0
@@ -768,12 +930,33 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move4" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="UI/Tally"]
 root_node = NodePath("../../..")
 libraries = {
 "": SubResource("AnimationLibrary_bdmmd")
 }
+
+[node name="EndTurn" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -192.0
+offset_bottom = 64.0
+grow_horizontal = 0
+mouse_filter = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_w3kyq")
+theme_override_font_sizes/font_size = 32
+text = "End Turn"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("3_gh476")
+
+[node name="NinePatchRect" parent="UI/EndTurn" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("18_u5yv7")

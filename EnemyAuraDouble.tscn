@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://detbjaff3hoq0"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_16pgg"]
+albedo_color = Color(0, 0, 0, 1)
+emission_enabled = true
+emission_energy_multiplier = 0.5
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_14e8d"]
+material = SubResource("StandardMaterial3D_16pgg")
+size = Vector2(0.063, 0.063)
+orientation = 2
+
+[sub_resource type="Curve" id="Curve_p7s53"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.503597, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.38121, 0.0, 0, 0]
+point_count = 3
+
+[node name="Particles" type="CPUParticles3D"]
+amount = 12
+lifetime = 1.25
+mesh = SubResource("PlaneMesh_14e8d")
+emission_shape = 4
+emission_points = PackedVector3Array(-0.656, 0, -0.328, -0.656, 0, 0, -0.656, 0, 0.328, -0.328, 0, -0.328, -0.328, 0, 0, -0.328, 0, 0.328, 0, 0, -0.328, 0, 0, 0, 0, 0, 0.328, 0.328, 0, -0.328, 0.328, 0, 0, 0.328, 0, 0.328, 0.656, 0, -0.328, 0.656, 0, 0, 0.656, 0, 0.328)
+gravity = Vector3(0, 2.5, 0)
+scale_amount_curve = SubResource("Curve_p7s53")

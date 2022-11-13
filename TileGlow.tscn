@@ -1,7 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://csynm666j7qp5"]
+[gd_scene load_steps=14 format=3 uid="uid://b0o0104hukaa3"]
 
-[ext_resource type="Texture2D" uid="uid://c04238fp3rc0d" path="res://RedTileGlow.png" id="1_mhbu7"]
 [ext_resource type="Script" path="res://TileGlow.gd" id="2_6ya7x"]
+[ext_resource type="Texture2D" uid="uid://bt4ktcl0ld5s0" path="res://TileGlowGray.png" id="2_11hrx"]
 
 [sub_resource type="Animation" id="Animation_1kua1"]
 resource_name = "Appear"
@@ -94,14 +94,14 @@ _data = {
 "RESET": SubResource("Animation_s7qmv")
 }
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_16pgg"]
-albedo_color = Color(1, 0, 0, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bhxwm"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
 emission_enabled = true
-emission = Color(1, 0, 0, 1)
+emission = Color(0.5, 0.5, 0.5, 1)
 emission_energy_multiplier = 0.5
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_h4qcb"]
-material = SubResource("StandardMaterial3D_16pgg")
+material = SubResource("StandardMaterial3D_bhxwm")
 size = Vector2(0.063, 0.063)
 orientation = 2
 
@@ -165,6 +165,7 @@ _data = {
 
 [node name="TileGlow" type="Node3D"]
 script = ExtResource("2_6ya7x")
+color = 4
 
 [node name="Sprite" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0)
@@ -173,7 +174,7 @@ pixel_size = 0.0313
 axis = 1
 alpha_cut = 2
 texture_filter = 2
-texture = ExtResource("1_mhbu7")
+texture = ExtResource("2_11hrx")
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Appear"

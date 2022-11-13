@@ -88,7 +88,33 @@ func _ready():
 			selectedTally = null
 			$UI/Tally.deselect()
 			)
+	
+	await $Intro/Anim.animation_finished
+	while active:
 		
+		$Turn/Anim.play("PlayerTurn")
+		
+		await $UI/EndTurn.clicked
+		
+		$Turn/Anim.play("EnemyTurn")
+		await $Turn/Anim.animation_finished
+		
+		for e in get_tree().get_nodes_in_group("Enemy"):
+			
+			var p = preload("res://Pointer.tscn").instantiate()
+			p.global_position = e.global_position
+			add_child(p)
+			
+			var t = get_tree().create_tween()
+			t.set_trans(Tween.TRANS_QUAD)
+			t.set_ease(Tween.EASE_OUT)
+			t.tween_property($World/Camera, "global_position", e.global_position + Vector3(-1, 4, 6), 0.5)
+
+			t.play()
+			await t.finished
+			await e.begin_turn()
+			
+			p.dismiss()
 	var prev_position = Vector2(0, 0)
 	var prev_pressed = false
 	if false:
@@ -104,3 +130,5 @@ func _ready():
 					$World/Camera3D.global_position += Vector3(delta.x, 0, delta.y) / 1080.0
 				prev_position = pos
 			)
+signal player_turn_ended
+var active = true
