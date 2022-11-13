@@ -76,7 +76,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 Moves="*res://Moves.tscn"
-GDShell="*res://addons/gdshell/scripts/gdshell_main.gd"
 
 [display]
 
@@ -86,7 +85,3 @@ window/size/viewport_height=1080
 [dotnet]
 
 project/assembly_name="Good&Evil"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/gdshell/plugin.cfg")
