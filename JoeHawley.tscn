@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://globk6a68laj"]
+[gd_scene load_steps=12 format=3 uid="uid://globk6a68laj"]
 
 [ext_resource type="Script" path="res://Tally.gd" id="1_6eew5"]
 [ext_resource type="Texture2D" uid="uid://0urkwqtr0jnd" path="res://JoeHawley.png" id="2_30ou4"]
@@ -138,8 +138,11 @@ _data = {
 "RESET": SubResource("Animation_o0hbn")
 }
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_slj54"]
-size = Vector3(1, 1.5, 1)
+[sub_resource type="BoxShape3D" id="BoxShape3D_b0b7g"]
+size = Vector3(0.5, 1.4, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gogy8"]
+size = Vector3(1.4, 1.4, 0.75)
 
 [node name="Joe" type="Node3D" groups=["Tally"]]
 script = ExtResource("1_6eew5")
@@ -179,8 +182,15 @@ libraries = {
 [node name="Area" type="Area3D" parent="."]
 
 [node name="Cube" type="CollisionShape3D" parent="Area"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
-shape = SubResource("BoxShape3D_slj54")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("BoxShape3D_b0b7g")
+
+[node name="NoWalk" type="Area3D" parent="." groups=["NoWalk"]]
+input_ray_pickable = false
+
+[node name="Cube" type="CollisionShape3D" parent="NoWalk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("BoxShape3D_gogy8")
 
 [node name="Punch" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0.8, 0)

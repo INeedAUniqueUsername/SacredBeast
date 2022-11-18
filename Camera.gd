@@ -2,6 +2,14 @@ extends Camera3D
 
 var can_move = true
 
+var offset: Vector3
+
+var follow: Node3D:
+	set(n):
+		if n:
+			offset = (global_position - n.global_position)
+		follow = n
+
 func move(delta: Vector3):
 	var tw = get_tree().create_tween()
 	tw.set_ease(Tween.EASE_OUT)
@@ -10,6 +18,8 @@ func move(delta: Vector3):
 	tw.play()
 	await tw.finished
 func _process(delta):
+	if follow:
+		global_position = follow.global_position + offset
 	if can_move:
 		var p = Input.is_key_pressed
 		var dirs = {

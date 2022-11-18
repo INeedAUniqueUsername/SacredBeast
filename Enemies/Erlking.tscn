@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://ccsyustoubmrd"]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
-[ext_resource type="Texture2D" uid="uid://drvq4c3wp07ra" path="res://Cannibal.png" id="2_nmix7"]
+[ext_resource type="Texture2D" uid="uid://b2kkddggk66wp" path="res://Erlking.png" id="2_fxocs"]
+[ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="3_ynfke"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pwerb"]
 size = Vector3(2, 2, 1)
@@ -40,6 +41,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), Vector3(0, 0.1, 0), Vector3(0, -0.1, 0), Vector3(0, 0.1, 0), Vector3(0, -0.1, 0), Vector3(0, 0.05, 0), Vector3(0, -0.05, 0), Vector3(0, 0.05, 0), Vector3(0, -0.05, 0), Vector3(0, 0.025, 0), Vector3(0, -0.025, 0), Vector3(0, 0.025, 0), Vector3(0, -0.025, 0), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
 }
 
 [sub_resource type="Animation" id="Animation_q7g64"]
@@ -105,20 +118,22 @@ _data = {
 "RESET": SubResource("Animation_fa25n")
 }
 
-[node name="Cannibal" type="Node3D" groups=["Enemy"]]
+[node name="Erlking" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-title = "Cannibal"
+title = "Erlking"
+width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
 visibility_range_begin = 4.0
 visibility_range_begin_margin = 2.0
 visibility_range_fade_mode = 1
 centered = false
-offset = Vector2(-40, 0)
-pixel_size = 0.0313
+offset = Vector2(-1200, 0)
+pixel_size = 0.001
 alpha_cut = 2
-texture_filter = 2
-texture = ExtResource("2_nmix7")
+texture_filter = 1
+texture = ExtResource("2_fxocs")
+hframes = 3
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
 input_ray_pickable = false
@@ -135,6 +150,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("BoxShape3D_7xkwx")
 
 [node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
 libraries = {
 "": SubResource("AnimationLibrary_8155p")
 }
+
+[node name="Aura" parent="." instance=ExtResource("3_ynfke")]

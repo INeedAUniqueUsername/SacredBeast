@@ -48,10 +48,12 @@ func create_floor_glow():
 	var t = TileGlow.instantiate()
 	var tc = t.TileColor
 	t.color = [tc.Red, tc.Yellow, tc.Green, tc.Blue, tc.Gray][tally]
-	t.global_position = global_position
-	t.set_emitting_selected(self)
-	world.add_child.call_deferred(t)
 	
+	world.add_child.call_deferred(t)
+	t.tree_entered.connect(func():
+		t.global_position = global_position
+		t.set_emitting_selected(self)
+	)
 	moved.connect(t.dismiss)
 	selected.connect(t.set_emitting_selected.bind(self))
 	deselected.connect(t.set_emitting_selected.bind(self))
@@ -61,7 +63,7 @@ func deselect():
 func select():
 	is_selected = true
 	selected.emit()
-	#show_walk()
+	show_walk()
 
 var is_moving = false
 func show_walk():
@@ -101,22 +103,22 @@ func show_walk():
 		create_floor_glow()
 		if is_selected:
 			self.show_walk()
-	var create_tile := func(v: Vector3, delay:float, parent:Node3D):
+	var create_tile := func create_tile(v: Vector3, delay:float, parent:Node3D):
 		
 		var t = preload("res://TileStep.tscn").instantiate()
-		t.global_position = v
 		t.parent = parent
 		
 		var timer = Timer.new()
 		add_child(timer)
-		timer.wait_time = delay
-		timer.start()
+		if delay > 0:
+			timer.wait_time = delay
+			timer.start()
 		deselected.connect(timer.queue_free)
-		timer.timeout.connect(func():
+		timer.timeout.connect(func place_in_world():
 			if !is_instance_valid(t):
 				return
 			world.add_child(t)
-			self.selected.connect(t.dismiss)
+			t.global_position = v
 			self.deselected.connect(t.dismiss)
 			t.clicked.connect(move_to.bind(t))	
 		)
@@ -145,41 +147,34 @@ func show_walk():
 	seen[global_position].queue_free()
 	seen.erase(global_position)
 const HitDesc = preload("res://HitDesc.gd")
-func use_move(m):
-	if m == Moves.JoeHawley:
-		#var TileTarget = preload("res://TileTarget.tscn")
-		#var forward = global_position + global_transform.basis.x
-		#var tt = TileTarget.instantiate()
-		#tt.global_position = forward
-		#world.add_child(tt)
-		
-		var a = AudioStreamPlayer3D.new()
-		add_child(a)
-		a.stream = preload("res://Sounds/JoeHawleyJoeHawley.wav")
-		a.global_position = global_position + Vector3(0, 1, 0)
-		a.play()
-		a.finished.connect(a.queue_free)
-		
-		$Anim.play("Punch")
-		await $Anim.animation_finished
-		
-		var param = PhysicsPointQueryParameters3D.new()
-		param.position = $Punch.global_position
-		param.collide_with_areas = true
-		param.collide_with_bodies = false
-		param.exclude = []
-		param.collision_mask = -1
-		var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
-		hit = hit.map(func(h):
-			return h.collider
-		).filter(func(h):
-			return h.is_in_group("Hitbox")
-		).map(func(h):
-			h.get_parent().take_damage(HitDesc.new(self, param.position, 10))
-		)
-		await get_tree().create_timer(0.5).timeout
-		$Anim.play("Idle")
-		return
+func use_move_joe_hawley():
+	var a = AudioStreamPlayer3D.new()
+	add_child(a)
+	a.stream = preload("res://Sounds/JoeHawleyJoeHawley.wav")
+	a.global_position = global_position + Vector3(0, 1, 0)
+	a.play()
+	a.finished.connect(a.queue_free)
+	
+	$Anim.play("Punch")
+	await $Anim.animation_finished
+	
+	var param = PhysicsPointQueryParameters3D.new()
+	param.position = $Punch.global_position
+	param.collide_with_areas = true
+	param.collide_with_bodies = false
+	param.exclude = []
+	param.collision_mask = -1
+	var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
+	hit = hit.map(func(h):
+		return h.collider
+	).filter(func(h):
+		return h.is_in_group("Hitbox")
+	).map(func(h):
+		h.get_parent().take_damage(HitDesc.new(self, param.position, 10))
+	)
+	await get_tree().create_timer(0.5).timeout
+	$Anim.play("Idle")
+func take_damage(hitDesc:HitDesc):
 	pass
 func _process(delta):
 	pass
@@ -191,7 +186,7 @@ func can_walk(pos: Vector3):
 		param.position = pos + Vector3(0, 0.1, 0)
 		param.collide_with_areas = true
 		param.collide_with_bodies = false
-		param.exclude = []
+		param.exclude = [$NoWalk]
 		param.collision_mask = -1
 		return not get_world_3d().direct_space_state.intersect_point(param).any(func(e): return e.collider.is_in_group("NoWalk"))
 	

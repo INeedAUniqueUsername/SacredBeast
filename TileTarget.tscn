@@ -1,7 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://lmjn7jckdlmt"]
+[gd_scene load_steps=8 format=3 uid="uid://csshk0nmg0lgi"]
 
-[ext_resource type="Script" path="res://TileTarget.gd" id="1_0w2s8"]
-[ext_resource type="Texture2D" uid="uid://dse6duo6cnceh" path="res://TileTarget.png" id="2_uej0i"]
+[sub_resource type="GDScript" id="GDScript_oa5kk"]
+script/source = "extends Node3D
+func dismiss():
+	$Anim.play(\"Disappear\")
+"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3suqd"]
 
 [sub_resource type="Animation" id="Animation_1kua1"]
 resource_name = "Appear"
@@ -104,7 +109,7 @@ _data = {
 }
 
 [node name="TileTarget" type="Node3D"]
-script = ExtResource("1_0w2s8")
+script = SubResource("GDScript_oa5kk")
 
 [node name="Sprite" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0)
@@ -112,7 +117,7 @@ pixel_size = 0.0313
 axis = 1
 alpha_cut = 2
 texture_filter = 2
-texture = ExtResource("2_uej0i")
+texture = SubResource("CompressedTexture2D_3suqd")
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Appear"

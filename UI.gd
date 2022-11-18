@@ -8,6 +8,8 @@ func _ready():
 func set_style(char: TallyChar):
 	
 	const Tally = preload("res://Common.gd").Tally
+	
+	$Name.text = char.tallyName
 	var texture = {
 		Tally.Joe: preload("res://RedRect.png"),
 		Tally.Rob: preload("res://YellowRect.png"),
@@ -18,18 +20,22 @@ func set_style(char: TallyChar):
 	$Name/NinePatchRect.texture = texture
 func appear():
 	var tw = get_tree().create_tween()
-	tw.tween_property(self, "modulate", Color.WHITE, 0.3)
+	tw.set_ease(Tween.EASE_OUT)
+	tw.set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "modulate", Color.WHITE, 0.1)
 	tw.play()
 func disappear():
 	var tw = get_tree().create_tween()
-	tw.tween_property(self, "modulate", Color.TRANSPARENT, 0.3)
+	tw.tween_property(self, "modulate", Color.TRANSPARENT, 0.1)
 	tw.play()
+	
+	self.modulate = Color.TRANSPARENT
 func hover(char: TallyChar):
 	set_style(char)
 	
 	
 	var tw = get_tree().create_tween()
-	tw.tween_property(self, "modulate", Color(Color.WHITE, 0.5), 0.3)
+	tw.tween_property(self, "modulate", Color(Color.WHITE, 0.5), 0.1)
 	tw.play()
 	
 	$Act.visible = false
@@ -53,5 +59,5 @@ func deselect():
 
 	
 	var tw = get_tree().create_tween()
-	tw.tween_property(self, "modulate", Color(Color.WHITE, 0.5), 0.3)
+	tw.tween_property(self, "modulate", Color(Color.WHITE, 0.5), 0.1)
 	tw.play()

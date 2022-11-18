@@ -35,28 +35,36 @@ func _ready():
 	for i in range($UI/Tally/MoveList.get_child_count()):
 		var c = $UI/Tally/MoveList.get_child(i)
 		c.clicked.connect(func():
+			if i >= len(selectedTally.move_list):
+				return
 			var m = selectedTally.move_list[i]
 			
 			$UI/Tally/MoveList.visible = false
 			await showMessage(selectedTally.tallyName + " used *" + m.title + "*")
 			
-			await selectedTally.use_move(m)
+			if m == Moves.JoeHawley:
+				selectedTally.use_move_joe_hawley()
 			)
 	for enemy in get_tree().get_nodes_in_group("Enemy"):
 		enemy.died.connect(func():
-			showMessage(str(enemy.name) + " fell!")
+			showMessage(enemy.title + " fell!")
+		)
+		enemy.show_message.connect(func(s):
+			showMessage(s)
 		)
 		
 		enemy.took_damage.connect(func(h):
-			showMessage(str(enemy.name) + " took the hit!")	
+			
+			showMessage(str(enemy.name) + " was hit!")	
 			var at = ActionText.instantiate()
-			at.global_position = h.pos + Vector3(0, 0.5, 1)
 			$World.add_child(at)
+			at.global_position = h.pos + Vector3(0, 0.5, 1)
 			
 			var au = AudioStreamPlayer3D.new()
 			au.stream = preload("res://Sounds/punch_hit.wav")
-			au.global_position = h.pos
+			
 			$World.add_child(au)
+			au.global_position = h.pos
 			au.play()
 			au.finished.connect(au.queue_free)
 			
@@ -68,33 +76,40 @@ func _ready():
 		
 		var area = tally.get_node("Area")
 		area.mouse_entered.connect(func():
-			if !selectedTally:
+			if !self.selectedTally:
 				$UI/Tally.hover(tally)
 			)
 		area.mouse_exited.connect(func():
-			if !selectedTally:
+			if !self.selectedTally:
 				$UI/Tally.disappear()
 			)
 		
 		tally.selected.connect(func():
-			self.selectedTally = tally
-			for other in tallyHall:
-				if other == tally:
-					continue
-				other.deselect()
+			if self.selectedTally:
+				self.selectedTally.deselect()
 			$UI/Tally.select(tally)
+			self.selectedTally = tally
 		)
 		tally.deselected.connect(func():
-			selectedTally = null
 			$UI/Tally.deselect()
+			self.selectedTally = null
 			)
 	
 	await $Intro/Anim.animation_finished
+	
+	get_tree().create_timer(4.5).timeout.connect(func():
+		$World/Smoke.emitting = true
+		)
+	
 	while active:
 		
 		$Turn/Anim.play("PlayerTurn")
 		
 		await $UI/EndTurn.clicked
+		
+		
+		for t in tallyHall:
+			t.deselect()
 		
 		$Turn/Anim.play("EnemyTurn")
 		await $Turn/Anim.animation_finished
@@ -102,8 +117,8 @@ func _ready():
 		for e in get_tree().get_nodes_in_group("Enemy"):
 			
 			var p = preload("res://Pointer.tscn").instantiate()
-			p.global_position = e.global_position
-			add_child(p)
+			#p.global_position = e.global_position
+			e.add_child(p)
 			
 			var t = get_tree().create_tween()
 			t.set_trans(Tween.TRANS_QUAD)
@@ -112,7 +127,10 @@ func _ready():
 
 			t.play()
 			await t.finished
+			
+			$World/Camera.follow = e
 			await e.begin_turn()
+			$World/Camera.follow = null
 			
 			p.dismiss()
 	var prev_position = Vector2(0, 0)

@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://d24ddtc3qyfma"]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Crow.png" id="1_jaion"]
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
+[ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Crow.png" id="2_bwb00"]
 [ext_resource type="AnimationLibrary" uid="uid://clt76rg56nu4l" path="res://CommonEnemyAnim.tres" id="3_he4xx"]
+[ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="4_n0qju"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3skce"]
 size = Vector3(2, 2, 1)
@@ -13,14 +14,18 @@ size = Vector3(2.8, 2, 1.8)
 [node name="Crow" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
 title = "Crow"
+width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
+visibility_range_begin = 4.0
+visibility_range_begin_margin = 2.0
+visibility_range_fade_mode = 1
 centered = false
 offset = Vector2(-32, 0)
 pixel_size = 0.0313
 alpha_cut = 2
 texture_filter = 2
-texture = ExtResource("1_jaion")
+texture = ExtResource("2_bwb00")
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
 input_ray_pickable = false
@@ -41,3 +46,5 @@ autoplay = "Idle"
 libraries = {
 "": ExtResource("3_he4xx")
 }
+
+[node name="Aura" parent="." instance=ExtResource("4_n0qju")]

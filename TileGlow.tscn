@@ -95,12 +95,14 @@ _data = {
 }
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bhxwm"]
+resource_local_to_scene = true
 albedo_color = Color(0.5, 0.5, 0.5, 1)
 emission_enabled = true
-emission = Color(0.5, 0.5, 0.5, 1)
-emission_energy_multiplier = 0.5
+emission = Color(1, 1, 1, 1)
+emission_operator = 1
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_h4qcb"]
+resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_bhxwm")
 size = Vector2(0.063, 0.063)
 orientation = 2

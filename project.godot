@@ -68,10 +68,10 @@ _global_script_class_icons={
 
 [application]
 
-config/name="SacredBeast"
+config/name="Sacred Beast"
 run/main_scene="res://World.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://Icon.png"
 
 [autoload]
 

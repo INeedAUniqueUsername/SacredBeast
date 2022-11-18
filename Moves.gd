@@ -18,3 +18,8 @@ var HymnForAScarecrow := MoveInfo.new(
 	"Hymn for a Scarecrow",
 	"Hymn for a Scarecrow"
 	)
+
+var JustApathy := MoveInfo.new(
+	"Just Apathy",
+	"Shoots an arrow that deals between 1 and 100 damage. Might be too much or not enough."
+	)

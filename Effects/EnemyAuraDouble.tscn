@@ -14,8 +14,9 @@ orientation = 2
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.503597, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.38121, 0.0, 0, 0]
 point_count = 3
 
-[node name="Particles" type="CPUParticles3D"]
-amount = 12
+[node name="Aura" type="CPUParticles3D"]
+emitting = false
+amount = 36
 lifetime = 1.25
 mesh = SubResource("PlaneMesh_14e8d")
 emission_shape = 4

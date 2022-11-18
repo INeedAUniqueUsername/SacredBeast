@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dse6duo6cnceh"
-path="res://.godot/imported/TileTarget.png-d3143769eafb723bf99083f05a9fb1c7.ctex"
+uid="uid://lj5ngftoeqlf"
+path="res://.godot/imported/Poster_Creatures.png-1b95a7a48e19f6ee40e03a9b6a7fff4c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://TileTarget.png"
-dest_files=["res://.godot/imported/TileTarget.png-d3143769eafb723bf99083f05a9fb1c7.ctex"]
+source_file="res://Poster_Creatures.png"
+dest_files=["res://.godot/imported/Poster_Creatures.png-1b95a7a48e19f6ee40e03a9b6a7fff4c.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/hdr_compression=1
 compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

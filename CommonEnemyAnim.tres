@@ -1,4 +1,4 @@
-[gd_resource type="AnimationLibrary" load_steps=5 format=3 uid="uid://clt76rg56nu4l"]
+[gd_resource type="AnimationLibrary" load_steps=6 format=3 uid="uid://clt76rg56nu4l"]
 
 [sub_resource type="Animation" id="Animation_u15py"]
 resource_name = "Die"
@@ -14,6 +14,22 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_e7t4w"]
+resource_name = "Flash"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(100, 100, 100, 1), Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_qosfy"]
@@ -80,6 +96,7 @@ tracks/1/keys = {
 [resource]
 _data = {
 "Die": SubResource("Animation_u15py"),
+"Flash": SubResource("Animation_e7t4w"),
 "Hurt": SubResource("Animation_qosfy"),
 "Idle": SubResource("Animation_q7g64"),
 "RESET": SubResource("Animation_fa25n")
