@@ -1,4 +1,4 @@
-[gd_scene load_steps=60 format=3 uid="uid://cys06kwf1k4kj"]
+[gd_scene load_steps=62 format=3 uid="uid://cys06kwf1k4kj"]
 
 [ext_resource type="Script" path="res://Battle.gd" id="1_b8anq"]
 [ext_resource type="Texture2D" uid="uid://csfuiqrdo5x27" path="res://WhiteTile.png" id="1_prg36"]
@@ -13,14 +13,14 @@
 [ext_resource type="Script" path="res://Camera.gd" id="4_t3y6g"]
 [ext_resource type="PackedScene" uid="uid://globk6a68laj" path="res://JoeHawley.tscn" id="7_1o8gr"]
 [ext_resource type="Texture2D" uid="uid://crynh6oo67jqr" path="res://PrologueBackOutline.png" id="7_r3phc"]
-[ext_resource type="PackedScene" path="res://Enemies/Crow.tscn" id="8_5n1wp"]
-[ext_resource type="PackedScene" path="res://Enemies/Misery.tscn" id="9_bfpbp"]
+[ext_resource type="PackedScene" uid="uid://po56fr80mi07" path="res://Enemies/Crow.tscn" id="8_5n1wp"]
+[ext_resource type="PackedScene" uid="uid://cn5nygapahov3" path="res://Enemies/Misery.tscn" id="9_bfpbp"]
 [ext_resource type="PackedScene" uid="uid://c277t2ff7hngi" path="res://RobCantor.tscn" id="11_2sria"]
 [ext_resource type="PackedScene" uid="uid://cld0xuijrjcsp" path="res://Enemies/Cannibal.tscn" id="13_p0l7c"]
-[ext_resource type="PackedScene" path="res://Enemies/Fate.tscn" id="14_icrtb"]
-[ext_resource type="PackedScene" path="res://Enemies/Erlking.tscn" id="15_pfo1m"]
+[ext_resource type="PackedScene" uid="uid://drmb8v6v41cwp" path="res://Enemies/Fate.tscn" id="14_icrtb"]
+[ext_resource type="PackedScene" uid="uid://cttrvj5164e0e" path="res://Enemies/Erlking.tscn" id="15_pfo1m"]
 [ext_resource type="PackedScene" uid="uid://d08wfqndrgqni" path="res://Enemies/Ashley.tscn" id="16_j5265"]
-[ext_resource type="PackedScene" path="res://Enemies/Mary-Kate.tscn" id="17_ftqfu"]
+[ext_resource type="PackedScene" uid="uid://vxun4udpr6kt" path="res://Enemies/Mary-Kate.tscn" id="17_ftqfu"]
 [ext_resource type="AudioStream" uid="uid://d3yl43ph0jxyr" path="res://Music/BananaMan.mp3" id="18_u5yv7"]
 
 [sub_resource type="Animation" id="Animation_x63lx"]
@@ -474,6 +474,16 @@ _data = {
 "Scroll": SubResource("Animation_0o1c7")
 }
 
+[sub_resource type="SystemFont" id="SystemFont_8u52e"]
+font_names = PackedStringArray("Arial Nova", "Arial")
+font_style = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wxei4"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+
 [sub_resource type="Animation" id="Animation_pnee0"]
 resource_name = "Appear"
 length = 0.3
@@ -542,6 +552,7 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="Msg" type="Label" parent="Turn"]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -563,6 +574,7 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="Turn/Msg" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="Turn"]
 root_node = NodePath("../..")
@@ -581,6 +593,7 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="LevelTitle" type="Label" parent="Intro"]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -602,6 +615,7 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="Intro/LevelTitle" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="Intro"]
 autoplay = "Intro"
@@ -782,6 +796,7 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="Message" type="Label" parent="UI"]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 1.0
@@ -801,6 +816,7 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="UI/Message" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="UI/Message"]
 libraries = {
@@ -808,7 +824,7 @@ libraries = {
 }
 
 [node name="Tally" type="Control" parent="UI"]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -817,55 +833,46 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_quljh")
 
-[node name="Name" type="Label" parent="UI/Tally"]
-offset_right = 240.0
+[node name="Title" type="Label" parent="UI/Tally"]
+layout_mode = 0
+offset_right = 288.0
 offset_bottom = 64.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_w3kyq")
+theme_override_fonts/font = SubResource("SystemFont_8u52e")
 theme_override_font_sizes/font_size = 32
 text = "Joe Hawley"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NinePatchRect" parent="UI/Tally/Name" instance=ExtResource("2_myrce")]
+[node name="NinePatchRect" parent="UI/Tally/Title" instance=ExtResource("2_myrce")]
+layout_mode = 1
 texture = ExtResource("4_2ckxh")
 
-[node name="Info" type="Label" parent="UI/Tally"]
+[node name="Desc" type="Label" parent="UI/Tally"]
+layout_mode = 0
 offset_top = 64.0
-offset_right = 240.0
+offset_right = 288.0
 offset_bottom = 320.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("1_w3kyq")
-theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxEmpty_wxei4")
+text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaa"
+autowrap_mode = 2
 
-[node name="NinePatchRect" parent="UI/Tally/Info" instance=ExtResource("2_myrce")]
-
-[node name="Act" type="Label" parent="UI/Tally"]
-offset_left = 240.0
-offset_right = 432.0
-offset_bottom = 64.0
-mouse_filter = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_w3kyq")
-theme_override_font_sizes/font_size = 32
-text = "Act"
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("3_gh476")
-
-[node name="NinePatchRect" parent="UI/Tally/Act" instance=ExtResource("2_myrce")]
+[node name="NinePatchRect" parent="UI/Tally/Desc" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="MoveList" type="Control" parent="UI/Tally"]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 0
-offset_left = 240.0
+offset_left = 288.0
 offset_top = 64.0
-offset_right = 240.0
+offset_right = 288.0
 offset_bottom = 64.0
 
 [node name="Move1" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_right = 384.0
 offset_bottom = 64.0
 mouse_filter = 0
@@ -878,8 +885,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move1" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Move2" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_top = 64.0
 offset_right = 384.0
 offset_bottom = 128.0
@@ -893,8 +902,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move2" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Move3" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_top = 128.0
 offset_right = 384.0
 offset_bottom = 192.0
@@ -908,8 +919,10 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move3" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Move4" type="Label" parent="UI/Tally/MoveList"]
+layout_mode = 0
 offset_top = 192.0
 offset_right = 384.0
 offset_bottom = 256.0
@@ -923,6 +936,7 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move4" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="UI/Tally"]
 root_node = NodePath("../../..")
@@ -930,7 +944,49 @@ libraries = {
 "": SubResource("AnimationLibrary_bdmmd")
 }
 
+[node name="Actions" type="Control" parent="UI/Tally"]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Move" type="Label" parent="UI/Tally/Actions"]
+visible = false
+layout_mode = 0
+offset_left = 288.0
+offset_right = 480.0
+offset_bottom = 64.0
+mouse_filter = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_w3kyq")
+theme_override_font_sizes/font_size = 32
+text = "Move"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("3_gh476")
+
+[node name="NinePatchRect" parent="UI/Tally/Actions/Move" instance=ExtResource("2_myrce")]
+layout_mode = 1
+
+[node name="Act" type="Label" parent="UI/Tally/Actions"]
+layout_mode = 0
+offset_left = 288.0
+offset_right = 480.0
+offset_bottom = 64.0
+mouse_filter = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("1_w3kyq")
+theme_override_font_sizes/font_size = 32
+text = "Act"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("3_gh476")
+
+[node name="NinePatchRect" parent="UI/Tally/Actions/Act" instance=ExtResource("2_myrce")]
+layout_mode = 1
+
 [node name="EndTurn" type="Label" parent="UI"]
+layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -947,6 +1003,7 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/EndTurn" instance=ExtResource("2_myrce")]
+layout_mode = 1
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("18_u5yv7")

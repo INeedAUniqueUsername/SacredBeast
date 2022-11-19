@@ -23,3 +23,17 @@ var JustApathy := MoveInfo.new(
 	"Just Apathy",
 	"Shoots an arrow that deals between 1 and 100 damage. Might be too much or not enough."
 	)
+	
+var Greener := MoveInfo.new(
+	"Greener",
+	"Shoots an arrow that deals more damage from a long distance"
+)
+var AnotherMinute := MoveInfo.new(
+	"Another Minute",
+	"Increases a Tally's walk range by 8 tiles for this turn"
+)
+var Haiku := MoveInfo.new(
+	"Haiku",
+	"Shoots "
+	
+)

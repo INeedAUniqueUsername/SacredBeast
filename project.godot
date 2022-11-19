@@ -44,6 +44,11 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/gdshell/scripts/gdshell_ui_handler.gd"
 }, {
+"base": "RefCounted",
+"class": &"HitDesc",
+"language": &"GDScript",
+"path": "res://HitDesc.gd"
+}, {
 "base": "Label",
 "class": &"LabelButton",
 "language": &"GDScript",
@@ -62,6 +67,7 @@ _global_script_class_icons={
 "GDShellCommandRunner": "res://addons/gdshell/icon.png",
 "GDShellMain": "res://addons/gdshell/icon.png",
 "GDShellUIHandler": "res://addons/gdshell/icon.png",
+"HitDesc": "",
 "LabelButton": "",
 "TallyChar": ""
 }

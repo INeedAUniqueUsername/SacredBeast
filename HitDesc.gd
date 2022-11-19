@@ -1,7 +1,11 @@
+class_name HitDesc
 var attacker: Node
 var pos: Vector3
-var damage_hp: int
-func _init(attacker:Node, pos:Vector3, damage_hp:int):
+var dmg: int
+const MoveInfo = preload("res://Moves.gd").MoveInfo
+var move:MoveInfo
+func _init(attacker:Node, pos:Vector3, dmg: int, move:MoveInfo):
 	self.attacker = attacker
 	self.pos = pos
-	self.damage_hp = damage_hp
+	self.dmg = dmg
+	self.move = move

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=7 format=3 uid="uid://cn5nygapahov3"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="Texture2D" uid="uid://ctslchegoo2si" path="res://Misery.png" id="2_uhaad"]
@@ -6,14 +6,14 @@
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="4_m5i55"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_j1ac2"]
-size = Vector3(2, 2, 1)
+size = Vector3(2, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_nx5fs"]
 size = Vector3(2.8, 2, 1.8)
 
 [node name="Misery" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-title = "Misery"
+enemyType = 6
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
@@ -28,7 +28,6 @@ texture_filter = 2
 texture = ExtResource("2_uhaad")
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
-input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

@@ -1,8 +1,8 @@
 extends Node
 
-
+const TallyChar = preload("res://Tally.gd")
 const ActionText = preload("res://ActionText.tscn")
-var selectedTally = null
+var selectedTally: TallyChar = null
 
 signal message_changed
 var messageVisible = false
@@ -30,36 +30,139 @@ func hideMessage():
 	timer.timeout.connect(timer.queue_free)
 	message_changed.connect(timer.queue_free)
 
-# Called when the node enters the scene tree for the first time.
+
+const HitDesc = preload("res://HitDesc.gd")
+
+var current_action:Node = null:
+	set(n):
+		if self.current_action:
+			self.current_action.queue_free()
+			current_action = null
+		current_action = n
+		if n:
+			add_child(n)
+			n.tree_exiting.connect(func():
+				if n == self.current_action:
+					current_action = null
+				)
+var tally_turn = true
 func _ready():
+	var tallyHall = get_tree().get_nodes_in_group("Tally")
+	var allowSelect = func(b): tallyHall.map(func(t): t.allow_select = b)
 	for i in range($UI/Tally/MoveList.get_child_count()):
 		var c = $UI/Tally/MoveList.get_child(i)
 		c.clicked.connect(func():
-			if i >= len(selectedTally.move_list):
+			var t := self.selectedTally as TallyChar
+			if i >= len(t.move_list):
 				return
-			var m = selectedTally.move_list[i]
+			current_action = null
 			
+			allowSelect.call(false)
+			
+			var m = t.move_list[i]
 			$UI/Tally/MoveList.visible = false
-			await showMessage(selectedTally.tallyName + " used *" + m.title + "*")
-			
 			if m == Moves.JoeHawley:
-				selectedTally.use_move_joe_hawley()
+				await showMessage(t.tallyName + " used *" + m.title + "*")
+				await t.use_move_joe_hawley()
+			elif m == Moves.JustApathy:
+				var action = Node.new()
+				self.current_action = action
+				var selection = Node.new()
+				add_child(selection)
+				action.tree_exiting.connect(selection.queue_free)
+				var attack = Node.new()
+				add_child(attack)
+				for e in get_tree().get_nodes_in_group("Enemy"):
+					var marker = preload("res://TileStep.tscn").instantiate()
+					add_child(marker)
+					marker.global_position = e.global_position
+					marker.scale *= 2
+					marker.clicked.connect(func():
+						selection.queue_free()
+						await showMessage(t.tallyName + " used *" + m.title + "*")
+						await t.use_move_just_apathy(e)
+						action.queue_free()
+						)
+					selection.tree_exiting.connect(marker.queue_free)
+				await action.tree_exiting
+			elif m == Moves.Greener:
+				var action = Node.new()
+				self.current_action = action
+				var selection = Node.new()
+				add_child(selection)
+				action.tree_exiting.connect(selection.queue_free)
+				var attack = Node.new()
+				add_child(attack)
+				for e in get_tree().get_nodes_in_group("Enemy"):
+					var marker = preload("res://TileStep.tscn").instantiate()
+					add_child(marker)
+					marker.global_position = e.global_position
+					marker.scale *= 2
+					marker.clicked.connect(func():
+						selection.queue_free()
+						await showMessage(t.tallyName + " used *" + m.title + "*")
+						await t.use_move_greener(e)
+						action.queue_free()
+						)
+					selection.tree_exiting.connect(marker.queue_free)
+				await action.tree_exiting
+			
+			elif m == Moves.AnotherMinute:
+				var action = Node.new()
+				self.current_action = action
+				var selection = Node.new()
+				add_child(selection)
+				action.tree_exiting.connect(selection.queue_free)
+				var attack = Node.new()
+				add_child(attack)
+				for e in get_tree().get_nodes_in_group("Tally"):
+					var marker = preload("res://TileStep.tscn").instantiate()
+					add_child(marker)
+					marker.global_position = e.global_position
+					marker.scale *= 2
+					marker.clicked.connect(func():
+						selection.queue_free()
+						await showMessage(t.tallyName + " used *" + m.title + "*")
+						
+						await t.use_move_another_minute(e)
+						await showMessage(e.tallyName + " gained walk range!")
+						action.queue_free()
+						)
+					selection.tree_exiting.connect(marker.queue_free)
+				await action.tree_exiting
+				
+			allowSelect.call(true)
+			
+			self.current_action = Node.new()
+			t.show_walk(self.current_action)
 			)
 	for enemy in get_tree().get_nodes_in_group("Enemy"):
-		enemy.died.connect(func():
-			showMessage(enemy.title + " fell!")
-		)
+		var h = enemy.get_node("Hitbox")
+		h.mouse_entered.connect(func():
+			if !self.selectedTally:
+				$UI/Tally.showEnemy(enemy)
+			)
+		h.mouse_exited.connect(func():
+			if !self.selectedTally:
+				$UI/Tally.disappear()
+			)
 		enemy.show_message.connect(func(s):
 			showMessage(s)
 		)
 		
-		enemy.took_damage.connect(func(h):
+		enemy.took_damage.connect(func(h:HitDesc):
 			
-			showMessage(str(enemy.name) + " was hit!")	
+			showMessage(str(enemy.title) + " was hit!")
 			var at = ActionText.instantiate()
 			$World.add_child(at)
 			at.global_position = h.pos + Vector3(0, 0.5, 1)
 			
+			var st = str(h.dmg)
+			if h.move == Moves.JoeHawley:
+				st = "JOE HAWLEY!"
+			elif h.move == Moves.JustApathy:
+				st = "Apathy!"
+			at.get_node("Label3D").text = st
 			var au = AudioStreamPlayer3D.new()
 			au.stream = preload("res://Sounds/punch_hit.wav")
 			
@@ -71,7 +174,6 @@ func _ready():
 			#$World/Camera.shake()
 			)
 	
-	var tallyHall = get_tree().get_nodes_in_group("Tally")
 	for tally in tallyHall:
 		
 		var area = tally.get_node("Area")
@@ -89,10 +191,14 @@ func _ready():
 				self.selectedTally.deselect()
 			$UI/Tally.select(tally)
 			self.selectedTally = tally
+			
+			self.current_action = Node.new()
+			tally.show_walk(self.current_action)
 		)
 		tally.deselected.connect(func():
-			$UI/Tally.deselect()
-			self.selectedTally = null
+			if tally == self.selectedTally:
+				$UI/Tally.deselect()
+				self.selectedTally = null
 			)
 	
 	await $Intro/Anim.animation_finished
@@ -101,15 +207,19 @@ func _ready():
 		$World/Smoke.emitting = true
 		)
 	
+	
+	tallyHall.map(func(t): t.walk_remaining = 8)
 	while active:
 		
 		$Turn/Anim.play("PlayerTurn")
+		allowSelect.call(true)
 		
 		await $UI/EndTurn.clicked
-		
-		
-		for t in tallyHall:
-			t.deselect()
+		if self.selectedTally:
+			self.selectedTally.deselect()
+			
+		tallyHall.map(func(t): t.walk_remaining = 8)
+		allowSelect.call(false)
 		
 		$Turn/Anim.play("EnemyTurn")
 		await $Turn/Anim.animation_finished

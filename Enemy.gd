@@ -1,7 +1,31 @@
 extends Node3D
 
-@export var title: String
-
+enum EnemyType {
+	Ashley, Crow, Cannibal, Erlking, Fate, MaryKate, Misery
+}
+@export var enemyType: EnemyType
+var title:String:
+	get:
+		return {
+			EnemyType.Ashley: "Alpha",
+			EnemyType.MaryKate: "Mu-Kappa",
+			EnemyType.Crow: "Crow",
+			EnemyType.Cannibal: "Cannibal",
+			EnemyType.Erlking: "Erlking",
+			EnemyType.Fate: "Fate",
+			EnemyType.Misery: "Misery"
+		}[enemyType]
+var desc:String:
+	get:
+		return {
+			EnemyType.Ashley: "When this enemy falls, any excess damage from the killing hit is converted to healing for all nearby enemies",
+			EnemyType.MaryKate: "When this enemy falls, any excess damage from the killing hit is dealt to all Tallies",
+			EnemyType.Crow: "",
+			EnemyType.Cannibal: "This enemy gains unlimited movement range on every other turn.",
+			EnemyType.Erlking: "",
+			EnemyType.Fate: "",
+			EnemyType.Misery: ""
+		}[enemyType]
 enum Width {
 	Single, Double
 }
@@ -15,23 +39,54 @@ var is_turn_active:bool:
 	set(b):
 		if $Aura:
 			$Aura.emitting = b
+
+var turnIndex = 0
 func begin_turn():
+	turnIndex += 1
 	is_turn_active = true
+	
+	if enemyType == EnemyType.Cannibal:
+		var target = get_tree().get_first_node_in_group("Tally") as TallyChar
+		if !target:
+			return
+		
+		if turnIndex%2 == 0:
+			show_message.emit("Cannibal makes her way towards " + target.tallyName)
+			await get_tree().create_timer(1).timeout
+			await walk_towards(target.global_position + Vector3(1, 0, 0), 16, 0)
+			
+			if ((target.global_position + Vector3(1, 0, 0)) - global_position).length() > 0.5:
+				return
+			show_message.emit("Cannibal used *Tear Open Wide*!")
+			await get_tree().create_timer(1).timeout
+			$Anim.play("Bite")
+			await $Anim.animation_finished
+			target.take_damage(HitDesc.new(self, target.global_position + Vector3(0, 0.5, 0), 20, null))
+			await get_tree().create_timer(1).timeout
+			$Anim.play("Idle")
+		else:
+			show_message.emit("Cannibal used *Willing Victim*")
+			await get_tree().create_timer(2).timeout
+			show_message.emit(target.tallyName + " is unable to walk!")
+			target.walk_remaining = 0
+			await get_tree().create_timer(1).timeout
+		return
 	
 	var target = get_tree().get_first_node_in_group("Tally") as Node3D
 	if target:
-		await walk_towards(target.global_position)
-		if (global_position - target.global_position).length() < 4:
+		await walk_towards(target.global_position, 4, 1)
+		if (global_position - target.global_position).length() < 1:
 			show_message.emit(title + " attacks!")
 			
 			if $Anim.has_animation("Flash"):
 				$Anim.play("Flash")
 				await $Anim.animation_finished
-			target.take_damage(HitDesc.new(self, self.global_position, 10))
+			#target.take_damage(HitDesc.new(self, self.global_position, 10))
 			await get_tree().create_timer(1).timeout
 			$Anim.play("Idle")
 	is_turn_active = false
-func walk_towards(target_pos: Vector3):
+	
+func walk_towards(target_pos: Vector3, range:int, separation:int):
 	var distanceTo = {
 		global_position: 0
 	}
@@ -44,19 +99,19 @@ func walk_towards(target_pos: Vector3):
 		var p = next.pop_front()
 		var P = func(x, z): return p + Vector3(x, 0, z)
 		var d = distanceTo[p]
-		if d > 12:
+		if d > range + 3:
 			continue
 		for q in [P.call(-1, 0), P.call(0, -1), P.call(1, 0), P.call(0, 1)]:
-			distanceTo[q] = d + 1
 			if seen.has(q):
 				continue
 			seen.push_back(q)
+			distanceTo[q] = d + 1
 			if !can_occupy(q):
 				continue
 			next.push_back(q)
 			prev[q] = p
 	var dest = global_position
-	var D = func(p): return abs(3 - (p - target_pos).length())
+	var D = func(p): return abs(separation - (p - target_pos).length())
 	
 	var dist = D.call(dest)
 	for p in prev.keys():
@@ -64,7 +119,7 @@ func walk_towards(target_pos: Vector3):
 		if d < dist:
 			dest = p
 			dist = d
-	while distanceTo[dest] > 6:
+	while not (distanceTo[dest] <= range):
 		dest = prev[dest]
 	var path = []
 	var p = dest
@@ -116,18 +171,32 @@ func has_ground(pos: Vector3):
 	if !b:
 		pass
 	return b
+
 signal died
-signal took_damage(hitDesc)
-func take_damage(hitDesc):
+signal took_damage(hitDesc:HitDesc)
+
+var hp = 100
+func take_damage(hitDesc:HitDesc):
 	took_damage.emit(hitDesc)
 	
 	$Anim.play("Hurt")
 	await $Anim.animation_finished
-	die()
+	
+	var extra = hitDesc.dmg - hp
+	hp -= hitDesc.dmg
+	if hp > 0:
+		$Anim.play("Idle")
+		return
+	die(extra)
+func heal(amount:int):
+	hp += amount
 	pass
 @onready var world = get_tree().get_first_node_in_group("World")
-func die():
+func die(extra_dmg:int = 0):
+	show_message.emit(title + " fell!")
 	died.emit()
+	
+	
 	var a = AudioStreamPlayer3D.new()
 	world.add_child(a)
 	a.stream = preload("res://Sounds/enemy_die.wav")
@@ -143,5 +212,19 @@ func die():
 	await get_tree().create_timer(0.5).timeout
 	$Anim.play("Die")
 	await $Anim.animation_finished
+	
+	match enemyType:
+		EnemyType.Ashley:
+			await get_tree().create_timer(0.5).timeout
+			for e in get_tree().get_nodes_in_group("Enemy"):
+				e.heal(extra_dmg)
+			show_message.emit("Nearby enemies regained HP!")
+		EnemyType.MaryKate:
+			
+			await get_tree().create_timer(0.5).timeout
+			for t in get_tree().get_nodes_in_group("Tally"):
+				t.take_damage(HitDesc.new(self, t.global_position, extra_dmg, null))
+			show_message.emit("The Tallies took damage!")
+	
 	queue_free()
 	

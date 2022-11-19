@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=7 format=3 uid="uid://de61w08ak63h4"]
 
 [ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Crow.png" id="1_jaion"]
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
@@ -6,14 +6,14 @@
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="4_7tg70"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3skce"]
-size = Vector3(2, 2, 1)
+size = Vector3(2, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7xkwx"]
 size = Vector3(2.8, 2, 1.8)
 
 [node name="Crow" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-title = "Crow"
+enemyType = 2
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
@@ -25,7 +25,6 @@ texture_filter = 2
 texture = ExtResource("1_jaion")
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
-input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

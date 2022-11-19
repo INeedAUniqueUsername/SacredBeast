@@ -1,11 +1,11 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=11 format=3 uid="uid://cttrvj5164e0e"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="Texture2D" uid="uid://b2kkddggk66wp" path="res://Erlking.png" id="2_fxocs"]
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="3_ynfke"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pwerb"]
-size = Vector3(2, 2, 1)
+size = Vector3(2, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7xkwx"]
 size = Vector3(2.8, 2, 1.8)
@@ -120,7 +120,7 @@ _data = {
 
 [node name="Erlking" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-title = "Erlking"
+enemyType = 3
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
@@ -136,7 +136,6 @@ texture = ExtResource("2_fxocs")
 hframes = 3
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
-input_ray_pickable = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
