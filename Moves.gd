@@ -8,7 +8,7 @@ class MoveInfo:
 
 var JoeHawley := MoveInfo.new(
 	"Joe Hawley",
-	"Short-range single-strike attack that hits a single enemy. When Joe Hawley attacks, no one makes it out alive."
+	"Punches a single enemy. When Joe Hawley attacks, no one makes it out alive."
 )
 var RotaryPark := MoveInfo.new(
 	"Rotary Park",
@@ -26,7 +26,7 @@ var JustApathy := MoveInfo.new(
 	
 var Greener := MoveInfo.new(
 	"Greener",
-	"Shoots an arrow that deals more damage from a long distance"
+	"Shoots an arrow that deals more damage based on Rob's remaining walk range. After using this attack, Rob cannot walk until the next turn."
 )
 var AnotherMinute := MoveInfo.new(
 	"Another Minute",
@@ -35,5 +35,8 @@ var AnotherMinute := MoveInfo.new(
 var Haiku := MoveInfo.new(
 	"Haiku",
 	"Shoots "
-	
+)
+var TheWholeWorldAndYou := MoveInfo.new(
+	"The Whole World and You",
+	"Stops time on a single enemy until the next turn."
 )

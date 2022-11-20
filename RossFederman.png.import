@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://crx5fluheff53"
-path="res://.godot/imported/Ashley-export.png-37d10b696738e4cdec137fd912013818.ctex"
+uid="uid://c7mek7df42nt1"
+path="res://.godot/imported/RossFederman.png-b7e06f7c7e20fa203742a908b8278364.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Ashley-export.png"
-dest_files=["res://.godot/imported/Ashley-export.png-37d10b696738e4cdec137fd912013818.ctex"]
+source_file="res://RossFederman.png"
+dest_files=["res://.godot/imported/RossFederman.png-b7e06f7c7e20fa203742a908b8278364.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/hdr_compression=1
 compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

@@ -1,15 +1,10 @@
 extends Node3D
 class_name TallyChar
-
 const Tally = preload("res://Common.gd").Tally
-
 const TileGlow = preload("res://TileGlow.tscn")
-
 @export_enum(Joe, Rob, Andrew, Zubin, Ross) var tally
-
 const MoveInfo = preload("res://Moves.gd").MoveInfo
 var move_list : Array = []
-
 var tallyName: String:
 	get:
 		return {
@@ -22,12 +17,11 @@ var tallyName: String:
 var desc:String:
 	get:
 		return {
-			
-			Tally.Joe: 		"Class: Songfighter",
-			Tally.Rob: 		"Class: Guitarcher",
-			Tally.Andrew: 	"Class: Keybard",		# Musicleric
-			Tally.Zubin: 	"Class: Basskeeper",	#Beast Slayer
-			Tally.Ross: 	"Class: Rhythmagician"	# Drumlock, Drumgineer
+			Tally.Joe:		"Class: Songfighter",
+			Tally.Rob:		"Class: Guitarcher",
+			Tally.Andrew:	"Class: Keybard",		# Musicleric
+			Tally.Zubin:	"Class: Basskeeper",	#Beast Slayer
+			Tally.Ross:		"Class: Rhythmagician"	# Drumlock, Drumgineer
 		}[tally]
 signal moved
 var is_selected = false
@@ -35,7 +29,7 @@ func _ready():
 	move_list = {
 		Tally.Joe: [Moves.JoeHawley],
 		Tally.Rob: [Moves.JustApathy, Moves.Greener, Moves.AnotherMinute],
-		Tally.Andrew: [],
+		Tally.Andrew: [Moves.TheWholeWorldAndYou],
 		Tally.Zubin: [],
 		Tally.Ross: []
 	}[tally]
@@ -53,12 +47,10 @@ func _ready():
 signal deselected
 signal selected
 @onready var world = get_tree().get_first_node_in_group("World")
-
 func create_floor_glow():
 	var t = TileGlow.instantiate()
 	var tc = t.TileColor
 	t.color = [tc.Red, tc.Yellow, tc.Green, tc.Blue, tc.Gray][tally]
-	
 	world.add_child.call_deferred(t)
 	t.tree_entered.connect(func():
 		t.global_position = global_position
@@ -77,10 +69,8 @@ func select():
 		return
 	is_selected = true
 	selected.emit()
-
 var allow_select = false
-var is_moving = false
-
+var is_busy = false
 var walk_remaining = 0
 func show_walk(flag:Node = null):
 	if !flag:
@@ -92,13 +82,12 @@ func show_walk(flag:Node = null):
 		global_position:0
 	}
 	const dirs = [Vector3(0, 0, 1), Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(-1, 0, 0)]
-	
 	var seen = {global_position:null}
 	var next : Array[Vector3] = [global_position]
-	
 	var move_to := func move_to(t: Node3D):
 		if !seen.has(t.global_position):
 			return
+		is_busy = true
 		self.walk_remaining -= distanceTo[t.global_position]
 		self.moved.emit()
 		var path = t.get_tile_path()
@@ -113,23 +102,21 @@ func show_walk(flag:Node = null):
 				else:
 					k.queue_free()
 		)
-		
 		seen.clear()
 		next.clear()
-		is_moving = true
 		for x in path:
 			var tw = get_tree().create_tween()
 			tw.tween_property(self, "global_position", x.global_position, 1/3.0)
 			tw.play()
 			tw.finished.connect(x.dismiss)
 			await tw.finished
-		is_moving = false
 		
 		create_floor_glow()
 		if self.is_selected:
 			if not is_instance_valid(flag):
 				flag = null
 			self.show_walk(flag)
+		is_busy = false
 	var create_tile := func create_tile(v: Vector3, delay:float, parent:Node3D):
 		
 		var t = preload("res://TileStep.tscn").instantiate()
@@ -198,36 +185,30 @@ func use_move_joe_hawley():
 		).filter(func(h):
 			return h.is_in_group("Hitbox")
 		).map(func(h):
-			h.get_parent().take_damage(HitDesc.new(self, param.position, 10, Moves.JoeHawley))
+			h.get_parent().take_damage(HitDesc.new(self, param.position, 20, Moves.JoeHawley))
 		)
 		await get_tree().create_timer(0.2).timeout
 	await get_tree().create_timer(0.3).timeout
 	$Anim.play("Idle")
 func use_move_just_apathy(enemy: Node3D):
-	
 	$Anim.play("Shoot")
 	await $Anim.animation_finished
 	enemy.take_damage(HitDesc.new(self, enemy.global_position + Vector3(0, 0.5, 0), randi_range(1, 100), Moves.JustApathy))
 	await get_tree().create_timer(0.5).timeout
 	$Anim.play("Idle")
-
 func use_move_greener(enemy: Node3D):
-	
 	$Anim.play("Shoot")
 	await $Anim.animation_finished
-	enemy.take_damage(HitDesc.new(self, enemy.global_position + Vector3(0, 0.5, 0), 10 + (enemy.global_position - global_position).length() * 5, Moves.Greener))
+	var dmg = 10 + walk_remaining * 5
+	walk_remaining = 0
+	enemy.take_damage(HitDesc.new(self, enemy.global_position + Vector3(0, 0.5, 0), dmg, Moves.Greener))
 	await get_tree().create_timer(0.5).timeout
 	$Anim.play("Idle")
-
 func use_move_another_minute(other:TallyChar):
-	
 	other.walk_remaining += 8
 	await get_tree().create_timer(0.5).timeout
 func take_damage(hitDesc:HitDesc):
 	pass
-func _process(delta):
-	pass
-
 func can_walk(pos: Vector3):
 	var allow_walk = func():
 		

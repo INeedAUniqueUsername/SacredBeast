@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cajwdgaqyvu7a"
-path="res://.godot/imported/Mary-Kate-export.png-1bdd2b5275fc0aebc7620389c4b8d0d0.ctex"
+uid="uid://elbi1sin06q7"
+path="res://.godot/imported/ZubinSedghi.png-47c5bfff688a40659c59bc8283481587.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Mary-Kate-export.png"
-dest_files=["res://.godot/imported/Mary-Kate-export.png-1bdd2b5275fc0aebc7620389c4b8d0d0.ctex"]
+source_file="res://ZubinSedghi.png"
+dest_files=["res://.godot/imported/ZubinSedghi.png-47c5bfff688a40659c59bc8283481587.ctex"]
 
 [params]
 
@@ -21,7 +21,7 @@ compress/hdr_compression=1
 compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

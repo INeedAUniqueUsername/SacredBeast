@@ -1,50 +1,54 @@
 extends Node3D
 
+
 enum EnemyType {
-	Ashley, Crow, Cannibal, Erlking, Fate, MaryKate, Misery
+	Ashley,
+	Crow,
+	Cannibal,
+	Erlking,
+	Fate,
+	MaryKate,
+	Misery,
+	Animal
+}
+class EnemyInfo:
+	var title:String
+	var desc:String
+	func _init(title:String, desc:String):
+		self.title = title
+		self.desc = desc
+var EnemyDict = {
+	EnemyType.Ashley: 	EnemyInfo.new("Ashley", "When this enemy falls, any excess damage from the killing hit is converted to healing for all nearby enemies"),
+	EnemyType.Cannibal: EnemyInfo.new("Cannibal", "This enemy gains unlimited movement range on every other turn."),
+	EnemyType.Crow: 	EnemyInfo.new("Crow", ""),
+	EnemyType.Erlking: 	EnemyInfo.new("Erlking", ""),
+	EnemyType.Fate: 	EnemyInfo.new("Fate", ""),
+	EnemyType.MaryKate: EnemyInfo.new("Mary-Kate", "When this enemy falls, any excess damage from the killing hit is dealt to all Tallies"),
+	EnemyType.Misery: 	EnemyInfo.new("Misery", "")
 }
 @export var enemyType: EnemyType
 var title:String:
 	get:
-		return {
-			EnemyType.Ashley: "Alpha",
-			EnemyType.MaryKate: "Mu-Kappa",
-			EnemyType.Crow: "Crow",
-			EnemyType.Cannibal: "Cannibal",
-			EnemyType.Erlking: "Erlking",
-			EnemyType.Fate: "Fate",
-			EnemyType.Misery: "Misery"
-		}[enemyType]
+		return EnemyDict[enemyType].title
 var desc:String:
-	get:
-		return {
-			EnemyType.Ashley: "When this enemy falls, any excess damage from the killing hit is converted to healing for all nearby enemies",
-			EnemyType.MaryKate: "When this enemy falls, any excess damage from the killing hit is dealt to all Tallies",
-			EnemyType.Crow: "",
-			EnemyType.Cannibal: "This enemy gains unlimited movement range on every other turn.",
-			EnemyType.Erlking: "",
-			EnemyType.Fate: "",
-			EnemyType.Misery: ""
-		}[enemyType]
+	get: return EnemyDict[enemyType].desc
 enum Width {
 	Single, Double
 }
 @export var width : Width
-
 signal show_message(message:String)
-
 const HitDesc = preload("res://HitDesc.gd")
-
 var is_turn_active:bool:
 	set(b):
 		if $Aura:
 			$Aura.emitting = b
-
 var turnIndex = 0
 func begin_turn():
 	turnIndex += 1
 	is_turn_active = true
-	
+	await do_turn()
+	is_turn_active = false
+func do_turn():
 	if enemyType == EnemyType.Cannibal:
 		var target = get_tree().get_first_node_in_group("Tally") as TallyChar
 		if !target:
@@ -84,8 +88,6 @@ func begin_turn():
 			#target.take_damage(HitDesc.new(self, self.global_position, 10))
 			await get_tree().create_timer(1).timeout
 			$Anim.play("Idle")
-	is_turn_active = false
-	
 func walk_towards(target_pos: Vector3, range:int, separation:int):
 	var distanceTo = {
 		global_position: 0
@@ -190,9 +192,10 @@ func take_damage(hitDesc:HitDesc):
 	die(extra)
 func heal(amount:int):
 	hp += amount
-	pass
+var alive = true
 @onready var world = get_tree().get_first_node_in_group("World")
 func die(extra_dmg:int = 0):
+	alive = false
 	show_message.emit(title + " fell!")
 	died.emit()
 	

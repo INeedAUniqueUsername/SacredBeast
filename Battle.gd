@@ -46,6 +46,30 @@ var current_action:Node = null:
 					current_action = null
 				)
 var tally_turn = true
+
+func get_active_enemies():
+	return get_tree().get_nodes_in_group("Enemy").filter(func(e): return e.alive)
+
+func request_target(targets: Array, f: Callable):
+	var action = Node.new()
+	self.current_action = action
+	var selection = Node.new()
+	add_child(selection)
+	action.tree_exiting.connect(selection.queue_free)
+	var attack = Node.new()
+	add_child(attack)
+	for e in targets:
+		var marker = preload("res://TileStep.tscn").instantiate()
+		add_child(marker)
+		marker.global_position = e.global_position
+		marker.scale *= 2
+		marker.clicked.connect(func():
+			selection.queue_free()
+			await f.call(e)
+			action.queue_free()
+			)
+		selection.tree_exiting.connect(marker.queue_free)
+	await action.tree_exiting
 func _ready():
 	var tallyHall = get_tree().get_nodes_in_group("Tally")
 	var allowSelect = func(b): tallyHall.map(func(t): t.allow_select = b)
@@ -55,83 +79,41 @@ func _ready():
 			var t := self.selectedTally as TallyChar
 			if i >= len(t.move_list):
 				return
-			current_action = null
-			
+			if t.is_busy:
+				return
+			$UI/Tally/MoveList.visible = false
+			c.mouse_exited.emit()
+				
+			self.current_action = null
 			allowSelect.call(false)
+			t.is_busy = true
 			
 			var m = t.move_list[i]
-			$UI/Tally/MoveList.visible = false
-			if m == Moves.JoeHawley:
+			
+			var announceMove = func():
 				await showMessage(t.tallyName + " used *" + m.title + "*")
+			
+			if m == Moves.JoeHawley:
+				await announceMove.call()
 				await t.use_move_joe_hawley()
 			elif m == Moves.JustApathy:
-				var action = Node.new()
-				self.current_action = action
-				var selection = Node.new()
-				add_child(selection)
-				action.tree_exiting.connect(selection.queue_free)
-				var attack = Node.new()
-				add_child(attack)
-				for e in get_tree().get_nodes_in_group("Enemy"):
-					var marker = preload("res://TileStep.tscn").instantiate()
-					add_child(marker)
-					marker.global_position = e.global_position
-					marker.scale *= 2
-					marker.clicked.connect(func():
-						selection.queue_free()
-						await showMessage(t.tallyName + " used *" + m.title + "*")
-						await t.use_move_just_apathy(e)
-						action.queue_free()
-						)
-					selection.tree_exiting.connect(marker.queue_free)
-				await action.tree_exiting
-			elif m == Moves.Greener:
-				var action = Node.new()
-				self.current_action = action
-				var selection = Node.new()
-				add_child(selection)
-				action.tree_exiting.connect(selection.queue_free)
-				var attack = Node.new()
-				add_child(attack)
-				for e in get_tree().get_nodes_in_group("Enemy"):
-					var marker = preload("res://TileStep.tscn").instantiate()
-					add_child(marker)
-					marker.global_position = e.global_position
-					marker.scale *= 2
-					marker.clicked.connect(func():
-						selection.queue_free()
-						await showMessage(t.tallyName + " used *" + m.title + "*")
-						await t.use_move_greener(e)
-						action.queue_free()
-						)
-					selection.tree_exiting.connect(marker.queue_free)
-				await action.tree_exiting
-			
+				var act = func(e):
+					await announceMove.call()
+					await t.use_move_just_apathy(e)
+				await request_target(get_active_enemies(), act)
+			elif m == Moves.Greener:				
+				var act = func(e):
+					await announceMove.call()
+					await t.use_move_greener(e)
+				await request_target(get_active_enemies(), act)
 			elif m == Moves.AnotherMinute:
-				var action = Node.new()
-				self.current_action = action
-				var selection = Node.new()
-				add_child(selection)
-				action.tree_exiting.connect(selection.queue_free)
-				var attack = Node.new()
-				add_child(attack)
-				for e in get_tree().get_nodes_in_group("Tally"):
-					var marker = preload("res://TileStep.tscn").instantiate()
-					add_child(marker)
-					marker.global_position = e.global_position
-					marker.scale *= 2
-					marker.clicked.connect(func():
-						selection.queue_free()
-						await showMessage(t.tallyName + " used *" + m.title + "*")
-						
-						await t.use_move_another_minute(e)
-						await showMessage(e.tallyName + " gained walk range!")
-						action.queue_free()
-						)
-					selection.tree_exiting.connect(marker.queue_free)
-				await action.tree_exiting
-				
+				var act = func(e):
+					await announceMove.call()
+					await t.use_move_another_minute(e)
+					await showMessage(e.tallyName + " gained walk range!")
+				await request_target(get_tree().get_nodes_in_group("Tally"), act)
 			allowSelect.call(true)
+			t.is_busy = false
 			
 			self.current_action = Node.new()
 			t.show_walk(self.current_action)
@@ -152,7 +134,7 @@ func _ready():
 		
 		enemy.took_damage.connect(func(h:HitDesc):
 			
-			showMessage(str(enemy.title) + " was hit!")
+			showMessage(str(enemy.title) + " was hit for " + str(h.dmg) + " damage!")
 			var at = ActionText.instantiate()
 			$World.add_child(at)
 			at.global_position = h.pos + Vector3(0, 0.5, 1)
