@@ -17,32 +17,28 @@ var tallyName: String:
 var desc:String:
 	get:
 		return {
-			Tally.Joe:		"Class: Songfighter",
-			Tally.Rob:		"Class: Guitarcher",
-			Tally.Andrew:	"Class: Keybard",		# Musicleric
-			Tally.Zubin:	"Class: Basskeeper",	#Beast Slayer
-			Tally.Ross:		"Class: Rhythmagician"	# Drumlock, Drumgineer
+			Tally.Joe:		"Class: Songfighter\n",
+			Tally.Rob:		"Class: Guitarcher\nThis suave fellow happens to be a skilled archer. His sharp arrows are known to break hearts.",
+			Tally.Andrew:	"Class: Keybard\nThis keyboardist has the blessing of the Rainbow Connection.",		# Musicleric
+			Tally.Zubin:	"Class: Basskeeper\nHe wields a hammer and specializes in slaying the toughest enemies.",	#Beast Slayer
+			Tally.Ross:		"Class: Rhythmagician\nThis drummer wields the power of musical magic."	# Drumlock, Drumgineer
 		}[tally]
 signal moved
 var is_selected = false
+signal clicked
 func _ready():
 	move_list = {
-		Tally.Joe: [Moves.JoeHawley],
+		Tally.Joe: [Moves.JoeHawley, Moves.AllOfMyFriends],
 		Tally.Rob: [Moves.JustApathy, Moves.Greener, Moves.AnotherMinute],
-		Tally.Andrew: [Moves.TheWholeWorldAndYou],
-		Tally.Zubin: [],
-		Tally.Ross: []
+		Tally.Andrew: [Moves.TheWholeWorldAndYou, Moves.TakenForARide, Moves.GoodDay],
+		Tally.Zubin: [Moves.ColorBeGone],
+		Tally.Ross: [Moves.TheTrap, Moves.TurnTheLightsOff, Moves.RulerOfEverything]
 	}[tally]
 	
 	create_floor_glow()
 	$Area.input_event.connect(func(camera, event: InputEvent, a, b, c):
 		if event.is_pressed():
-			if self.is_selected:
-				if self.is_moving:
-					return
-				self.deselect()
-			else:
-				self.select()
+			self.clicked.emit()
 	)
 signal deselected
 signal selected
@@ -60,18 +56,41 @@ func create_floor_glow():
 	selected.connect(t.set_emitting_selected.bind(self))
 	deselected.connect(t.set_emitting_selected.bind(self))
 func deselect():
-	if !allow_select:
-		return
 	is_selected = false
 	deselected.emit()
 func select():
-	if !allow_select:
-		return
 	is_selected = true
 	selected.emit()
-var allow_select = false
 var is_busy = false
+
+var moves_remaining = 0
 var walk_remaining = 0
+
+var willingVictim = 0
+
+var allOfMyFriends = 0
+var joeHawley = false
+func begin_turn(rulerOfEverything:bool):
+	joeHawley = false
+	if !rulerOfEverything and allOfMyFriends > 0:
+		allOfMyFriends = 0
+		show_message.emit("*All of my Friends* has ended")
+		await get_tree().create_timer(2)
+	
+	if tally == Tally.Joe:
+		moves_remaining = 2
+	else:
+		moves_remaining = 1
+	
+	willingVictim -= 1
+	if willingVictim > 0:
+		walk_remaining = 0
+		show_message.emit(tallyName + " is unable to walk for this turn!")
+		await get_tree().create_timer(2)
+	else:
+		walk_remaining = 8
+func end_turn():
+	pass
 func show_walk(flag:Node = null):
 	if !flag:
 		flag = Node.new()
@@ -162,6 +181,7 @@ func show_walk(flag:Node = null):
 	seen.erase(global_position)
 const HitDesc = preload("res://HitDesc.gd")
 func use_move_joe_hawley():
+	
 	for i in range(1):
 		var a = AudioStreamPlayer3D.new()
 		add_child(a)
@@ -179,17 +199,28 @@ func use_move_joe_hawley():
 		param.collide_with_bodies = false
 		param.exclude = []
 		param.collision_mask = -1
+		
+		var dmg = {
+			true:40,
+			false:20
+		}[joeHawley]
+		
 		var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
 		hit = hit.map(func(h):
 			return h.collider
 		).filter(func(h):
 			return h.is_in_group("Hitbox")
 		).map(func(h):
-			h.get_parent().take_damage(HitDesc.new(self, param.position, 20, Moves.JoeHawley))
+			h.get_parent().take_damage(HitDesc.new(self, param.position, dmg, Moves.JoeHawley))
 		)
 		await get_tree().create_timer(0.2).timeout
 	await get_tree().create_timer(0.3).timeout
 	$Anim.play("Idle")
+	joeHawley = true
+func use_move_all_of_my_friends():
+	allOfMyFriends = len(get_tree().get_nodes_in_group("Tally"))
+	show_message.emit("Joe's defense is at " + str(allOfMyFriends * 20) + "%.")
+	await get_tree().create_timer(1).timeout
 func use_move_just_apathy(enemy: Node3D):
 	$Anim.play("Shoot")
 	await $Anim.animation_finished
@@ -205,10 +236,179 @@ func use_move_greener(enemy: Node3D):
 	await get_tree().create_timer(0.5).timeout
 	$Anim.play("Idle")
 func use_move_another_minute(other:TallyChar):
-	other.walk_remaining += 8
 	await get_tree().create_timer(0.5).timeout
-func take_damage(hitDesc:HitDesc):
+	other.walk_remaining += 8
+func use_move_the_whole_world_and_you(enemy:Node3D):
+	$Anim.play("Raise")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+	enemy.timestop = 1
+	
+	var tp = preload("res://TimestopParticle.tscn").instantiate()
+	enemy.add_child(tp)
+	tp.global_position = enemy.global_position
+	
+	var a = AudioStreamPlayer3D.new()
+	a.stream = preload("res://Sounds/timestop.wav")
+	enemy.add_child(a)
+	a.play()
+	a.finished.connect(a.queue_free)
 	pass
+
+func use_move_taken_for_a_ride(e:Node3D, pos:Vector3):
+	
+	$Anim.play("Raise")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+	
+	show_message.emit(e.title + " was taken for a ride!")
+	
+	var tw = get_tree().create_tween()
+	tw.set_ease(Tween.EASE_OUT)
+	tw.set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(e, "global_position", pos, 0.5)
+	tw.play()
+	
+	await get_tree().create_timer(1).timeout
+func use_move_good_day():
+	$Anim.play("Raise")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+	$Heal.play()
+	for t in get_tree().get_nodes_in_group("Tally"):
+		t.heal(20)
+		var h = preload("res://HealParticle.tscn").instantiate()
+		t.add_child(h)
+		h.global_position = t.global_position
+
+func use_move_color_be_gone():
+	$Anim.play("Smash")
+	await $Anim.animation_finished
+	$HammerHit.play()
+	
+	var param = PhysicsPointQueryParameters3D.new()
+	param.position = $Smash.global_position
+	param.collide_with_areas = true
+	param.collide_with_bodies = false
+	param.exclude = []
+	param.collision_mask = -1
+	var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
+	hit = hit.map(func(h):
+		return h.collider
+	).filter(func(h):
+		return h.is_in_group("Hitbox")
+	).map(func(h):
+		h.get_parent().take_damage(HitDesc.new(self, param.position, 60, Moves.ColorBeGone))
+	)
+	await get_tree().create_timer(1).timeout
+	$Anim.play("Idle")
+
+func use_move_the_trap(first: Node3D):
+	$Anim.play("Wave")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+	
+	$Lightning.play()
+	
+	
+	var seen = [first]
+	var next = [first]
+	while len(next) > 0:
+		await get_tree().create_timer(0.3).timeout
+		var e = next.pop_front()
+		e.take_damage(HitDesc.new(self, e.global_position + Vector3(0, 0.5, 0), 30, Moves.TheTrap))
+		
+		var param = PhysicsShapeQueryParameters3D.new()
+		var sp = SphereShape3D.new()
+		sp.radius = 3
+		param.shape = sp
+		param.transform.origin = e.global_position
+		param.collide_with_areas = true
+		param.collide_with_bodies = false
+		param.exclude = []
+		param.collision_mask = -1
+		var nearby = get_world_3d().direct_space_state.intersect_shape(param).map(func(h):
+			return h.collider
+		).filter(func(h):
+			return h.is_in_group("Hitbox")
+		).map(func(h):
+			return h.get_parent()
+		)
+		for other in nearby:
+			if seen.has(other):
+				continue
+			seen.push_back(other)
+			next.push_back(other)
+	$Anim.play("Idle")
+		
+	return
+	var e = null
+	await get_tree().create_timer(1).timeout
+	#e.take_damage(HitDesc.new(self, e.global_position + Vector3(0, 0.5, 0), 30, Moves.TheTrap))
+	
+	var param = PhysicsShapeQueryParameters3D.new()
+	var sp = SphereShape3D.new()
+	sp.radius = 3
+	param.shape = sp
+	param.transform.origin = e.global_position
+	param.collide_with_areas = true
+	param.collide_with_bodies = false
+	param.exclude = []
+	param.collision_mask = -1
+	var nearby = get_world_3d().direct_space_state.intersect_shape(param).map(func(h):
+		return h.collider
+	).filter(func(h):
+		return h.is_in_group("Hitbox")
+	).map(func(h):
+		return h.get_parent()
+	)
+	nearby.erase(e)
+	for hit in nearby:
+		await get_tree().create_timer(0.5).timeout
+		hit.take_damage(HitDesc.new(self, hit.global_position + Vector3(0, 1, 0), 20, Moves.TheTrap))
+		
+	
+	pass
+func use_move_ruler_of_everything():
+	$Anim.play("Wave")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+func use_move_turn_the_lights_off():
+	$Anim.play("Wave")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+func heal(amount:int):
+	pass
+func get_line_of_sight_enemies():
+	return get_tree().get_nodes_in_group("Enemy")
+	[].filter(func(e):
+		var param = PhysicsRayQueryParameters3D.new()
+		param.from = global_position
+		param.to = e.global_position
+		param.collide_with_areas = true
+		param.collide_with_bodies = false
+		param.exclude = [$Area, $NoWalk, e.get_node("Hitbox")]
+		param.collision_mask = -1
+		var hit = get_world_3d().direct_space_state.intersect_ray(param)
+		return not hit.has("collider")
+	)
+signal show_message(msg:String)
+func take_damage(h:HitDesc):
+	h.dmg *= (1 - allOfMyFriends/5.0)
+	
+	show_message.emit(tallyName + " was hit for " + str(h.dmg) + " damage!")
+	var at = preload("res://ActionText.tscn").instantiate()
+	add_child(at)
+	at.global_position = h.pos + Vector3(0, 0.5, 1)
+	at.get_node("Label3D").text = str(h.dmg)
+	
+	var au = AudioStreamPlayer3D.new()
+	au.stream = preload("res://Sounds/punch_hit.wav")
+	
+	add_child(au)
+	au.global_position = h.pos
+	au.play()
+	au.finished.connect(au.queue_free)
 func can_walk(pos: Vector3):
 	var allow_walk = func():
 		

@@ -17,6 +17,8 @@ var tally : TallyChar:
 			}[t.tally]
 			$Title/NinePatchRect.texture = texture
 			
+			$Actions/Act.clickable = t.moves_remaining > 0
+			
 			var index = 0
 			for m in $MoveList.get_children():
 				m = m as LabelButton
@@ -27,7 +29,8 @@ var tally : TallyChar:
 				else:
 					m.text = ""
 					m.clickable = false
-				index += 1	
+				index += 1
+			$MoveList.visible = false
 		tally = t
 func _ready():
 	modulate = Color.TRANSPARENT

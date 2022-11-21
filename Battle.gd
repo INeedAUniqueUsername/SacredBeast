@@ -2,8 +2,15 @@ extends Node
 
 const TallyChar = preload("res://Tally.gd")
 const ActionText = preload("res://ActionText.tscn")
-var selectedTally: TallyChar = null
-
+var selectedTally: TallyChar = null:
+	set(t):
+		if selectedTally:
+			selectedTally.deselect()
+			$UI/Tally.deselect()
+		selectedTally = t
+		if t:
+			t.select()
+			$UI/Tally.select(t)
 signal message_changed
 var messageVisible = false
 func showMessage(t:String):
@@ -19,7 +26,6 @@ func showMessage(t:String):
 	tw.play()
 	await tw.finished
 	hideMessage()
-
 func hideMessage():
 	var timer = Timer.new()
 	timer.wait_time = 2
@@ -29,10 +35,7 @@ func hideMessage():
 	timer.timeout.connect(func(): messageVisible = false)
 	timer.timeout.connect(timer.queue_free)
 	message_changed.connect(timer.queue_free)
-
-
 const HitDesc = preload("res://HitDesc.gd")
-
 var current_action:Node = null:
 	set(n):
 		if self.current_action:
@@ -46,13 +49,19 @@ var current_action:Node = null:
 					current_action = null
 				)
 var tally_turn = true
+var rulerOfEverything = false
+var turnTheLightsOff = false
+
+var busy = false
 
 func get_active_enemies():
 	return get_tree().get_nodes_in_group("Enemy").filter(func(e): return e.alive)
-
-func request_target(targets: Array, f: Callable):
+func request_target(targets: Array, f: Callable, subtask:bool = false):
 	var action = Node.new()
-	self.current_action = action
+	if subtask:
+		current_action.add_child(action)
+	else:
+		current_action = action
 	var selection = Node.new()
 	add_child(selection)
 	action.tree_exiting.connect(selection.queue_free)
@@ -61,18 +70,21 @@ func request_target(targets: Array, f: Callable):
 	for e in targets:
 		var marker = preload("res://TileStep.tscn").instantiate()
 		add_child(marker)
-		marker.global_position = e.global_position
-		marker.scale *= 2
+		if e is Vector3:
+			marker.global_position = e
+		else:
+			marker.global_position = e.global_position
+			marker.scale *= 2
 		marker.clicked.connect(func():
 			selection.queue_free()
 			await f.call(e)
-			action.queue_free()
+			if is_instance_valid(action):
+				action.queue_free()
 			)
 		selection.tree_exiting.connect(marker.queue_free)
 	await action.tree_exiting
 func _ready():
 	var tallyHall = get_tree().get_nodes_in_group("Tally")
-	var allowSelect = func(b): tallyHall.map(func(t): t.allow_select = b)
 	for i in range($UI/Tally/MoveList.get_child_count()):
 		var c = $UI/Tally/MoveList.get_child(i)
 		c.clicked.connect(func():
@@ -81,38 +93,92 @@ func _ready():
 				return
 			if t.is_busy:
 				return
-			$UI/Tally/MoveList.visible = false
-			c.mouse_exited.emit()
-				
-			self.current_action = null
-			allowSelect.call(false)
-			t.is_busy = true
-			
 			var m = t.move_list[i]
-			
+			var begin_move = func():
+				self.selectedTally.moves_remaining -= 1
+				$UI/Tally.tally = self.selectedTally
+				c.mouse_exited.emit()
+				self.current_action = null
+				t.is_busy = true
 			var announceMove = func():
 				await showMessage(t.tallyName + " used *" + m.title + "*")
-			
 			if m == Moves.JoeHawley:
+				begin_move.call()
 				await announceMove.call()
 				await t.use_move_joe_hawley()
+			elif m == Moves.AllOfMyFriends:
+				if t.allOfMyFriends > 0:
+					return
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_all_of_my_friends()
 			elif m == Moves.JustApathy:
+				begin_move.call()
 				var act = func(e):
 					await announceMove.call()
 					await t.use_move_just_apathy(e)
-				await request_target(get_active_enemies(), act)
-			elif m == Moves.Greener:				
+				await request_target(t.get_line_of_sight_enemies(), act)
+			elif m == Moves.Greener:
+				begin_move.call()
 				var act = func(e):
 					await announceMove.call()
 					await t.use_move_greener(e)
-				await request_target(get_active_enemies(), act)
+				await request_target(t.get_line_of_sight_enemies(), act)
 			elif m == Moves.AnotherMinute:
+				begin_move.call()
 				var act = func(e):
 					await announceMove.call()
 					await t.use_move_another_minute(e)
 					await showMessage(e.tallyName + " gained walk range!")
 				await request_target(get_tree().get_nodes_in_group("Tally"), act)
-			allowSelect.call(true)
+			elif m == Moves.TheWholeWorldAndYou:
+				begin_move.call()
+				var act = func(e):
+					await announceMove.call()
+					await t.use_move_the_whole_world_and_you(e)
+					await showMessage(e.title + " is timestopped!")
+				await request_target(get_active_enemies(), act)
+			elif m == Moves.TakenForARide:
+				begin_move.call()
+				var act = func(e):
+					var act2 = func(pos):
+						await announceMove.call()
+						await t.use_move_taken_for_a_ride(e, pos)
+						
+					var positions = e.get_all_standable_positions()
+					await request_target(positions, act2, true)
+				await request_target(get_active_enemies(), act)
+			elif m == Moves.GoodDay:
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_good_day()
+				await showMessage("The Tallies restored 20 HP!")
+			elif m == Moves.ColorBeGone:
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_color_be_gone()
+			elif m == Moves.TheTrap:
+				begin_move.call()
+				var act = func(e):
+					await announceMove.call()
+					await t.use_move_the_trap(e)
+				await request_target(get_active_enemies(), act)
+			elif m == Moves.TurnTheLightsOff:
+				if turnTheLightsOff:
+					return
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_turn_the_lights_off()
+				turnTheLightsOff = true
+				await showMessage("All attacks are now twice as strong!")
+			elif m == Moves.RulerOfEverything:
+				if rulerOfEverything:
+					return
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_ruler_of_everything()
+				rulerOfEverything = true
+				await showMessage("Turns are now doubled!")
 			t.is_busy = false
 			
 			self.current_action = Node.new()
@@ -128,9 +194,7 @@ func _ready():
 			if !self.selectedTally:
 				$UI/Tally.disappear()
 			)
-		enemy.show_message.connect(func(s):
-			showMessage(s)
-		)
+		enemy.show_message.connect(func(s): showMessage(s))
 		
 		enemy.took_damage.connect(func(h:HitDesc):
 			
@@ -168,63 +232,81 @@ func _ready():
 				$UI/Tally.disappear()
 			)
 		
-		tally.selected.connect(func():
-			if self.selectedTally:
-				self.selectedTally.deselect()
-			$UI/Tally.select(tally)
-			self.selectedTally = tally
+		tally.clicked.connect(func():
+			if (self.selectedTally and self.selectedTally.is_busy) or busy:
+				return
+			if tally == self.selectedTally:
+				self.selectedTally = null
+				return
 			
+			self.selectedTally = tally
 			self.current_action = Node.new()
 			tally.show_walk(self.current_action)
 		)
-		tally.deselected.connect(func():
-			if tally == self.selectedTally:
-				$UI/Tally.deselect()
-				self.selectedTally = null
-			)
+		tally.show_message.connect(func(s): showMessage(s))
 	
 	await $Intro/Anim.animation_finished
 	
 	get_tree().create_timer(4.5).timeout.connect(func():
 		$World/Smoke.emitting = true
 		)
-	
-	
-	tallyHall.map(func(t): t.walk_remaining = 8)
 	while active:
+		var tally_turn = func():
+			busy = false
+			for t in tallyHall:
+				await t.begin_turn(rulerOfEverything)
+			$Turn/Anim.play("PlayerTurn")
+			await $UI/EndTurn.clicked
+			self.selectedTally = null
+			for t in tallyHall:
+				await t.end_turn()
+		var enemy_turn = func():
+			busy = true
+			$Turn/Anim.play("EnemyTurn")
+			await $Turn/Anim.animation_finished
+			
+			var activeEnemies = get_active_enemies()
+			activeEnemies.sort_custom(func(a, b): return a.turn_priority < b.turn_priority)
+			for e in activeEnemies:
+				if !is_instance_valid(e):
+					continue
+				var p = preload("res://Pointer.tscn").instantiate()
+				#p.global_position = e.global_position
+				e.add_child(p)
+				var t = get_tree().create_tween()
+				t.set_trans(Tween.TRANS_QUAD)
+				t.set_ease(Tween.EASE_OUT)
+				t.tween_property($World/Camera, "global_position", e.global_position + Vector3(0, 4, 6), 0.5)
+				t.play()
+				await t.finished
+				
+				$World/Camera.follow = e
+				await e.begin_turn()
+				$World/Camera.follow = null
+				
+				p.dismiss()
+			for e in get_active_enemies():
+				e.timestop -= 1
+				
+		await tally_turn.call()
+		if rulerOfEverything:
+			await tally_turn.call()
+			
+		busy = true
+		await enemy_turn.call()
+		if rulerOfEverything:
+			await enemy_turn.call()
 		
-		$Turn/Anim.play("PlayerTurn")
-		allowSelect.call(true)
-		
-		await $UI/EndTurn.clicked
-		if self.selectedTally:
-			self.selectedTally.deselect()
+		if rulerOfEverything:
+			rulerOfEverything = false
+			await showMessage("*Ruler of Everything* has ended")
+			await get_tree().create_timer(0.5).timeout
+		if turnTheLightsOff:
+			turnTheLightsOff = false
+			await showMessage("*Turn the Lights Off* has ended")
 			
-		tallyHall.map(func(t): t.walk_remaining = 8)
-		allowSelect.call(false)
-		
-		$Turn/Anim.play("EnemyTurn")
-		await $Turn/Anim.animation_finished
-		
-		for e in get_tree().get_nodes_in_group("Enemy"):
-			
-			var p = preload("res://Pointer.tscn").instantiate()
-			#p.global_position = e.global_position
-			e.add_child(p)
-			
-			var t = get_tree().create_tween()
-			t.set_trans(Tween.TRANS_QUAD)
-			t.set_ease(Tween.EASE_OUT)
-			t.tween_property($World/Camera, "global_position", e.global_position + Vector3(-1, 4, 6), 0.5)
-
-			t.play()
-			await t.finished
-			
-			$World/Camera.follow = e
-			await e.begin_turn()
-			$World/Camera.follow = null
-			
-			p.dismiss()
+			await get_tree().create_timer(0.5).timeout
+		busy = false
 	var prev_position = Vector2(0, 0)
 	var prev_pressed = false
 	if false:

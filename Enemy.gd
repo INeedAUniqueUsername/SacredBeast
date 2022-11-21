@@ -43,40 +43,80 @@ var is_turn_active:bool:
 		if $Aura:
 			$Aura.emitting = b
 var turnIndex = 0
+
+var timestop = 0:
+	set(t):
+		timestop = t
+		if t > 0:
+			$Anim.play("Hurt")
+		else:
+			$Anim.play("Idle")
+
 func begin_turn():
 	turnIndex += 1
+	if timestop > 0:
+		show_message.emit(title + " cannot act!")
+		await get_tree().create_timer(1).timeout
+		return
+	
 	is_turn_active = true
 	await do_turn()
 	is_turn_active = false
+
+var cannibal_target: TallyChar = null
+
+var turn_priority = 100
 func do_turn():
 	if enemyType == EnemyType.Cannibal:
-		var target = get_tree().get_first_node_in_group("Tally") as TallyChar
-		if !target:
-			return
-		
-		if turnIndex%2 == 0:
-			show_message.emit("Cannibal makes her way towards " + target.tallyName)
-			await get_tree().create_timer(1).timeout
-			await walk_towards(target.global_position + Vector3(1, 0, 0), 16, 0)
-			
-			if ((target.global_position + Vector3(1, 0, 0)) - global_position).length() > 0.5:
+		if cannibal_target:
+			var inRange = ((cannibal_target.global_position + Vector3(1, 0, 0)) - global_position).length() <= 0.5
+			if cannibal_target.willingVictim > 0 or inRange:
+				
+				if not inRange:
+					show_message.emit("Cannibal makes her way towards " + cannibal_target.tallyName)
+					await get_tree().create_timer(1).timeout
+					await walk_towards(cannibal_target.global_position + Vector3(1, 0, 0), 16, 0)
+					
+					if ((cannibal_target.global_position + Vector3(1, 0, 0)) - global_position).length() > 0.5:
+						return
+				show_message.emit("Cannibal used *Tear Open Wide*!")
+				await get_tree().create_timer(1).timeout
+				$Anim.play("Bite")
+				await $Anim.animation_finished
+				
+				var a = AudioStreamPlayer3D.new()
+				cannibal_target.add_child(a)
+				a.stream = preload("res://Sounds/cannibal_bite.wav")
+				a.play()
+				a.finished.connect(a.queue_free)
+				
+				
+				var dmg = {
+					true:70,
+					false:35
+				}[cannibal_target.willingVictim > 0]
+				cannibal_target.take_damage(HitDesc.new(self, cannibal_target.global_position + Vector3(0, 0.5, 0), dmg, null))
+				await get_tree().create_timer(1).timeout
+				
+				cannibal_target.willingVictim = 2
+				$Anim.play("Idle")
+				
+				turn_priority = 100
 				return
-			show_message.emit("Cannibal used *Tear Open Wide*!")
-			await get_tree().create_timer(1).timeout
-			$Anim.play("Bite")
-			await $Anim.animation_finished
-			target.take_damage(HitDesc.new(self, target.global_position + Vector3(0, 0.5, 0), 20, null))
-			await get_tree().create_timer(1).timeout
-			$Anim.play("Idle")
-		else:
-			show_message.emit("Cannibal used *Willing Victim*")
-			await get_tree().create_timer(2).timeout
-			show_message.emit(target.tallyName + " is unable to walk!")
-			target.walk_remaining = 0
-			await get_tree().create_timer(1).timeout
+				
+		cannibal_target = get_tree().get_nodes_in_group("Tally").pick_random()
+		show_message.emit("Cannibal used *Willing Victim*")
+		get_tree().create_timer(0.5).timeout.connect($CurseInhale.play)
+		await get_tree().create_timer(2).timeout
+		$CurseEffect.play()
+		show_message.emit(cannibal_target.tallyName + " is unable to walk!")
+		cannibal_target.willingVictim = 2
+		
+		turn_priority = 1
+		await get_tree().create_timer(1).timeout
 		return
 	
-	var target = get_tree().get_first_node_in_group("Tally") as Node3D
+	var target = get_tree().get_nodes_in_group("Tally").pick_random() as Node3D
 	if target:
 		await walk_towards(target.global_position, 4, 1)
 		if (global_position - target.global_position).length() < 1:
@@ -187,7 +227,9 @@ func take_damage(hitDesc:HitDesc):
 	var extra = hitDesc.dmg - hp
 	hp -= hitDesc.dmg
 	if hp > 0:
-		$Anim.play("Idle")
+		
+		if timestop < 1:
+			$Anim.play("Idle")
 		return
 	die(extra)
 func heal(amount:int):
@@ -230,4 +272,21 @@ func die(extra_dmg:int = 0):
 			show_message.emit("The Tallies took damage!")
 	
 	queue_free()
+	
+func get_all_standable_positions() -> Array[Vector3]:
+	var seen = [global_position]
+	var next = [global_position]
+	var result = []
+	while len(next) > 0:
+		var p = next.pop_front()
+		var P = func(x, z) -> Vector3: return p + Vector3(x, 0, z)
+		if not can_occupy(p):
+			continue
+		result.push_back(p)
+		for q in [P.call(-1, 0), P.call(0, -1), P.call(1, 0), P.call(0, 1)]:
+			if seen.has(q):
+				continue
+			seen.push_back(q)
+			next.push_back(q)
+	return result
 	

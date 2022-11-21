@@ -1,14 +1,44 @@
-[gd_scene load_steps=12 format=3 uid="uid://cld0xuijrjcsp"]
+[gd_scene load_steps=15 format=3 uid="uid://cld0xuijrjcsp"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="Texture2D" uid="uid://drvq4c3wp07ra" path="res://Cannibal.png" id="2_nmix7"]
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="3_ppw7r"]
+[ext_resource type="AudioStream" uid="uid://vmmgko4nox5d" path="res://Sounds/cannibal_inhale.wav" id="4_igw6a"]
+[ext_resource type="AudioStream" uid="uid://dfsi06rdnhyeh" path="res://Sounds/cannibal_curse.wav" id="5_djj47"]
+[ext_resource type="AudioStream" uid="uid://tty4ym4qnjtd" path="res://Sounds/WillingVictim3.wav" id="6_uuwp4"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pwerb"]
 size = Vector3(2, 2, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7xkwx"]
 size = Vector3(2.8, 2, 1.8)
+
+[sub_resource type="Animation" id="Animation_ceylf"]
+resource_name = "Bite"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [2, 3]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BiteInhale:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_u15py"]
 resource_name = "Die"
@@ -97,21 +127,17 @@ tracks/2/keys = {
 "update": 1,
 "values": [0]
 }
-
-[sub_resource type="Animation" id="Animation_ceylf"]
-resource_name = "Bite"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("BiteInhale:playing")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [0, 2]
+"values": [false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8155p"]
@@ -138,7 +164,7 @@ pixel_size = 0.0313
 alpha_cut = 2
 texture_filter = 2
 texture = ExtResource("2_nmix7")
-hframes = 3
+hframes = 4
 
 [node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
 
@@ -160,3 +186,15 @@ libraries = {
 }
 
 [node name="Aura" parent="." instance=ExtResource("3_ppw7r")]
+
+[node name="BiteInhale" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_igw6a")
+volume_db = -5.0
+
+[node name="CurseInhale" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_djj47")
+volume_db = -8.0
+
+[node name="CurseEffect" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_uuwp4")
+volume_db = -3.0

@@ -39,7 +39,7 @@ func _ready():
 	gui_input.connect(func(ev: InputEvent):
 		if ev is InputEventMouseButton:
 			var mb = ev as InputEventMouseButton
-			if !mb.pressed and pressed and hover:
+			if !mb.pressed and pressed and hover and clickable:
 				self.clicked.emit()
 			self.pressed = mb.pressed
 			updateTexture()
