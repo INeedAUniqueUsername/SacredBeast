@@ -9,15 +9,15 @@ class MoveInfo:
 # Joe
 var JoeHawley := MoveInfo.new(
 	"Joe Hawley",
-	"Punches a single enemy directly in front of Joe. When Joe Hawley attacks, no one makes it out alive."
+	"Punches a single enemy directly in front of Joe. Deals more damage when used repeatedly until the next enemy turn. When Joe Hawley attacks, no one makes it out alive."
 )
 var RotaryPark := MoveInfo.new(
 	"Rotary Park",
-	"Short-range multi-strike attack that targets a single enemy."
+	"Spins around, dealing damage to surrounding enemies."
 )
 var AllOfMyFriends := MoveInfo.new(
 	"All of my Friends",
-	"For the next turn, damage taken is reduced by 20% for each active Tally."
+	"For the next turn, Joe takes 20% less damage for each active Tally and deals 20% more damage for each fallen Tally."
 )
 
 # Rob
@@ -33,9 +33,9 @@ var AnotherMinute := MoveInfo.new(
 	"Another Minute",
 	"Increases a Tally's walk range by 8 tiles for this turn"
 )
-var Haiku := MoveInfo.new(
-	"Haiku",
-	"Shoots "
+var GardenOfEden := MoveInfo.new(
+	"Garden of Eden",
+	"TO DO"
 )
 
 # Andrew
@@ -49,19 +49,19 @@ var GoodDay := MoveInfo.new(
 )
 var TakenForARide := MoveInfo.new(
 	"Taken for a Ride",
-	"Teleports an enemy to another location"
+	"Teleports an enemy to another location. The enemy takes double damage until the next turn."
 )
 
 # Zubin
 var ColorBeGone := MoveInfo.new(
 	"Color Be Gone",
-	"Zubin brings down the hammer on an enemy directly in front of him."
+	"Zubin swings the hammer at an enemy directly in front of him."
 )
 
 # Ross
 var TheTrap := MoveInfo.new(
 	"The Trap",
-	"Strikes an enemy with lightning. Nearby enemies take damage too."
+	"Strikes an enemy with lightning. Also hits nearby enemies."
 )
 var RulerOfEverything := MoveInfo.new(
 	"Ruler of Everything",
@@ -69,5 +69,6 @@ var RulerOfEverything := MoveInfo.new(
 )
 var TurnTheLightsOff := MoveInfo.new(
 	"Turn the Lights Off",
-	"Damages all enemies. Also increases their attack damage by 50%."
+	"The lights will be off at the end of the turn for the next two turns. All damage is doubled while the lights are off."
 )
+

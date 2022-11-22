@@ -14,6 +14,11 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/CustomRunner/CustomRunner.gd"
 }, {
+"base": "Node3D",
+"class": &"Enemy",
+"language": &"GDScript",
+"path": "res://Enemy.gd"
+}, {
 "base": "Node",
 "class": &"GDShellCommand",
 "language": &"GDScript",
@@ -61,6 +66,7 @@ _global_script_classes=[{
 }]
 _global_script_class_icons={
 "CustomRunner": "",
+"Enemy": "",
 "GDShellCommand": "res://addons/gdshell/icon.png",
 "GDShellCommandDB": "res://addons/gdshell/icon.png",
 "GDShellCommandParser": "res://addons/gdshell/icon.png",

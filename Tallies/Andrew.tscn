@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://dl6fiv2xuxivb"]
+[gd_scene load_steps=17 format=3 uid="uid://dl6fiv2xuxivb"]
 
 [ext_resource type="Script" path="res://Tally.gd" id="1_y4sej"]
 [ext_resource type="Texture2D" uid="uid://ci6gswgitiobv" path="res://AndrewHorowitz.png" id="2_k6gbk"]
 [ext_resource type="AudioStream" uid="uid://bjkxei6lmjqp0" path="res://Sounds/staff.wav" id="3_dhivb"]
 [ext_resource type="AudioStream" uid="uid://d1j711c27id33" path="res://Sounds/staff_heal.wav" id="4_2p5mg"]
+[ext_resource type="AudioStream" uid="uid://cgbbepaicunf7" path="res://Sounds/staff_teleport.wav" id="5_rtrmh"]
 
 [sub_resource type="Animation" id="Animation_4fiss"]
 resource_name = "Idle"
@@ -210,3 +211,6 @@ stream = ExtResource("3_dhivb")
 
 [node name="Heal" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_2p5mg")
+
+[node name="Teleport" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_rtrmh")

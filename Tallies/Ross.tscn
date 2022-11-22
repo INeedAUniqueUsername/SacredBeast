@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://browso1sl5d70"]
+[gd_scene load_steps=17 format=3 uid="uid://browso1sl5d70"]
 
 [ext_resource type="Script" path="res://Tally.gd" id="1_kp4n1"]
 [ext_resource type="Texture2D" uid="uid://c7mek7df42nt1" path="res://RossFederman.png" id="2_rcjbd"]
 [ext_resource type="AudioStream" uid="uid://cie323xpa5oyi" path="res://Sounds/wand_cast.wav" id="3_r6a54"]
 [ext_resource type="AudioStream" uid="uid://b52ndf6pqgj0e" path="res://Sounds/wand_lightning.wav" id="4_13kmm"]
+[ext_resource type="AudioStream" uid="uid://dkf727qsmbtpy" path="res://Sounds/double_time.wav" id="5_6ce2a"]
 
 [sub_resource type="Animation" id="Animation_4fiss"]
 resource_name = "Idle"
@@ -209,3 +210,6 @@ stream = ExtResource("3_r6a54")
 
 [node name="Lightning" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_13kmm")
+
+[node name="DoubleTime" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_6ce2a")

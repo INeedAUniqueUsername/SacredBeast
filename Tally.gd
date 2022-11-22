@@ -17,18 +17,18 @@ var tallyName: String:
 var desc:String:
 	get:
 		return {
-			Tally.Joe:		"Class: Songfighter\n",
+			Tally.Joe:		"Class: Songfighter\nKnown for his fabled Joe Hawley attack, this fighter can attack twice per turn.",
 			Tally.Rob:		"Class: Guitarcher\nThis suave fellow happens to be a skilled archer. His sharp arrows are known to break hearts.",
-			Tally.Andrew:	"Class: Keybard\nThis keyboardist has the blessing of the Rainbow Connection.",		# Musicleric
-			Tally.Zubin:	"Class: Basskeeper\nHe wields a hammer and specializes in slaying the toughest enemies.",	#Beast Slayer
-			Tally.Ross:		"Class: Rhythmagician\nThis drummer wields the power of musical magic."	# Drumlock, Drumgineer
+			Tally.Andrew:	"Class: Keybard\nThis keyboardist supports the party with the power of whimsical magic.",		# Musicleric
+			Tally.Zubin:	"Class: Basskeeper\nHe wields a hammer and specializes in slaying the toughest of enemies.",	#Beast Slayer
+			Tally.Ross:		"Class: Rhythmagician\nThis drummer can use musical magic to switch up the rhythm of battle."	# Drumlock, Drumgineer
 		}[tally]
 signal moved
 var is_selected = false
 signal clicked
 func _ready():
 	move_list = {
-		Tally.Joe: [Moves.JoeHawley, Moves.AllOfMyFriends],
+		Tally.Joe: [Moves.JoeHawley, Moves.RotaryPark, Moves.AllOfMyFriends],
 		Tally.Rob: [Moves.JustApathy, Moves.Greener, Moves.AnotherMinute],
 		Tally.Andrew: [Moves.TheWholeWorldAndYou, Moves.TakenForARide, Moves.GoodDay],
 		Tally.Zubin: [Moves.ColorBeGone],
@@ -69,13 +69,15 @@ var walk_remaining = 0
 var willingVictim = 0
 
 var allOfMyFriends = 0
-var joeHawley = false
-func begin_turn(rulerOfEverything:bool):
-	joeHawley = false
-	if !rulerOfEverything and allOfMyFriends > 0:
-		allOfMyFriends = 0
-		show_message.emit("*All of my Friends* has ended")
-		await get_tree().create_timer(2)
+var joeHawley = 0
+func begin_turn(rulerOfEverything:bool, turnTheLightsOff:bool):
+	self.turnTheLightsOff = turnTheLightsOff
+	if not rulerOfEverything:
+		joeHawley = 0
+		if allOfMyFriends > 0:
+			allOfMyFriends = 0
+			show_message.emit("*All of my Friends* has ended")
+			await get_tree().create_timer(2)
 	
 	if tally == Tally.Joe:
 		moves_remaining = 2
@@ -89,7 +91,8 @@ func begin_turn(rulerOfEverything:bool):
 		await get_tree().create_timer(2)
 	else:
 		walk_remaining = 8
-func end_turn():
+func end_turn(turnTheLightsOff:bool):
+	self.turnTheLightsOff = turnTheLightsOff
 	pass
 func show_walk(flag:Node = null):
 	if !flag:
@@ -182,44 +185,71 @@ func show_walk(flag:Node = null):
 const HitDesc = preload("res://HitDesc.gd")
 func use_move_joe_hawley():
 	
-	for i in range(1):
-		var a = AudioStreamPlayer3D.new()
-		add_child(a)
-		a.stream = preload("res://Sounds/JoeHawleyJoeHawley.wav")
-		a.global_position = global_position + Vector3(0, 1, 0)
-		a.play()
-		a.finished.connect(a.queue_free)
+	var a = AudioStreamPlayer3D.new()
+	add_child(a)
+	a.stream = preload("res://Sounds/JoeHawleyJoeHawley.wav")
+	a.global_position = global_position + Vector3(0, 1, 0)
+	a.play()
+	a.finished.connect(a.queue_free)
+	
+	$Anim.play("Punch")
+	await $Anim.animation_finished
+	
+	var param = PhysicsPointQueryParameters3D.new()
+	param.position = $Punch.global_position
+	param.collide_with_areas = true
+	param.collide_with_bodies = false
+	param.exclude = []
+	param.collision_mask = -1
+	
+	var dmg = 20 * (1 + joeHawley) * (1 + allOfMyFriends / 5.0)
+	
+	var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
+	hit = hit.map(func(h):
+		return h.collider
+	).filter(func(h):
+		return h.is_in_group("Hitbox")
+	).map(func(h):
+		h.get_parent().take_damage(HitDesc.new(self, param.position, dmg, Moves.JoeHawley))
+	)
+	await get_tree().create_timer(0.5).timeout
+	$Anim.play("Idle")
+	joeHawley += 1
+func use_move_rotary_park():
+	$Anim.play("SpinCharge")
+	await $Anim.animation_finished
+	
+	var dmg = 25 * (1 + allOfMyFriends / 5.0)
+	var attack = func():
+		var par = PhysicsShapeQueryParameters3D.new()
+		var sh = SphereShape3D.new()
+		sh.radius = 1.5
+		par.shape = sh
+		par.transform.origin = global_position
+		par.collide_with_areas = true
+		par.collide_with_bodies = false
+		par.exclude = []
+		par.collision_mask = -1
 		
-		$Anim.play("Punch")
-		await $Anim.animation_finished
 		
-		var param = PhysicsPointQueryParameters3D.new()
-		param.position = $Punch.global_position
-		param.collide_with_areas = true
-		param.collide_with_bodies = false
-		param.exclude = []
-		param.collision_mask = -1
-		
-		var dmg = {
-			true:40,
-			false:20
-		}[joeHawley]
-		
-		var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
-		hit = hit.map(func(h):
+		var hit = get_world_3d().direct_space_state.intersect_shape(par).map(func(h):
 			return h.collider
 		).filter(func(h):
 			return h.is_in_group("Hitbox")
 		).map(func(h):
-			h.get_parent().take_damage(HitDesc.new(self, param.position, dmg, Moves.JoeHawley))
-		)
-		await get_tree().create_timer(0.2).timeout
-	await get_tree().create_timer(0.3).timeout
-	$Anim.play("Idle")
-	joeHawley = true
+			return h.get_parent() as Enemy
+		) as Array[Enemy]
+		for h in hit:
+			h.take_damage(HitDesc.new(self, h.global_position + Vector3(0, 0.5, 0), dmg, Moves.RotaryPark))
+			await get_tree().create_timer(0.1).timeout
+	attack.call()
+	$Anim.play("Spin")
+	await $Anim.animation_finished
+		
 func use_move_all_of_my_friends():
 	allOfMyFriends = len(get_tree().get_nodes_in_group("Tally"))
-	show_message.emit("Joe's defense is at " + str(allOfMyFriends * 20) + "%.")
+	var p = allOfMyFriends * 20
+	show_message.emit("Joe gained " + str(p) + "% defense and " + str(100 - p) + "% attack.")
 	await get_tree().create_timer(1).timeout
 func use_move_just_apathy(enemy: Node3D):
 	$Anim.play("Shoot")
@@ -261,13 +291,19 @@ func use_move_taken_for_a_ride(e:Node3D, pos:Vector3):
 	await $Anim.animation_finished
 	$Anim.play("Idle")
 	
+	$Teleport.play()
+	
 	show_message.emit(e.title + " was taken for a ride!")
 	
+	e.takenForARide = true
 	var tw = get_tree().create_tween()
 	tw.set_ease(Tween.EASE_OUT)
 	tw.set_trans(Tween.TRANS_QUAD)
 	tw.tween_property(e, "global_position", pos, 0.5)
+	
 	tw.play()
+	
+	e.spin()
 	
 	await get_tree().create_timer(1).timeout
 func use_move_good_day():
@@ -307,16 +343,19 @@ func use_move_the_trap(first: Node3D):
 	$Anim.play("Wave")
 	await $Anim.animation_finished
 	$Anim.play("Idle")
-	
 	$Lightning.play()
-	
-	
 	var seen = [first]
 	var next = [first]
+	
+	var msg = "Damage: "
 	while len(next) > 0:
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.1).timeout
 		var e = next.pop_front()
-		e.take_damage(HitDesc.new(self, e.global_position + Vector3(0, 0.5, 0), 30, Moves.TheTrap))
+		
+		var dmg = 30 / (1 + (e.global_position - first.global_position).length()/4.0)
+		e.take_damage(HitDesc.new(self, e.global_position + Vector3(0, 0.5, 0), dmg, Moves.TheTrap, false))
+		
+		msg += e.title + ": " + str(int(dmg)) + ", "
 		
 		var param = PhysicsShapeQueryParameters3D.new()
 		var sp = SphereShape3D.new()
@@ -339,6 +378,7 @@ func use_move_the_trap(first: Node3D):
 				continue
 			seen.push_back(other)
 			next.push_back(other)
+	show_message.emit(msg)
 	$Anim.play("Idle")
 		
 	return
@@ -366,17 +406,17 @@ func use_move_the_trap(first: Node3D):
 	for hit in nearby:
 		await get_tree().create_timer(0.5).timeout
 		hit.take_damage(HitDesc.new(self, hit.global_position + Vector3(0, 1, 0), 20, Moves.TheTrap))
-		
-	
 	pass
 func use_move_ruler_of_everything():
 	$Anim.play("Wave")
 	await $Anim.animation_finished
 	$Anim.play("Idle")
+	$DoubleTime.play()
 func use_move_turn_the_lights_off():
 	$Anim.play("Wave")
 	await $Anim.animation_finished
 	$Anim.play("Idle")
+	$DoubleTime.play()
 func heal(amount:int):
 	pass
 func get_line_of_sight_enemies():
@@ -393,7 +433,11 @@ func get_line_of_sight_enemies():
 		return not hit.has("collider")
 	)
 signal show_message(msg:String)
+
+var turnTheLightsOff = false
 func take_damage(h:HitDesc):
+	if turnTheLightsOff:
+		h.dmg *= 2
 	h.dmg *= (1 - allOfMyFriends/5.0)
 	
 	show_message.emit(tallyName + " was hit for " + str(h.dmg) + " damage!")

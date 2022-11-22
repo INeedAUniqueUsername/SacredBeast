@@ -1,5 +1,5 @@
 extends Node3D
-
+class_name Enemy
 
 enum EnemyType {
 	Ashley,
@@ -52,7 +52,11 @@ var timestop = 0:
 		else:
 			$Anim.play("Idle")
 
-func begin_turn():
+var turnTheLightsOff = false
+var takenForARide = false
+func begin_turn(turnTheLightsOff = false):
+	takenForARide = false
+	self.turnTheLightsOff = turnTheLightsOff
 	turnIndex += 1
 	if timestop > 0:
 		show_message.emit(title + " cannot act!")
@@ -214,11 +218,24 @@ func has_ground(pos: Vector3):
 		pass
 	return b
 
+
+func spin():
+	$Spin.play("Spin")
+
+	if timestop < 1:
+		$Anim.play("Hurt")
+		await $Anim.animation_finished
+		$Anim.play("Idle")
 signal died
 signal took_damage(hitDesc:HitDesc)
 
 var hp = 100
 func take_damage(hitDesc:HitDesc):
+	if turnTheLightsOff:
+		hitDesc.dmg *= 2
+	if takenForARide:
+		hitDesc.dmg *= 2
+	
 	took_damage.emit(hitDesc)
 	
 	$Anim.play("Hurt")

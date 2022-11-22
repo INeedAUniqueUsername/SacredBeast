@@ -50,7 +50,22 @@ var current_action:Node = null:
 				)
 var tally_turn = true
 var rulerOfEverything = false
-var turnTheLightsOff = false
+var turnTheLightsOff = 0:
+	set(n):
+		var env = $WorldEnvironment.environment
+		if n == 2 and turnTheLightsOff == 0:
+			var tw = get_tree().create_tween()
+			tw.tween_property(env, "background_energy_multiplier", 0.35, 1)
+			tw.play()
+		elif n == 1:
+			var tw = get_tree().create_tween()
+			tw.tween_property(env, "background_energy_multiplier", 0, 1)
+			tw.play()
+		elif n == 0:
+			var tw = get_tree().create_tween()
+			tw.tween_property(env, "background_energy_multiplier", 1, 1)
+			tw.play()
+		turnTheLightsOff = n
 
 var busy = false
 
@@ -106,6 +121,10 @@ func _ready():
 				begin_move.call()
 				await announceMove.call()
 				await t.use_move_joe_hawley()
+			elif m == Moves.RotaryPark:
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_rotary_park()
 			elif m == Moves.AllOfMyFriends:
 				if t.allOfMyFriends > 0:
 					return
@@ -164,13 +183,20 @@ func _ready():
 					await t.use_move_the_trap(e)
 				await request_target(get_active_enemies(), act)
 			elif m == Moves.TurnTheLightsOff:
-				if turnTheLightsOff:
+				if turnTheLightsOff > 1:
 					return
 				begin_move.call()
 				await announceMove.call()
 				await t.use_move_turn_the_lights_off()
-				turnTheLightsOff = true
-				await showMessage("All attacks are now twice as strong!")
+
+				if turnTheLightsOff == 0:
+					showMessage("The lights begin to dim. The lights will be off at the end of this turn.")
+				else:
+					showMessage("The lights will stay off for the next two turns.")
+				await get_tree().create_timer(1).timeout
+				
+				turnTheLightsOff = 2
+
 			elif m == Moves.RulerOfEverything:
 				if rulerOfEverything:
 					return
@@ -178,7 +204,7 @@ func _ready():
 				await announceMove.call()
 				await t.use_move_ruler_of_everything()
 				rulerOfEverything = true
-				await showMessage("Turns are now doubled!")
+				await showMessage("Next turn will be a Tally turn!")
 			t.is_busy = false
 			
 			self.current_action = Node.new()
@@ -198,7 +224,8 @@ func _ready():
 		
 		enemy.took_damage.connect(func(h:HitDesc):
 			
-			showMessage(str(enemy.title) + " was hit for " + str(h.dmg) + " damage!")
+			if h.announce:
+				showMessage(str(enemy.title) + " was hit for " + str(h.dmg) + " damage!")
 			var at = ActionText.instantiate()
 			$World.add_child(at)
 			at.global_position = h.pos + Vector3(0, 0.5, 1)
@@ -251,18 +278,28 @@ func _ready():
 		$World/Smoke.emitting = true
 		)
 	while active:
-		var tally_turn = func():
+		var tally_turn = func(second = false):
 			busy = false
 			for t in tallyHall:
-				await t.begin_turn(rulerOfEverything)
-			$Turn/Anim.play("PlayerTurn")
+				await t.begin_turn(self.rulerOfEverything, self.turnTheLightsOff > 0)
+			$Turn/Msg.text = {
+				true:"Tally Turn Part II",
+				false: "Tally Turn"
+			}[second]
+			$Turn/Anim.play("Show")
 			await $UI/EndTurn.clicked
 			self.selectedTally = null
+			
+			
 			for t in tallyHall:
-				await t.end_turn()
-		var enemy_turn = func():
+				await t.end_turn(self.turnTheLightsOff > 0)
+		var enemy_turn = func(second = false):
 			busy = true
-			$Turn/Anim.play("EnemyTurn")
+			$Turn/Msg.text = {
+				true:"Enemy Turn Part II",
+				false: {true: "Enemy Turn Part I", false: "Enemy Turn"}[self.rulerOfEverything]
+			}[second]
+			$Turn/Anim.play("Show")
 			await $Turn/Anim.animation_finished
 			
 			var activeEnemies = get_active_enemies()
@@ -281,29 +318,40 @@ func _ready():
 				await t.finished
 				
 				$World/Camera.follow = e
-				await e.begin_turn()
+				await e.begin_turn(self.turnTheLightsOff > 0)
 				$World/Camera.follow = null
 				
 				p.dismiss()
 			for e in get_active_enemies():
 				e.timestop -= 1
-				
+		
+		# Tally turns
 		await tally_turn.call()
 		if rulerOfEverything:
-			await tally_turn.call()
-			
+			await tally_turn.call(true)
+		
+		if turnTheLightsOff == 2:
+			turnTheLightsOff = 1
+			await showMessage("The lights are off! All damage is doubled!")
+			await get_tree().create_timer(0.5).timeout
+		elif turnTheLightsOff == 1:
+			turnTheLightsOff = 0
+			await showMessage("*Turn the Lights Off* has ended. The lights are on. Damage is no longer doubled.")
+			await get_tree().create_timer(0.5).timeout
+		# Enemy turns
 		busy = true
 		await enemy_turn.call()
 		if rulerOfEverything:
-			await enemy_turn.call()
+			await enemy_turn.call(true)
+		
+		if turnTheLightsOff == 2:
+			turnTheLightsOff = 1
 		
 		if rulerOfEverything:
 			rulerOfEverything = false
 			await showMessage("*Ruler of Everything* has ended")
 			await get_tree().create_timer(0.5).timeout
-		if turnTheLightsOff:
-			turnTheLightsOff = false
-			await showMessage("*Turn the Lights Off* has ended")
+		
 			
 			await get_tree().create_timer(0.5).timeout
 		busy = false
