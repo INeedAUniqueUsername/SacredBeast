@@ -122,7 +122,7 @@ size = Vector3(0.5, 1.4, 0.5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_gogy8"]
 size = Vector3(1.4, 1.4, 0.75)
 
-[node name="Zubin" type="Node3D" groups=["Tally"]]
+[node name="Zubin" type="Node3D" groups=["Tally", "Zubin"]]
 script = ExtResource("1_hrgcl")
 tally = 3
 

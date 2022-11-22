@@ -98,8 +98,8 @@ func request_target(targets: Array, f: Callable, subtask:bool = false):
 			)
 		selection.tree_exiting.connect(marker.queue_free)
 	await action.tree_exiting
+func get_active_tallies(): return get_tree().get_nodes_in_group("Tally")
 func _ready():
-	var tallyHall = get_tree().get_nodes_in_group("Tally")
 	for i in range($UI/Tally/MoveList.get_child_count()):
 		var c = $UI/Tally/MoveList.get_child(i)
 		c.clicked.connect(func():
@@ -225,12 +225,12 @@ func _ready():
 		enemy.took_damage.connect(func(h:HitDesc):
 			
 			if h.announce:
-				showMessage(str(enemy.title) + " was hit for " + str(h.dmg) + " damage!")
+				showMessage(str(enemy.title) + " took " + str(h.dmgTaken) + " damage!")
 			var at = ActionText.instantiate()
 			$World.add_child(at)
 			at.global_position = h.pos + Vector3(0, 0.5, 1)
 			
-			var st = str(h.dmg)
+			var st = str(h.dmgTaken)
 			if h.move == Moves.JoeHawley:
 				st = "JOE HAWLEY!"
 			elif h.move == Moves.JustApathy:
@@ -247,7 +247,7 @@ func _ready():
 			#$World/Camera.shake()
 			)
 	
-	for tally in tallyHall:
+	for tally in get_active_tallies():
 		
 		var area = tally.get_node("Area")
 		area.mouse_entered.connect(func():
@@ -280,7 +280,8 @@ func _ready():
 	while active:
 		var tally_turn = func(second = false):
 			busy = false
-			for t in tallyHall:
+			
+			for t in get_active_tallies():
 				await t.begin_turn(self.rulerOfEverything, self.turnTheLightsOff > 0)
 			$Turn/Msg.text = {
 				true:"Tally Turn Part II",
@@ -290,8 +291,7 @@ func _ready():
 			await $UI/EndTurn.clicked
 			self.selectedTally = null
 			
-			
-			for t in tallyHall:
+			for t in get_active_tallies():
 				await t.end_turn(self.turnTheLightsOff > 0)
 		var enemy_turn = func(second = false):
 			busy = true

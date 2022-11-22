@@ -18,7 +18,7 @@ enemyType = 4
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, -3.49691e-07, 0, 1, 0, 3.49691e-07, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, -2.89599e-05, 0, 1, 0, 2.89599e-05, 0, 1, 0, 0, 0)
 visibility_range_begin = 4.0
 visibility_range_begin_margin = 2.0
 visibility_range_fade_mode = 1

@@ -17,11 +17,11 @@ var tallyName: String:
 var desc:String:
 	get:
 		return {
-			Tally.Joe:		"Class: Songfighter\nKnown for his fabled Joe Hawley attack, this fighter can attack twice per turn.",
+			Tally.Joe:		"Class: Songfighter\nKnown for his fabled attack, this singer can act twice per turn.",
 			Tally.Rob:		"Class: Guitarcher\nThis suave fellow happens to be a skilled archer. His sharp arrows are known to break hearts.",
-			Tally.Andrew:	"Class: Keybard\nThis keyboardist supports the party with the power of whimsical magic.",		# Musicleric
-			Tally.Zubin:	"Class: Basskeeper\nHe wields a hammer and specializes in slaying the toughest of enemies.",	#Beast Slayer
-			Tally.Ross:		"Class: Rhythmagician\nThis drummer can use musical magic to switch up the rhythm of battle."	# Drumlock, Drumgineer
+			Tally.Andrew:	"Class: Keybard\nThis keyboardist supports the party with the power of whimsical magic.",
+			Tally.Zubin:	"Class: Basskeeper\nHe wields a hammer and specializes in slaying the toughest of enemies.",
+			Tally.Ross:		"Class: Rhythmagician\nThis drummer can use musical magic to switch up the rhythm of battle."
 		}[tally]
 signal moved
 var is_selected = false
@@ -434,13 +434,17 @@ func get_line_of_sight_enemies():
 	)
 signal show_message(msg:String)
 
+var hp = 100
 var turnTheLightsOff = false
 func take_damage(h:HitDesc):
+	h.dmgTaken = h.dmg
 	if turnTheLightsOff:
-		h.dmg *= 2
-	h.dmg *= (1 - allOfMyFriends/5.0)
+		h.dmgTaken *= 2
+	h.dmgTaken *= (1 - allOfMyFriends/5.0)
+	h.dmgTaken = min(h.dmgTaken, hp)
 	
-	show_message.emit(tallyName + " was hit for " + str(h.dmg) + " damage!")
+	
+	show_message.emit(tallyName + " was hit for " + str(h.dmgTaken) + " damage!")
 	var at = preload("res://ActionText.tscn").instantiate()
 	add_child(at)
 	at.global_position = h.pos + Vector3(0, 0.5, 1)
@@ -448,11 +452,36 @@ func take_damage(h:HitDesc):
 	
 	var au = AudioStreamPlayer3D.new()
 	au.stream = preload("res://Sounds/punch_hit.wav")
-	
 	add_child(au)
 	au.global_position = h.pos
 	au.play()
 	au.finished.connect(au.queue_free)
+	
+	hp -= h.dmgTaken
+	if hp == 0:
+		fall()
+func fall():
+	await get_tree().create_timer(2).timeout
+	show_message.emit(tallyName + " fell!")
+	
+	
+	var tw = get_tree().create_tween()
+	tw.tween_property($Sprite, "modulate", Color.TRANSPARENT, 1)
+	tw.play()
+	tw.finished.connect(self.queue_free)
+	
+	var p = preload("res://TallyFallParticle.tscn").instantiate()
+	world.add_child(p)
+	p.tallyColor = tally
+	p.global_position = global_position
+	
+	var a = AudioStreamPlayer3D.new()
+	a.stream = preload("res://Sounds/tally_fall.wav")
+	world.add_child(a)
+	a.global_position = global_position
+	a.play()
+	
+	
 func can_walk(pos: Vector3):
 	var allow_walk = func():
 		

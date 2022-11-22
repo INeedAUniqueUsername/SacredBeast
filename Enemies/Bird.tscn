@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://de61w08ak63h4"]
+[gd_scene load_steps=8 format=3 uid="uid://crda57gknu0d3"]
 
 [ext_resource type="Texture2D" uid="uid://bvhhca1esk7da" path="res://Crow.png" id="1_jaion"]
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
@@ -18,7 +18,7 @@ enemyType = 2
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, -3.49691e-07, 0, 1, 0, 3.49691e-07, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, -2.89599e-05, 0, 1, 0, 2.89599e-05, 0, 1, 0, 0, 0)
 centered = false
 offset = Vector2(-32, 0)
 pixel_size = 0.0313

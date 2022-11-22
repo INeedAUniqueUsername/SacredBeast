@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://vxun4udpr6kt"]
+[gd_scene load_steps=12 format=3 uid="uid://vxun4udpr6kt"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="Texture2D" uid="uid://bhqjnloy0a1tr" path="res://Mary-Kate.png" id="2_a4vw7"]
 [ext_resource type="AnimationLibrary" uid="uid://clt76rg56nu4l" path="res://CommonEnemyAnim.tres" id="3_he4xx"]
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="4_pvgcl"]
 [ext_resource type="AnimationLibrary" uid="uid://bq8yotgmibwmh" path="res://Enemies/SpinSprite.tres" id="5_5d635"]
+[ext_resource type="AudioStream" uid="uid://hrnh7rvatnx3" path="res://Sounds/key_to_my_heart.wav" id="6_4l21p"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_e61u2"]
 size = Vector3(2, 2, 0.5)
@@ -56,7 +57,7 @@ enemyType = 5
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, -3.49691e-07, 0, 1, 0, 3.49691e-07, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 0, -2.89599e-05, 0, 1, 0, 2.89599e-05, 0, 1, 0, 0, 0)
 visibility_range_begin = 4.0
 visibility_range_begin_margin = 2.0
 visibility_range_fade_mode = 1
@@ -99,3 +100,6 @@ libraries = {
 libraries = {
 "": ExtResource("5_5d635")
 }
+
+[node name="KeyToMyHeart" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_4l21p")
