@@ -19,7 +19,7 @@ enum TileColor {
 		][color]
 		
 		var c = [
-			Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE, Color(0.5, 0.5, 0.5)
+			Color.RED, Color.YELLOW, Color.GREEN, Color.DODGER_BLUE, Color(0.5, 0.5, 0.5)
 		][color]
 		$Particles.mesh.material.albedo_color = c
 		$Particles.mesh.material.emission = c

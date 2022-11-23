@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c277t2ff7hngi"]
+[gd_scene load_steps=15 format=3 uid="uid://c277t2ff7hngi"]
 
 [ext_resource type="Script" path="res://Tally.gd" id="1_lcw0j"]
 [ext_resource type="Texture2D" uid="uid://btnnwv5qpkpry" path="res://RobCantor.png" id="2_iy6wh"]
@@ -114,11 +114,27 @@ tracks/2/keys = {
 "values": [true]
 }
 
+[sub_resource type="Animation" id="Animation_c77da"]
+resource_name = "Raise"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_64v4p"]
 _data = {
 "Idle": SubResource("Animation_4fiss"),
 "Punch": SubResource("Animation_vx0ty"),
 "RESET": SubResource("Animation_o0hbn"),
+"Raise": SubResource("Animation_c77da"),
 "Shoot": SubResource("Animation_lkw6j")
 }
 
@@ -152,7 +168,7 @@ pixel_size = 0.0313
 alpha_cut = 2
 texture_filter = 2
 texture = ExtResource("2_iy6wh")
-hframes = 4
+hframes = 5
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Idle"

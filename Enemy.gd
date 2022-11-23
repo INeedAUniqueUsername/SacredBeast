@@ -98,7 +98,7 @@ func do_turn():
 		
 		
 		if global_position.distance_to(target.global_position) < 4:
-			show_message.emit(title + " used *Key to my Heart* against " + target.tallyName)
+			show_message.emit(title + " used *Key to my Heart* on " + target.tallyName)
 			
 			get_tree().create_timer(1).timeout.connect($KeyToMyHeart.play)
 			await get_tree().create_timer(2.5).timeout
@@ -106,7 +106,7 @@ func do_turn():
 			var dmg = 20 + total_damage_taken/5.0
 			
 			var h = HitDesc.new(self, target.global_position + Vector3.UP/2, dmg, null)
-			target.take_damage(h)
+			await target.take_damage(h)
 			await get_tree().create_timer(1.5).timeout
 			
 			playSound(preload("res://Sounds/staff_heal.wav"))
@@ -118,7 +118,7 @@ func do_turn():
 		return
 		
 	if enemyType == EnemyType.Cannibal:
-		if cannibal_target:
+		if cannibal_target and is_instance_valid(cannibal_target):
 			var inRange = ((cannibal_target.global_position + Vector3(1, 0, 0)) - global_position).length() <= 0.5
 			if cannibal_target.willingVictim > 0 or inRange:
 				
@@ -129,7 +129,7 @@ func do_turn():
 					
 					if ((cannibal_target.global_position + Vector3(1, 0, 0)) - global_position).length() > 0.5:
 						return
-				show_message.emit("Cannibal used *Tear Open Wide*!")
+				show_message.emit("Cannibal used *Tear Open Wide* on " + cannibal_target.tallyName + "!")
 				await get_tree().create_timer(1).timeout
 				$Anim.play("Bite")
 				await $Anim.animation_finished
@@ -141,17 +141,20 @@ func do_turn():
 					true:70,
 					false:35
 				}[cannibal_target.willingVictim > 0]
-				cannibal_target.take_damage(HitDesc.new(self, cannibal_target.global_position + Vector3.UP/2, dmg, null))
+				await cannibal_target.take_damage(HitDesc.new(self, cannibal_target.global_position + Vector3.UP/2, dmg, null))
 				await get_tree().create_timer(1).timeout
 				
-				cannibal_target.willingVictim = 2
+				if is_instance_valid(cannibal_target):
+					cannibal_target.willingVictim = 2
 				$Anim.play("Idle")
 				
 				turn_priority = 100
 				return
 				
 		cannibal_target = get_tree().get_nodes_in_group("Tally").pick_random()
-		show_message.emit("Cannibal used *Willing Victim*")
+		if not cannibal_target:
+			return
+		show_message.emit("Cannibal used *Willing Victim* on " + cannibal_target.tallyName)
 		get_tree().create_timer(0.5).timeout.connect($CurseInhale.play)
 		await get_tree().create_timer(2).timeout
 		$CurseEffect.play()
@@ -269,32 +272,49 @@ func spin():
 		await $Anim.animation_finished
 		$Anim.play("Idle")
 signal died
-signal took_damage(hitDesc:HitDesc)
-
-
 var total_damage_taken = 0
-func take_damage(hitDesc:HitDesc):
-	hitDesc.dmgTaken = hitDesc.dmg
+func take_damage(h:HitDesc):
+	h.dmgTaken = h.dmg
 	if turnTheLightsOff:
-		hitDesc.dmgTaken *= 2
+		h.dmgTaken *= 2
 	if takenForARide:
-		hitDesc.dmgTaken *= 2
+		h.dmgTaken *= 2
 	
-	took_damage.emit(hitDesc)
+	var extra = h.dmgTaken - hp
+	h.dmgTaken = min(h.dmgTaken, hp)
+	
+	hp -= h.dmgTaken
+	total_damage_taken += h.dmgTaken
+	
+
+	var at = preload("res://ActionText.tscn").instantiate()
+	add_child(at)
+	at.global_position = h.pos + Vector3(0, 0.5, 0.5)
+	var st = str(h.dmgTaken)
+	if h.move == Moves.JoeHawley:
+		st = "JOE HAWLEY!"
+	elif h.move == Moves.JustApathy:
+		st = "Apathy!"
+	at.get_node("Label3D").text = st
+	
+	var au = AudioStreamPlayer3D.new()
+	au.stream = preload("res://Sounds/punch_hit.wav")
+	add_child(au)
+	au.play()
+	au.finished.connect(au.queue_free)
+	
+	if h.announce:
+		show_message.emit(title + " took " + str(h.dmgTaken) + " damage!")
 	
 	$Anim.play("Hurt")
 	await $Anim.animation_finished
 	
-	var extra = hitDesc.dmgTaken - hp
-	hitDesc.dmgTaken = min(hitDesc.dmgTaken, hp)
-	hp -= hitDesc.dmgTaken
 	if hp > 0:
-		total_damage_taken += hitDesc.dmgTaken
 		
 		if timestop < 1:
 			$Anim.play("Idle")
 		return
-	die(extra)
+	await die(extra)
 func heal(amount:int):
 	hp += amount
 var alive = true
@@ -339,7 +359,7 @@ func die(extra_dmg:int = 0):
 			await get_tree().create_timer(0.5).timeout
 			for t in get_tree().get_nodes_in_group("Tally"):
 				await get_tree().create_timer(0.1).timeout
-				t.take_damage(HitDesc.new(self, t.global_position, extra_dmg, null))
+				await t.take_damage(HitDesc.new(self, t.global_position, extra_dmg, null))
 			show_message.emit("The Tallies took damage!")
 	
 	queue_free()

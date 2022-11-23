@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3 uid="uid://dkv4j2eoqfebh"]
+[gd_scene load_steps=68 format=3 uid="uid://dkv4j2eoqfebh"]
 
 [ext_resource type="Script" path="res://Battle.gd" id="1_b8anq"]
 [ext_resource type="Texture2D" uid="uid://csfuiqrdo5x27" path="res://WhiteTile.png" id="1_prg36"]
@@ -187,8 +187,36 @@ tracks/1/keys = {
 "values": [0.0, 1.0]
 }
 
+[sub_resource type="Animation" id="Animation_jyexo"]
+resource_name = "Ending"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Turn:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Turn/Msg:visible_ratio")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.4, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xfebr"]
 _data = {
+"Ending": SubResource("Animation_jyexo"),
 "EnemyTurn": SubResource("Animation_x63lx"),
 "PlayerTurn": SubResource("Animation_wnq3l"),
 "RESET": SubResource("Animation_4o4q0"),
@@ -595,7 +623,6 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="Msg" type="Label" parent="Turn"]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -617,7 +644,6 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="Turn/Msg" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="Turn"]
 root_node = NodePath("../..")
@@ -636,7 +662,6 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="LevelTitle" type="Label" parent="Intro"]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -658,7 +683,6 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="Intro/LevelTitle" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="Intro"]
 autoplay = "Intro"
@@ -845,7 +869,6 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="Message" type="Label" parent="UI"]
-layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 1.0
@@ -865,7 +888,6 @@ visible_characters = 0
 visible_ratio = 0.0
 
 [node name="NinePatchRect" parent="UI/Message" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="UI/Message"]
 libraries = {
@@ -873,7 +895,7 @@ libraries = {
 }
 
 [node name="Tally" type="Control" parent="UI"]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -883,7 +905,6 @@ mouse_filter = 1
 script = ExtResource("1_quljh")
 
 [node name="Title" type="Label" parent="UI/Tally"]
-layout_mode = 0
 offset_right = 288.0
 offset_bottom = 64.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -894,11 +915,9 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NinePatchRect" parent="UI/Tally/Title" instance=ExtResource("2_myrce")]
-layout_mode = 1
 texture = ExtResource("4_2ckxh")
 
 [node name="Desc" type="Label" parent="UI/Tally"]
-layout_mode = 0
 offset_top = 64.0
 offset_right = 288.0
 offset_bottom = 320.0
@@ -910,10 +929,9 @@ text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaa"
 autowrap_mode = 2
 
 [node name="NinePatchRect" parent="UI/Tally/Desc" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="MoveList" type="Control" parent="UI/Tally"]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 0
 offset_left = 288.0
 offset_top = 64.0
@@ -921,7 +939,6 @@ offset_right = 288.0
 offset_bottom = 64.0
 
 [node name="Move1" type="Label" parent="UI/Tally/MoveList"]
-layout_mode = 0
 offset_right = 384.0
 offset_bottom = 64.0
 mouse_filter = 0
@@ -934,10 +951,8 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move1" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Move2" type="Label" parent="UI/Tally/MoveList"]
-layout_mode = 0
 offset_top = 64.0
 offset_right = 384.0
 offset_bottom = 128.0
@@ -951,10 +966,8 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move2" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Move3" type="Label" parent="UI/Tally/MoveList"]
-layout_mode = 0
 offset_top = 128.0
 offset_right = 384.0
 offset_bottom = 192.0
@@ -968,10 +981,8 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move3" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Move4" type="Label" parent="UI/Tally/MoveList"]
-layout_mode = 0
 offset_top = 192.0
 offset_right = 384.0
 offset_bottom = 256.0
@@ -985,7 +996,6 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/MoveList/Move4" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Anim" type="AnimationPlayer" parent="UI/Tally"]
 root_node = NodePath("../../..")
@@ -994,14 +1004,13 @@ libraries = {
 }
 
 [node name="Actions" type="Control" parent="UI/Tally"]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Move" type="Label" parent="UI/Tally/Actions"]
 visible = false
-layout_mode = 0
 offset_left = 288.0
 offset_right = 480.0
 offset_bottom = 64.0
@@ -1015,10 +1024,8 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/Actions/Move" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="Act" type="Label" parent="UI/Tally/Actions"]
-layout_mode = 0
 offset_left = 288.0
 offset_right = 480.0
 offset_bottom = 64.0
@@ -1032,10 +1039,8 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/Tally/Actions/Act" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="EndTurn" type="Label" parent="UI"]
-layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1052,7 +1057,6 @@ vertical_alignment = 1
 script = ExtResource("3_gh476")
 
 [node name="NinePatchRect" parent="UI/EndTurn" instance=ExtResource("2_myrce")]
-layout_mode = 1
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("18_u5yv7")

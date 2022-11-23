@@ -4,7 +4,7 @@ const TallyChar = preload("res://Tally.gd")
 const ActionText = preload("res://ActionText.tscn")
 var selectedTally: TallyChar = null:
 	set(t):
-		if selectedTally:
+		if selectedTally and is_instance_valid(selectedTally):
 			selectedTally.deselect()
 			$UI/Tally.deselect()
 		selectedTally = t
@@ -22,7 +22,7 @@ func showMessage(t:String):
 		await $UI/Message/Anim.animation_finished
 		messageVisible = true
 	var tw = get_tree().create_tween()
-	tw.tween_property($UI/Message, "visible_ratio", 1, len(t)/32.0)
+	tw.tween_property($UI/Message, "visible_ratio", 1, len(t)/64.0)
 	tw.play()
 	await tw.finished
 	hideMessage()
@@ -69,7 +69,7 @@ var turnTheLightsOff = 0:
 
 var busy = false
 
-func get_active_enemies():
+func get_active_enemies() -> Array[Node]:
 	return get_tree().get_nodes_in_group("Enemy").filter(func(e): return e.alive)
 func request_target(targets: Array, f: Callable, subtask:bool = false):
 	var action = Node.new()
@@ -121,16 +121,23 @@ func _ready():
 				begin_move.call()
 				await announceMove.call()
 				await t.use_move_joe_hawley()
-			elif m == Moves.RotaryPark:
+			elif m == Moves.AristotlesDenial:
 				begin_move.call()
 				await announceMove.call()
-				await t.use_move_rotary_park()
+				await t.use_move_aristotles_denial()
 			elif m == Moves.AllOfMyFriends:
 				if t.allOfMyFriends > 0:
 					return
 				begin_move.call()
 				await announceMove.call()
 				await t.use_move_all_of_my_friends()
+			elif m == Moves.SpringAndAStorm:
+				if t.springAndAStorm:
+					return
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_spring_and_a_storm()
+				await showMessage("Until the next Tally Turn, damage dealt to enemies will heal Tallies")
 			elif m == Moves.JustApathy:
 				begin_move.call()
 				var act = func(e):
@@ -150,6 +157,13 @@ func _ready():
 					await t.use_move_another_minute(e)
 					await showMessage(e.tallyName + " gained walk range!")
 				await request_target(get_tree().get_nodes_in_group("Tally"), act)
+			elif m == Moves.GardenOfEden:
+				begin_move.call()
+				var act = func(e):
+					await announceMove.call()
+					await t.use_move_garden_of_eden(e)
+					await showMessage(e.tallyName + " restored all HP!")
+				await request_target(get_tree().get_nodes_in_group("Tally"), act)
 			elif m == Moves.TheWholeWorldAndYou:
 				begin_move.call()
 				var act = func(e):
@@ -167,6 +181,18 @@ func _ready():
 					var positions = e.get_all_standable_positions()
 					await request_target(positions, act2, true)
 				await request_target(get_active_enemies(), act)
+			elif m == Moves.Misfortune:
+				begin_move.call()
+				if t.misfortune == 0:
+					var act = func(e):
+						await announceMove.call()
+						await t.use_move_misfortune_1(e)
+						await showMessage(e.title + " is cursed with Misfortune!")
+					await request_target(get_active_enemies(), act)
+				elif t.misfortune == 1:
+					await announceMove.call()
+					await t.use_move_misfortune_2()
+					await showMessage(t.misfortuneTarget.title + " is cursed with even more Misfortune!")
 			elif m == Moves.GoodDay:
 				begin_move.call()
 				await announceMove.call()
@@ -176,6 +202,10 @@ func _ready():
 				begin_move.call()
 				await announceMove.call()
 				await t.use_move_color_be_gone()
+			elif m == Moves.RotaryPark:
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_rotary_park()
 			elif m == Moves.TheTrap:
 				begin_move.call()
 				var act = func(e):
@@ -204,7 +234,7 @@ func _ready():
 				await announceMove.call()
 				await t.use_move_ruler_of_everything()
 				rulerOfEverything = true
-				await showMessage("Next turn will be a Tally turn!")
+				await showMessage("This turn will have a Part II!")
 			t.is_busy = false
 			
 			self.current_action = Node.new()
@@ -222,31 +252,10 @@ func _ready():
 			)
 		enemy.show_message.connect(func(s): showMessage(s))
 		
-		enemy.took_damage.connect(func(h:HitDesc):
-			
-			if h.announce:
-				showMessage(str(enemy.title) + " took " + str(h.dmgTaken) + " damage!")
-			var at = ActionText.instantiate()
-			$World.add_child(at)
-			at.global_position = h.pos + Vector3(0, 0.5, 1)
-			
-			var st = str(h.dmgTaken)
-			if h.move == Moves.JoeHawley:
-				st = "JOE HAWLEY!"
-			elif h.move == Moves.JustApathy:
-				st = "Apathy!"
-			at.get_node("Label3D").text = st
-			var au = AudioStreamPlayer3D.new()
-			au.stream = preload("res://Sounds/punch_hit.wav")
-			
-			$World.add_child(au)
-			au.global_position = h.pos
-			au.play()
-			au.finished.connect(au.queue_free)
-			
-			#$World/Camera.shake()
+		enemy.tree_exited.connect(func():
+			if get_active_enemies().is_empty():
+				end_game()
 			)
-	
 	for tally in get_active_tallies():
 		
 		var area = tally.get_node("Area")
@@ -271,7 +280,11 @@ func _ready():
 			tally.show_walk(self.current_action)
 		)
 		tally.show_message.connect(func(s): showMessage(s))
-	
+		
+		tally.tree_exited.connect(func():
+			if get_active_tallies().is_empty():
+				end_game()
+			)
 	await $Intro/Anim.animation_finished
 	
 	get_tree().create_timer(4.5).timeout.connect(func():
@@ -279,6 +292,8 @@ func _ready():
 		)
 	while active:
 		var tally_turn = func(second = false):
+			if !active:
+				return
 			busy = false
 			
 			for t in get_active_tallies():
@@ -292,7 +307,7 @@ func _ready():
 			self.selectedTally = null
 			
 			for t in get_active_tallies():
-				await t.end_turn(self.turnTheLightsOff > 0)
+				await t.end_turn(self.turnTheLightsOff == 2)
 		var enemy_turn = func(second = false):
 			busy = true
 			$Turn/Msg.text = {
@@ -307,6 +322,10 @@ func _ready():
 			for e in activeEnemies:
 				if !is_instance_valid(e):
 					continue
+				if not active:
+					return
+					
+				$UI/Tally.showEnemy(e)
 				var p = preload("res://Pointer.tscn").instantiate()
 				#p.global_position = e.global_position
 				e.add_child(p)
@@ -370,5 +389,14 @@ func _ready():
 					$World/Camera3D.global_position += Vector3(delta.x, 0, delta.y) / 1080.0
 				prev_position = pos
 			)
+func end_game():
+	active = false
+	busy = true
+	await get_tree().create_timer(1).timeout
+	if get_active_tallies().is_empty():
+		$Turn/Msg.text = "Enemies won"
+	else:
+		$Turn/Msg.text = "Tallies won"
+	$Turn/Anim.play("Ending")
 signal player_turn_ended
 var active = true

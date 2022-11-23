@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://bfs6we1qwfda0"]
+
+[ext_resource type="Script" path="res://HpBar.gd" id="1_viosa"]
+[ext_resource type="Texture2D" uid="uid://pecxcicf1esg" path="res://HpBar.png" id="2_b5hl3"]
+
+[node name="HpBar" type="Node3D"]
+script = ExtResource("1_viosa")
+
+[node name="Outline" type="Sprite3D" parent="."]
+pixel_size = 0.0156
+alpha_cut = 2
+texture_filter = 2
+texture = ExtResource("2_b5hl3")
+hframes = 2
+
+[node name="Color" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.063, 0)
+centered = false
+pixel_size = 0.0156
+alpha_cut = 2
+texture_filter = 2
+texture = ExtResource("2_b5hl3")
+frame = 1
+region_enabled = true
+region_rect = Rect2(64, 0, 64, 8)

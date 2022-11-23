@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://di2geo4g7esx3"]
+[gd_scene load_steps=16 format=3 uid="uid://di2geo4g7esx3"]
 
 [ext_resource type="Script" path="res://Tally.gd" id="1_hrgcl"]
 [ext_resource type="Texture2D" uid="uid://elbi1sin06q7" path="res://ZubinSedghi.png" id="2_afna5"]
 [ext_resource type="AudioStream" uid="uid://df0s86tr4gj68" path="res://Sounds/hammer_charge.wav" id="3_hwln2"]
 [ext_resource type="AudioStream" uid="uid://c4jlm2dqw6io4" path="res://Sounds/hammer_hit.wav" id="4_fd0ux"]
+[ext_resource type="Texture2D" uid="uid://b1uqyv46ct7sc" path="res://BlueRing.png" id="5_6qxnq"]
 
 [sub_resource type="Animation" id="Animation_4fiss"]
 resource_name = "Idle"
@@ -63,6 +64,42 @@ tracks/1/keys = {
 "update": 1,
 "values": [false]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("HammerPower:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("HammerPower:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_lkw6j"]
 resource_name = "Shoot"
@@ -107,13 +144,83 @@ tracks/1/keys = {
 "values": [true]
 }
 
+[sub_resource type="Animation" id="Animation_xp0eo"]
+resource_name = "Spin"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(0.35, 1),
+"update": 0,
+"values": [Vector3(0, -37.6991, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ooiv1"]
+resource_name = "SpinCharge"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HammerPower:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.6, 2),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("HammerPower:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.6, 2),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0, 0, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_64v4p"]
 _data = {
 "Idle": SubResource("Animation_4fiss"),
 "Punch": SubResource("Animation_vx0ty"),
 "RESET": SubResource("Animation_o0hbn"),
 "Shoot": SubResource("Animation_lkw6j"),
-"Smash": SubResource("Animation_0hlvn")
+"Smash": SubResource("Animation_0hlvn"),
+"Spin": SubResource("Animation_xp0eo"),
+"SpinCharge": SubResource("Animation_ooiv1")
 }
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_b0b7g"]
@@ -133,7 +240,7 @@ pixel_size = 0.0313
 alpha_cut = 2
 texture_filter = 2
 texture = ExtResource("2_afna5")
-hframes = 4
+hframes = 6
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Idle"
@@ -162,3 +269,10 @@ stream = ExtResource("3_hwln2")
 
 [node name="HammerHit" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_fd0ux")
+
+[node name="HammerPower" type="Sprite3D" parent="."]
+transform = Transform3D(0, 0, 0, 0, 0, 0, 0, 0, 0, -0.891, 0.594, 0)
+modulate = Color(1, 1, 1, 0)
+pixel_size = 0.0833
+texture_filter = 2
+texture = ExtResource("5_6qxnq")
