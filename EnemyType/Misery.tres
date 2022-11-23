@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c5i1dbwyjft53"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_2bqu7"]
+
+[resource]
+script = ExtResource("1_2bqu7")
+title = "Misery"
+desc = "Always targets Andrew first"

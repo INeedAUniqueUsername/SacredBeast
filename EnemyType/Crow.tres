@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://fb6g3cs17tmg"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_8wdf2"]
+
+[resource]
+script = ExtResource("1_8wdf2")
+title = "Crow"
+desc = null

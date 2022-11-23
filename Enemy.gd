@@ -1,37 +1,8 @@
 extends Node3D
 class_name Enemy
-
-enum EnemyType {
-	Ashley,
-	Crow,
-	Cannibal,
-	Erlking,
-	Fate,
-	MaryKate,
-	Misery,
-	Animal
-}
-class EnemyInfo:
-	var title:String
-	var desc:String
-	func _init(title:String, desc:String):
-		self.title = title
-		self.desc = desc
-var EnemyDict = {
-	EnemyType.Ashley: 	EnemyInfo.new("Ashley", "When this enemy falls, any excess damage from the killing hit is converted to healing for all nearby enemies"),
-	EnemyType.Cannibal: EnemyInfo.new("Cannibal", "This enemy gains unlimited movement range on every other turn."),
-	EnemyType.Crow: 	EnemyInfo.new("Crow", ""),
-	EnemyType.Erlking: 	EnemyInfo.new("Erlking", ""),
-	EnemyType.Fate: 	EnemyInfo.new("Fate", ""),
-	EnemyType.MaryKate: EnemyInfo.new("Mary-Kate", "When this enemy falls, any excess damage from the killing hit is dealt to all Tallies"),
-	EnemyType.Misery: 	EnemyInfo.new("Misery", "")
-}
-@export var enemyType: EnemyType
-var title:String:
-	get:
-		return EnemyDict[enemyType].title
-var desc:String:
-	get: return EnemyDict[enemyType].desc
+@export var enemyType: Resource
+@onready var title = enemyType.title
+@onready var desc = enemyType.desc
 enum Width {
 	Single, Double
 }
@@ -324,7 +295,6 @@ func die(extra_dmg:int = 0):
 	show_message.emit(title + " fell!")
 	died.emit()
 	
-	
 	var a = AudioStreamPlayer3D.new()
 	world.add_child(a)
 	a.stream = preload("res://Sounds/enemy_die.wav")
@@ -336,34 +306,28 @@ func die(extra_dmg:int = 0):
 	var dp = DeathParticles.instantiate()
 	world.add_child(dp)
 	dp.global_position = global_position + Vector3(0, 0.5, 0)
-	
 	await get_tree().create_timer(0.5).timeout
 	$Anim.play("Die")
 	await $Anim.animation_finished
 	
-	match enemyType:
-		EnemyType.Ashley:
-			await get_tree().create_timer(0.5).timeout
-			var any = false
-			for e in get_tree().get_nodes_in_group("Enemy"):
-				any = true
-				await get_tree().create_timer(0.1).timeout
-				e.heal(extra_dmg)
-				e.add_child(preload("res://HealParticle.tscn").instantiate())
-			
-			playSound(preload("res://Sounds/staff_heal.wav"), get_parent(), func(a):
-				a.global_position = global_position)
-			show_message.emit("Nearby enemies regained HP!")
-		EnemyType.MaryKate:
-			
-			await get_tree().create_timer(0.5).timeout
-			for t in get_tree().get_nodes_in_group("Tally"):
-				await get_tree().create_timer(0.1).timeout
-				await t.take_damage(HitDesc.new(self, t.global_position, extra_dmg, null))
-			show_message.emit("The Tallies took damage!")
-	
+	if enemyType == preload("res://EnemyType/Ashley.tres"):
+		await get_tree().create_timer(0.5).timeout
+		var any = false
+		for e in get_tree().get_nodes_in_group("Enemy"):
+			any = true
+			await get_tree().create_timer(0.1).timeout
+			e.heal(extra_dmg)
+			e.add_child(preload("res://HealParticle.tscn").instantiate())
+		playSound(preload("res://Sounds/staff_heal.wav"), get_parent(), func(a):
+			a.global_position = global_position)
+		show_message.emit("Nearby enemies regained HP!")		
+	elif enemyType == preload("res://EnemyType/Mary-Kate.tres"):
+		await get_tree().create_timer(0.5).timeout
+		for t in get_tree().get_nodes_in_group("Tally"):
+			await get_tree().create_timer(0.1).timeout
+			await t.take_damage(HitDesc.new(self, t.global_position, extra_dmg, null))
+		show_message.emit("The Tallies took damage!")
 	queue_free()
-	
 func get_all_standable_positions() -> Array[Vector3]:
 	var seen = [global_position]
 	var next = [global_position]

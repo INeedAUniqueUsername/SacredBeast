@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://drmb8v6v41cwp"]
+[gd_scene load_steps=9 format=3 uid="uid://drmb8v6v41cwp"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
 [ext_resource type="Texture2D" uid="uid://41y4pewylb5o" path="res://Fate.png" id="2_iw3om"]
+[ext_resource type="Resource" uid="uid://bdg80xb2aql3j" path="res://EnemyType/Fate.tres" id="2_t8htb"]
 [ext_resource type="AnimationLibrary" uid="uid://clt76rg56nu4l" path="res://CommonEnemyAnim.tres" id="3_he4xx"]
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="4_pvgcl"]
 [ext_resource type="AnimationLibrary" uid="uid://bq8yotgmibwmh" path="res://Enemies/SpinSprite.tres" id="5_rxnuc"]
@@ -14,7 +15,7 @@ size = Vector3(2.8, 3, 1.8)
 
 [node name="Fate" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-enemyType = 4
+enemyType = ExtResource("2_t8htb")
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]

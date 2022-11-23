@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bdg80xb2aql3j"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_k38p4"]
+
+[resource]
+script = ExtResource("1_k38p4")
+title = "Erlking"
+desc = null

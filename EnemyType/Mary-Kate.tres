@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bqgc7885vntg8"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_ec3uf"]
+
+[resource]
+script = ExtResource("1_ec3uf")
+title = "Fate"
+desc = null

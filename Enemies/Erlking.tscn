@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://cttrvj5164e0e"]
+[gd_scene load_steps=13 format=3 uid="uid://cttrvj5164e0e"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
+[ext_resource type="Resource" uid="uid://dcd8suinjm28c" path="res://EnemyType/Erlking.tres" id="2_em8it"]
 [ext_resource type="Texture2D" uid="uid://b2kkddggk66wp" path="res://Erlking.png" id="2_fxocs"]
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="3_ynfke"]
 [ext_resource type="AnimationLibrary" uid="uid://bq8yotgmibwmh" path="res://Enemies/SpinSprite.tres" id="4_cmcdk"]
@@ -121,7 +122,7 @@ _data = {
 
 [node name="Erlking" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-enemyType = 3
+enemyType = ExtResource("2_em8it")
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]

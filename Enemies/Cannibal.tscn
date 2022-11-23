@@ -1,6 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://cld0xuijrjcsp"]
+[gd_scene load_steps=17 format=3 uid="uid://cld0xuijrjcsp"]
 
 [ext_resource type="Script" path="res://Enemy.gd" id="1_xevfi"]
+[ext_resource type="Resource" uid="uid://cy7jl60t4dypb" path="res://EnemyType/Cannibal.tres" id="2_jfng3"]
 [ext_resource type="Texture2D" uid="uid://drvq4c3wp07ra" path="res://Cannibal.png" id="2_nmix7"]
 [ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="3_ppw7r"]
 [ext_resource type="AudioStream" uid="uid://vmmgko4nox5d" path="res://Sounds/cannibal_inhale.wav" id="4_igw6a"]
@@ -152,7 +153,7 @@ _data = {
 
 [node name="Cannibal" type="Node3D" groups=["Enemy"]]
 script = ExtResource("1_xevfi")
-enemyType = 2
+enemyType = ExtResource("2_jfng3")
 width = 1
 
 [node name="Sprite" type="Sprite3D" parent="."]

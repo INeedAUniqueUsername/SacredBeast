@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cy7jl60t4dypb"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_t8rmw"]
+
+[resource]
+script = ExtResource("1_t8rmw")
+title = "Cannibal"
+desc = "Always targets Rob first. This enemy paralyzes a target on one turn and attacks the target on the next turn."

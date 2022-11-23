@@ -45,8 +45,6 @@ var Misfortune := MoveInfo.new("Misfortune",
 var GoodDay := MoveInfo.new("Good Day",
 	"Restores 20 HP to all Tallies"
 )
-
-
 # Zubin
 var ColorBeGone := MoveInfo.new("Color Be Gone",
 	"Zubin swings the hammer at an enemy directly in front of him."
@@ -60,7 +58,6 @@ var WhiteBall := MoveInfo.new("White Ball",
 var SeaCucumber := MoveInfo.new("Sea Cucumber",
 	""
 )
-
 # Ross
 var TheTrap := MoveInfo.new("The Trap",
 	"Strikes an enemy with lightning. Also hits nearby enemies."
