@@ -1,0 +1,133 @@
+[gd_scene load_steps=10 format=3 uid="uid://3qo0cl2vqeqc"]
+
+[ext_resource type="Texture2D" uid="uid://gjx55ippvrsg" path="res://Map.png" id="1_flm0a"]
+[ext_resource type="Script" path="res://Overworld.gd" id="1_x6s0l"]
+[ext_resource type="SystemFont" uid="uid://bg67fe8v36op0" path="res://ArialNova.tres" id="3_oyyu4"]
+[ext_resource type="PackedScene" uid="uid://d3p4pdf616e82" path="res://WhiteRect.tscn" id="4_5a7hw"]
+[ext_resource type="PackedScene" uid="uid://ybw0oggyrwvf" path="res://MapMarker.tscn" id="5_sc2jf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r336q"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+
+[sub_resource type="Animation" id="Animation_0xyas"]
+resource_name = "Exit"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_i8b3s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_nan82"]
+_data = {
+"Exit": SubResource("Animation_0xyas"),
+"RESET": SubResource("Animation_i8b3s")
+}
+
+[node name="Overworld" type="Node2D"]
+z_index = -10
+script = ExtResource("1_x6s0l")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("1_flm0a")
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+current = true
+
+[node name="Polygon2D" type="Polygon2D" parent="Camera"]
+position = Vector2(-1920, -1080)
+scale = Vector2(3840, 2160)
+z_index = -5
+color = Color(1, 0.992157, 0.909804, 1)
+polygon = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
+
+[node name="Control" type="Control" parent="Camera"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Title" type="Label" parent="Camera/Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -960.5
+offset_top = 204.0
+offset_right = -480.5
+offset_bottom = 284.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_oyyu4")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxEmpty_r336q")
+text = "Level Select"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="NinePatchRect" parent="Camera/Control/Title" instance=ExtResource("4_5a7hw")]
+
+[node name="Desc" type="Label" parent="Camera/Control"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = 284.0
+offset_right = -480.0
+offset_bottom = 540.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_oyyu4")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxEmpty_r336q")
+text = "Click a level marker to start"
+autowrap_mode = 3
+
+[node name="NinePatchRect" parent="Camera/Control/Desc" instance=ExtResource("4_5a7hw")]
+
+[node name="MapMarker" parent="." instance=ExtResource("5_sc2jf")]
+
+[node name="MapMarker2" parent="." instance=ExtResource("5_sc2jf")]
+position = Vector2(803, 406)
+
+[node name="MapMarker3" parent="." instance=ExtResource("5_sc2jf")]
+position = Vector2(1259, 598)
+
+[node name="MapMarker4" parent="." instance=ExtResource("5_sc2jf")]
+position = Vector2(1515, 622)
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_nan82")
+}

@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://b4nvxbitdtrce"]
+
+[ext_resource type="PackedScene" uid="uid://dkv4j2eoqfebh" path="res://Board.tscn" id="1_02dsu"]
+[ext_resource type="PackedScene" uid="uid://mcadd06ntjmj" path="res://Tallies/TallyHall.tscn" id="2_vtjdo"]
+[ext_resource type="PackedScene" uid="uid://d08wfqndrgqni" path="res://Enemies/Ashley.tscn" id="3_idncx"]
+[ext_resource type="PackedScene" uid="uid://vxun4udpr6kt" path="res://Enemies/Mary-Kate.tscn" id="4_famdq"]
+[ext_resource type="PackedScene" uid="uid://38m0q8rmbhke" path="res://Enemies/NoEyedGirl.tscn" id="5_v0jwn"]
+
+[node name="Node" type="Node3D"]
+
+[node name="Board" parent="." instance=ExtResource("1_02dsu")]
+
+[node name="TallyHall" parent="Board" instance=ExtResource("2_vtjdo")]
+
+[node name="Ashley" parent="Board" instance=ExtResource("3_idncx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -2)
+
+[node name="Mary-Kate" parent="Board" instance=ExtResource("4_famdq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 2)
+
+[node name="NoEyedGirl" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -4)
+
+[node name="NoEyedGirl2" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -3)
+
+[node name="NoEyedGirl3" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -2)
+
+[node name="NoEyedGirl4" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+
+[node name="NoEyedGirl5" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="NoEyedGirl6" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="NoEyedGirl7" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 2)
+
+[node name="NoEyedGirl8" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 3)
+
+[node name="NoEyedGirl9" parent="Board" instance=ExtResource("5_v0jwn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 4)

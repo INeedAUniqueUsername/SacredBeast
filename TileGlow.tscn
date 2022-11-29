@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://TileGlow.gd" id="2_6ya7x"]
 [ext_resource type="Texture2D" uid="uid://bt4ktcl0ld5s0" path="res://TileGlowGray.png" id="2_11hrx"]
 
-[sub_resource type="Animation" id="Animation_1kua1"]
+[sub_resource type="Animation" id="Animation_a13h5"]
 resource_name = "Appear"
 length = 0.3
 tracks/0/type = "value"
@@ -19,7 +19,7 @@ tracks/0/keys = {
 "values": [Vector3(0, 0, 0), Vector3(1, 1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_qdhy5"]
+[sub_resource type="Animation" id="Animation_6mscr"]
 resource_name = "Disappear"
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -60,7 +60,7 @@ tracks/2/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_s7qmv"]
+[sub_resource type="Animation" id="Animation_7mvr6"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -87,31 +87,31 @@ tracks/1/keys = {
 "values": [Vector3(1, 1, 1)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_hdb73"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_icwsg"]
 _data = {
-"Appear": SubResource("Animation_1kua1"),
-"Disappear": SubResource("Animation_qdhy5"),
-"RESET": SubResource("Animation_s7qmv")
+"Appear": SubResource("Animation_a13h5"),
+"Disappear": SubResource("Animation_6mscr"),
+"RESET": SubResource("Animation_7mvr6")
 }
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bhxwm"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qvchg"]
 resource_local_to_scene = true
 albedo_color = Color(0.5, 0.5, 0.5, 1)
 emission_enabled = true
-emission = Color(1, 1, 1, 1)
+emission = Color(0.5, 0.5, 0.5, 1)
 emission_operator = 1
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_h4qcb"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_y8eft"]
 resource_local_to_scene = true
-material = SubResource("StandardMaterial3D_bhxwm")
+material = SubResource("StandardMaterial3D_qvchg")
 size = Vector2(0.063, 0.063)
 orientation = 2
 
-[sub_resource type="Curve" id="Curve_053bq"]
+[sub_resource type="Curve" id="Curve_lc6rd"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.503597, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.38121, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="Animation" id="Animation_6w123"]
+[sub_resource type="Animation" id="Animation_d243w"]
 resource_name = "Deselected"
 length = 0.3
 tracks/0/type = "value"
@@ -127,7 +127,7 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.4)]
 }
 
-[sub_resource type="Animation" id="Animation_xeihl"]
+[sub_resource type="Animation" id="Animation_38cnd"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -142,7 +142,7 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 0.501961)]
 }
 
-[sub_resource type="Animation" id="Animation_utfup"]
+[sub_resource type="Animation" id="Animation_2xcul"]
 resource_name = "Selected"
 length = 0.3
 tracks/0/type = "value"
@@ -158,11 +158,11 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 0.4), Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_au1xq"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_iwfh5"]
 _data = {
-"Deselected": SubResource("Animation_6w123"),
-"RESET": SubResource("Animation_xeihl"),
-"Selected": SubResource("Animation_utfup")
+"Deselected": SubResource("Animation_d243w"),
+"RESET": SubResource("Animation_38cnd"),
+"Selected": SubResource("Animation_2xcul")
 }
 
 [node name="TileGlow" type="Node3D"]
@@ -181,19 +181,19 @@ texture = ExtResource("2_11hrx")
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Appear"
 libraries = {
-"": SubResource("AnimationLibrary_hdb73")
+"": SubResource("AnimationLibrary_icwsg")
 }
 
 [node name="Particles" type="CPUParticles3D" parent="."]
 amount = 12
 lifetime = 1.25
-mesh = SubResource("PlaneMesh_h4qcb")
+mesh = SubResource("PlaneMesh_y8eft")
 emission_shape = 4
 emission_points = PackedVector3Array(0.328, 0, 0, 0.328, 0, -0.328, 0.328, 0, 0.328, -0.328, 0, 0, -0.328, 0, -0.328, -0.328, 0, 0.328, 0, 0, -0.328, 0, 0, 0.328)
 gravity = Vector3(0, 2.5, 0)
-scale_amount_curve = SubResource("Curve_053bq")
+scale_amount_curve = SubResource("Curve_lc6rd")
 
 [node name="Select" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_au1xq")
+"": SubResource("AnimationLibrary_iwfh5")
 }

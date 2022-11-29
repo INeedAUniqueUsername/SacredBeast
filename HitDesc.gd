@@ -14,3 +14,11 @@ func _init(attacker:Node, pos:Vector3, dmg: int, move:MoveInfo, announce:bool = 
 	self.dmg = dmg
 	self.move = move
 	self.announce = announce
+
+func get_action_text() -> String:
+	
+	if move == Moves.JoeHawley:
+		return "JOE HAWLEY!"
+	elif move == Moves.JustApathy:
+		return "Apathy!"
+	return str(dmgTaken)

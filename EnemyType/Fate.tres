@@ -4,5 +4,7 @@
 
 [resource]
 script = ExtResource("1_k38p4")
-title = "Erlking"
-desc = null
+title = "Fate"
+desc = ""
+hp_max = 300
+hp_start = 200

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://da7pj4yqc6y5x"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_l338r"]
+
+[resource]
+script = ExtResource("1_l338r")
+title = "Songbird Statue"
+desc = "This enemy only takes damage when attacked by a Tally of the same color."
+hp_max = 300
+hp_start = 150

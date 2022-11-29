@@ -1,39 +1,26 @@
 extends Node3D
 class_name TallyChar
-const Tally = preload("res://Common.gd").Tally
+
 const TileGlow = preload("res://TileGlow.tscn")
-@export_enum(Joe, Rob, Andrew, Zubin, Ross) var tally
 const MoveInfo = preload("res://Moves.gd").MoveInfo
-var move_list : Array = []
-var tallyName: String:
-	get:
-		return {
-			Tally.Joe: "Joe Hawley",
-			Tally.Rob: "Rob Cantor",
-			Tally.Andrew: "Andrew Horowitz",
-			Tally.Zubin: "Zubin Sedghi",
-			Tally.Ross: "Ross Federman"	
-		}[tally]
-var desc:String:
-	get:
-		return {
-			Tally.Joe:		"Class: Songfighter\nKnown for his fabled attack, this singer can act twice per turn.",
-			Tally.Rob:		"Class: Guitarcher\nThis suave fellow happens to be a skilled archer. His sharp arrows are known to break hearts.",
-			Tally.Andrew:	"Class: Keybard\nThis keyboardist supports the party with the power of whimsical magic.",
-			Tally.Zubin:	"Class: Basskeeper\nHe wields a hammer and specializes in slaying the toughest of enemies.",
-			Tally.Ross:		"Class: Rhythmagician\nThis drummer can use musical magic to switch up the rhythm of battle."
-		}[tally]
+
+enum Tally { Joe, Rob, Andrew, Zubin, Ross }
+
+@export_enum(Joe, Rob, Andrew, Zubin, Ross) var tally
+
+@onready var tallyName:String
+@onready var desc:String
+@onready var move_list:Array[MoveInfo]
+
 signal moved
 var is_selected = false
 signal clicked
 func _ready():
-	move_list = {
-		Tally.Joe: [Moves.JoeHawley, Moves.AristotlesDenial, Moves.AllOfMyFriends, Moves.SpringAndAStorm],
-		Tally.Rob: [Moves.JustApathy, Moves.Greener, Moves.AnotherMinute, Moves.GardenOfEden],
-		Tally.Andrew: [Moves.TheWholeWorldAndYou, Moves.TakenForARide, Moves.Misfortune, Moves.GoodDay],
-		Tally.Zubin: [Moves.ColorBeGone, Moves.RotaryPark],
-		Tally.Ross: [Moves.TheTrap, Moves.TurnTheLightsOff, Moves.RulerOfEverything, Moves.HotRodDuncan]
-	}[tally]
+	var t = TallyHall.TallyHall[tally]
+	tallyName = t.title
+	desc = t.desc
+	move_list = t.move_list
+	
 	
 	create_floor_glow()
 	$Area.input_event.connect(func(camera, event: InputEvent, a, b, c):
@@ -47,7 +34,6 @@ func _ready():
 	hp_changed.connect(func():
 		b.portion = clamp(1.0 * self.hp / self.hp_max, 0, 1)
 		)
-	
 signal deselected
 signal selected
 @onready var world = get_tree().get_first_node_in_group("World")
@@ -74,51 +60,138 @@ var is_busy = false
 var moves_remaining = 0
 var walk_remaining = 0
 
+var greatEyes = 0
 var willingVictim = 0
 
-var allOfMyFriends = 0
 var joeHawley = 0
-
+var aristotlesDenial = false
+var aristotlesDenialDmg = 0
+var allOfMyFriends = 0
+var springAndAStorm = false
 
 var misfortune = 0
 var misfortuneTarget:Enemy = null
-var aristotlesDenial = false
-var springAndAStorm = false
+
+var seaCucumber = 0
+
+var rulerOfEverything = false
+var turnTheLightsOff = false
+var hotRodDuncan = false
+
+var hp_max = 100
+var hp = 100
+var total_damage_taken = 0
+var surrenderTheirChemistryBooks :int = 0
+
+var bleeding = {
+	duration = 0,
+	dmg = 0,
+	source = null
+}
 func begin_turn(rulerOfEverything:bool, turnTheLightsOff:bool):
+	self.rulerOfEverything = rulerOfEverything
 	self.turnTheLightsOff = turnTheLightsOff
+	if surrenderTheirChemistryBooks > 0:
+		surrenderTheirChemistryBooks -= 1
+	
+	if bleeding and bleeding.duration > 0:
+		bleeding.duration -= 1
+		
+		show_message.emit(tallyName + " took bleeding damage!")
+		await get_tree().create_timer(0.5).timeout
+		await take_damage(HitDesc.new(null, self.global_position, bleeding.dmg, null, false))
+		await get_tree().create_timer(0.5)
 	if not rulerOfEverything:
+		hotRodDuncan = false
+		seaCucumber += 1
 		aristotlesDenial = false
 		if misfortune > 0 and is_instance_valid(misfortuneTarget) and misfortuneTarget.is_inside_tree():
-			show_message.emit(misfortuneTarget.title + " was struck by Misfortune!")
-			await get_tree().create_timer(1.5).timeout
-			var d = HitDesc.new(self, misfortuneTarget.global_position + Vector3.UP/2, misfortune * hp / 2, Moves.Misfortune)
+			show_message.emit(misfortuneTarget.title + " was struck by *Misfortune*!")
+			await get_tree().create_timer(1).timeout
+			var d = HitDesc.new(self, misfortuneTarget.global_position + Vector3.UP/2, misfortune * hp, Moves.Misfortune)
 			await misfortuneTarget.take_damage(d)
 			await on_damage_dealt(d.dmgTaken)
 		springAndAStorm = false
-		
 		misfortune = 0
-		
 		joeHawley = 0
 		if allOfMyFriends > 0:
 			allOfMyFriends = 0
 			show_message.emit("*All of my Friends* has ended")
-			await get_tree().create_timer(2)
+			await get_tree().create_timer(1.5)
 	
 	if tally == Tally.Joe:
 		moves_remaining = 2
 	else:
 		moves_remaining = 1
 	
+	walk_remaining = 8
+	
 	willingVictim -= 1
 	if willingVictim > 0:
 		walk_remaining = 0
-		show_message.emit(tallyName + " is unable to walk for this turn!")
-		await get_tree().create_timer(2)
-	else:
-		walk_remaining = 8
+		show_message.emit(tallyName + " is unable to walk due to *Willing Victim*!")
+		await get_tree().create_timer(1.5)
+		
+	greatEyes -= 1
+	if greatEyes > 0:
+		walk_remaining = 0
+		moves_remaining = 0
+		show_message.emit(tallyName + " is too mesmerized to fight!")
+		await get_tree().create_timer(1.5)
 func end_turn(turnTheLightsOff:bool):
 	self.turnTheLightsOff = turnTheLightsOff
 	pass
+func can_use_move(m:MoveInfo):
+	var result = true
+	if (
+		(allOfMyFriends > 0 and m == Moves.AllOfMyFriends	) or
+		(springAndAStorm 	and m == Moves.SpringAndAStorm	) or
+		(rulerOfEverything	and m == Moves.RulerOfEverything) or
+		(world.turnTheLightsOff > 1	and m == Moves.TurnTheLightsOff	) or 
+		(hotRodDuncan		and m == Moves.HotRodDuncan		)
+		):
+		return false
+	var magic = [
+		Moves.AnotherMinute, Moves.GardenOfEden,
+		Moves.TheWholeWorldAndYou, Moves.TakenForARide, Moves.Misfortune, Moves.GoodDay,
+		Moves.SeaCucumber,
+		Moves.TheTrap, Moves.RulerOfEverything, Moves.TurnTheLightsOff, Moves.HotRodDuncan
+	]
+	if surrenderTheirChemistryBooks > 0 and m in magic:
+		return false
+	return true
+	
+func check_ground_effect():
+	for other in $Area.get_overlapping_areas():
+		if other.is_in_group("Fire"):
+			show_message.emit(tallyName + " took damage from fire!")
+			await take_damage(HitDesc.new(null, global_position, 5, null, false))
+			await world.wait(0.5)
+		if other.is_in_group("Banana"):
+			other.get_parent().get_node("Anim").play("Disappear")
+			show_message.emit(tallyName + " took a Banana!")
+			heal(10)
+			await world.wait(0.5)
+	
+func get_walk_speed_at(p:Vector3):
+	var par = PhysicsPointQueryParameters3D.new()
+	par.collide_with_areas = true
+	par.collide_with_bodies = false
+	par.collision_mask = -1
+	par.exclude = []
+	par.position = p + Vector3.UP * 0.1
+	
+	var result = 1
+	var hit := get_world_3d().direct_space_state.intersect_point(par).map(func(h):
+		return h.collider
+	).filter(func(h):
+		return h.is_in_group("Ground")
+	)
+	for h in hit:
+		if h.is_in_group("Sand"):
+			result /= 4.0
+	
+	return result
 func show_walk(flag:Node = null):
 	if !flag:
 		flag = Node.new()
@@ -153,10 +226,14 @@ func show_walk(flag:Node = null):
 		next.clear()
 		for x in path:
 			var tw = get_tree().create_tween()
+			tw.set_ease(Tween.EASE_OUT)
+			tw.set_trans(Tween.TRANS_QUAD)
 			tw.tween_property(self, "global_position", x.global_position, 1/3.0)
 			tw.play()
 			tw.finished.connect(x.dismiss)
 			await tw.finished
+			
+			await check_ground_effect()
 		
 		create_floor_glow()
 		if self.is_selected:
@@ -193,15 +270,25 @@ func show_walk(flag:Node = null):
 		var d = distanceTo[p]
 		if d > walk_remaining:
 			break
-		var tile = create_tile.call(p, d/8.0, seen[p])
+			
+		var inc = 1 / get_walk_speed_at(p)
+		
+		
+		var delay = 0.1 # d/8.0
+		var tile = create_tile.call(p, delay, seen[p])
 		seen[p] = tile
+		
+		var dNext = d + inc
 		for offset in dirs:
 			var q = p + offset
 			if seen.has(q):
+				if distanceTo[q] > dNext:
+					distanceTo[q] = dNext
+					seen[q] = tile
 				continue
 			if !can_walk(q):
 				continue
-			distanceTo[q] = d + 1
+			distanceTo[q] = dNext
 			seen[q] = tile
 			next.push_back(q)
 	
@@ -228,6 +315,8 @@ func on_damage_dealt(dmgDealt:int):
 func use_move_joe_hawley():
 	$Anim.play("Punch")
 	await $Anim.animation_finished
+	get_tree().create_timer(0.5).timeout.connect($Anim.play.bind("Idle"))
+	
 	
 	var param = PhysicsPointQueryParameters3D.new()
 	param.position = $Punch.global_position
@@ -260,16 +349,16 @@ func use_move_joe_hawley():
 		result.dmgDealt += d.dmgTaken
 	
 	await get_tree().create_timer(0.5).timeout
-	$Anim.play("Idle")
+	
 	joeHawley += 1
 	
 	await on_damage_dealt(result.dmgDealt)
 func use_move_aristotles_denial():
 	aristotlesDenial = true
 func use_move_all_of_my_friends():
+	await get_tree().create_timer(0.5).timeout
 	allOfMyFriends = len(get_tree().get_nodes_in_group("Tally"))
-	var p = (allOfMyFriends - 1) * 25
-	show_message.emit("Joe gained " + str(p) + "% defense.")
+	show_message.emit("Active friends: " + str(allOfMyFriends - 1))
 	await get_tree().create_timer(1).timeout
 func use_move_spring_and_a_storm():
 	for t in get_tree().get_nodes_in_group("Tally"):
@@ -303,7 +392,7 @@ func use_move_garden_of_eden(other:TallyChar):
 	$Anim.play("Raise")
 	await $Anim.animation_finished
 	$Anim.play("Idle")
-	other.hp = other.hp_max
+	other.heal(other.hp_max)
 # Andrew
 func use_move_the_whole_world_and_you(enemy:Node3D):
 	$Anim.play("Raise")
@@ -364,7 +453,6 @@ func use_move_good_day():
 		t.heal(20)
 		var h = preload("res://HealParticle.tscn").instantiate()
 		t.add_child(h)
-		h.global_position = t.global_position
 # Zubin
 func use_move_color_be_gone():
 	$Anim.play("Smash")
@@ -428,31 +516,35 @@ func use_move_rotary_park():
 		msg = "Damage: "
 	}
 	
-	var flags = []
+	var callbacks = []
 	
 	var dmg = 30
 	for h in hit:
-		var f = Node.new()
-		add_child(f)
-		flags.push_back(f)
+		var d = HitDesc.new(self, h.global_position + Vector3(0, 0.5, 0), dmg, Moves.RotaryPark, false)
+		callbacks.push_back(await h.take_damage(d, true))
+		result.dmgDealt += d.dmgTaken
+		result.msg += h.title + ": " + str(d.dmgTaken) + ", "
 		
-		
-		(func():
-			var d = HitDesc.new(self, h.global_position + Vector3(0, 0.5, 0), dmg, Moves.RotaryPark, false)
-			await h.take_damage(d)
-			result.dmgDealt += d.dmgTaken
-			result.msg += h.title + ": " + str(d.dmgTaken) + ", "
-			f.queue_free()
-		).call()
 		await get_tree().create_timer(0.1).timeout
-		
-	for f in flags:
-		await f.tree_exited
+	
+	for c in callbacks:
+		await c.call()
 	
 	show_message.emit(result.msg)
 	await get_tree().create_timer(2).timeout
 	
 	await on_damage_dealt(result.dmgDealt)
+func use_move_white_ball(p:Vector3):
+	pass
+func use_move_sea_cucumber(t:TallyChar):
+	await get_tree().create_timer(1).timeout
+	
+	var delta = t.heal(seaCucumber * 10)
+	seaCucumber = 0
+	$Heal.play()
+	t.add_child(preload("res://HealParticle.tscn").instantiate())
+	show_message.emit(t.tallyName + " healed " + str(delta) + " HP!")
+	await get_tree().create_timer(1).timeout
 # Ross
 func use_move_the_trap(first: Node3D):
 	$Anim.play("Wave")
@@ -461,20 +553,17 @@ func use_move_the_trap(first: Node3D):
 	$Lightning.play()
 	var seen = [first]
 	var next = [first]
-	
 	var dmgDealt = 0
-	
+	var callbacks = []
 	var msg = "Damage: "
+	var dmgBase = 85 - ceil(first.global_position.distance_to(global_position)) * 5
 	while len(next) > 0:
 		var e = next.pop_front()
-		
-		var dmg = 30 / (1 + (e.global_position - first.global_position).length()/4.0)
+		var dmg = dmgBase / (1 + (e.global_position - first.global_position).length()/4.0)
 		var d = HitDesc.new(self, e.global_position + Vector3(0, 0.5, 0), dmg, Moves.TheTrap, false)
-		e.take_damage(d)
+		callbacks.push_back(await e.take_damage(d, true))
 		dmgDealt += d.dmgTaken
-		
-		msg += e.title + ": " + str(int(dmg)) + ", "
-		
+		msg += e.title + ": " + str(int(d.dmgTaken)) + ", "
 		var param = PhysicsShapeQueryParameters3D.new()
 		var sp = SphereShape3D.new()
 		sp.radius = 3
@@ -500,6 +589,9 @@ func use_move_the_trap(first: Node3D):
 		await get_tree().create_timer(0.1).timeout
 	show_message.emit(msg)
 	await get_tree().create_timer(2).timeout
+	
+	for c in callbacks:
+		await c.call()
 		
 	await on_damage_dealt(dmgDealt)
 		
@@ -539,11 +631,22 @@ func use_move_turn_the_lights_off():
 	await $Anim.animation_finished
 	$Anim.play("Idle")
 	$DoubleTime.play()
+func use_move_the_apologue_of_hot_rod_duncan(t: TallyChar):
+	$Anim.play("Wave")
+	await $Anim.animation_finished
+	$Anim.play("Idle")
+	$DoubleTime.play()
+	t.moves_remaining += 2
+	
+	hotRodDuncan = true
 func heal(amount:int):
 	var h = hp
 	hp = min(hp_max, hp + amount)
 	hp_changed.emit()
 	return hp - h
+func inc_max_hp(amount:int):
+	hp_max = max(0, hp_max + amount)
+	hp_changed.emit()
 func get_line_of_sight_enemies():
 	return get_tree().get_nodes_in_group("Enemy")
 	[].filter(func(e):
@@ -558,15 +661,8 @@ func get_line_of_sight_enemies():
 		return not hit.has("collider")
 	)
 signal show_message(msg:String)
-
-var hp_max = 100
-var hp = 100
-var turnTheLightsOff = false
-
-var total_damage_taken = 0
-
 signal hp_changed
-func take_damage(h:HitDesc):
+func take_damage(h:HitDesc, interrupt:bool = false):
 	h.dmgTaken = h.dmg
 	if turnTheLightsOff:
 		h.dmgTaken *= 2
@@ -578,10 +674,13 @@ func take_damage(h:HitDesc):
 		h.dmgTaken *= (1 - (allOfMyFriends - 1)/4.0)
 	h.dmgTaken = min(h.dmgTaken, hp)
 	
+	hp -= h.dmgTaken
 	total_damage_taken += h.dmgTaken
+	aristotlesDenialDmg += h.dmgTaken
+	hp_changed.emit()
 	
-	
-	show_message.emit(tallyName + " was hit for " + str(h.dmgTaken) + " damage!")
+	if h.announce:
+		show_message.emit(tallyName + " was hit for " + str(h.dmgTaken) + " damage!")
 	var at = preload("res://ActionText.tscn").instantiate()
 	add_child(at)
 	at.global_position = h.pos + Vector3(0, 0.5, 0.5)
@@ -593,33 +692,58 @@ func take_damage(h:HitDesc):
 	au.global_position = h.pos
 	au.play()
 	au.finished.connect(au.queue_free)
-	
-	hp -= h.dmgTaken
-	hp_changed.emit()
-	if hp == 0:
-		if aristotlesDenial:
-			var dmg = 0
+	var handle = func():
+		if aristotlesDenial and h.attacker:
+			aristotlesDenial = false
+			var dmgLeft = 0
 			for t in get_tree().get_nodes_in_group("Tally"):
-				dmg += t.total_damage_taken
-			dmg = dmg / 4
+				t = t as TallyChar
+				dmgLeft += t.aristotlesDenialDmg
+				t.aristotlesDenialDmg = 0
+			dmgLeft = dmgLeft / 2
 			
-			show_message.emit("*Aristotle's Denial* activated! All enemies took damage!")
+			if allOfMyFriends > 0:
+				dmgLeft *= (6 - allOfMyFriends) / 2.0
+			
+			show_message.emit("*Aristotle's Denial* activated!")
 			await get_tree().create_timer(1).timeout
 			var dmgDealt = 0
-			for e in get_tree().get_nodes_in_group("Enemy"):
-				var d = HitDesc.new(self, e.global_position, dmg, Moves.AristotlesDenial, false)
-				await e.take_damage(d)
+			
+			
+
+			if false:
+				var get_active_enemies = func():
+					var enemies = get_tree().get_nodes_in_group("Enemy")
+					enemies.erase(h.attacker)
+					enemies.push_front(h.attacker)
+					return enemies
+				while dmgLeft > 0:
+					var targets = get_active_enemies.call()
+					if targets.is_empty():
+						break
+					for t in targets:
+						if dmgLeft == 0:
+							break
+						var d = HitDesc.new(self, h.attacker.global_position, dmgLeft, Moves.AristotlesDenial, true)
+						await t.take_damage(d)
+						dmgDealt += d.dmgTaken
+						dmgLeft -= d.dmgTaken
+			if true:
+				var d = HitDesc.new(self, h.attacker.global_position, dmgLeft, Moves.AristotlesDenial, true)
+				await h.attacker.take_damage(d)
 				dmgDealt += d.dmgTaken
-		await fall()
+			await on_damage_dealt(dmgDealt)
+			
+		if hp == 0:
+			await fall()
+			queue_free()
+	if interrupt:
+		return handle
+	handle.call()
+signal fell
 func fall():
 	await get_tree().create_timer(2).timeout
 	show_message.emit(tallyName + " fell!")
-	
-	
-	var tw = get_tree().create_tween()
-	tw.tween_property($Sprite, "modulate", Color.TRANSPARENT, 1)
-	tw.play()
-	tw.finished.connect(self.queue_free)
 	
 	var p = preload("res://TallyFallParticle.tscn").instantiate()
 	world.add_child(p)
@@ -632,7 +756,11 @@ func fall():
 	a.global_position = global_position
 	a.play()
 	
-	
+	var tw = get_tree().create_tween()
+	tw.tween_property($Sprite, "modulate", Color.TRANSPARENT, 1)
+	tw.play()
+	await tw.finished
+	fell.emit()
 func can_walk(pos: Vector3):
 	var allow_walk = func():
 		
@@ -655,3 +783,20 @@ func has_ground(pos: Vector3):
 	
 	var hit = get_world_3d().direct_space_state.intersect_point(param)
 	return hit.any(func(e): return e.collider.is_in_group("Ground"))
+	
+func get_all_standable_positions() -> Array[Vector3]:
+	var seen = [global_position]
+	var next = [global_position]
+	var result = []
+	while len(next) > 0:
+		var p = next.pop_front()
+		var P = func(x, z) -> Vector3: return p + Vector3(x, 0, z)
+		if not can_walk(p):
+			continue
+		result.push_back(p)
+		for q in [P.call(-1, 0), P.call(0, -1), P.call(1, 0), P.call(0, 1)]:
+			if seen.has(q):
+				continue
+			seen.push_back(q)
+			next.push_back(q)
+	return result

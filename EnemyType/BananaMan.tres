@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bsfi4v2ldinla"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_2eh2q"]
+
+[resource]
+script = ExtResource("1_2eh2q")
+title = "Banana Man"
+desc = ""
+hp_max = 900
+hp_start = 300

@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://di2geo4g7esx3"]
+[gd_scene load_steps=17 format=3 uid="uid://di2geo4g7esx3"]
 
 [ext_resource type="Script" path="res://Tally.gd" id="1_hrgcl"]
 [ext_resource type="Texture2D" uid="uid://elbi1sin06q7" path="res://ZubinSedghi.png" id="2_afna5"]
 [ext_resource type="AudioStream" uid="uid://df0s86tr4gj68" path="res://Sounds/hammer_charge.wav" id="3_hwln2"]
 [ext_resource type="AudioStream" uid="uid://c4jlm2dqw6io4" path="res://Sounds/hammer_hit.wav" id="4_fd0ux"]
 [ext_resource type="Texture2D" uid="uid://b1uqyv46ct7sc" path="res://BlueRing.png" id="5_6qxnq"]
+[ext_resource type="AudioStream" uid="uid://d1j711c27id33" path="res://Sounds/staff_heal.wav" id="6_yi0rr"]
 
 [sub_resource type="Animation" id="Animation_4fiss"]
 resource_name = "Idle"
@@ -276,3 +277,6 @@ modulate = Color(1, 1, 1, 0)
 pixel_size = 0.0833
 texture_filter = 2
 texture = ExtResource("5_6qxnq")
+
+[node name="Heal" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_yi0rr")

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://crkckjsben5dg"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_c8uwb"]
+
+[resource]
+script = ExtResource("1_c8uwb")
+title = "No-Eyed Girl"
+desc = ""
+hp_max = 500
+hp_start = 100

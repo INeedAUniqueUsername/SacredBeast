@@ -6,3 +6,5 @@
 script = ExtResource("1_r4aww")
 title = "Ashley"
 desc = "Always targets Zubin first. When this enemy falls, any excess damage from the killing hit is converted to healing for all nearby enemies"
+hp_max = 300
+hp_start = 200

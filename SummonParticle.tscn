@@ -1,0 +1,85 @@
+[gd_scene load_steps=7 format=3 uid="uid://bd0ggh2443fqj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0e6kc"]
+albedo_color = Color(0, 0, 0, 1)
+emission = Color(0, 1, 0.282353, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_2tpj5"]
+material = SubResource("StandardMaterial3D_0e6kc")
+size = Vector2(0.25, 0.25)
+
+[sub_resource type="Curve" id="Curve_4o2kh"]
+max_value = 2.0
+_data = [Vector2(0, 0), 0.0, 11.4405, 0, 0, Vector2(1, 0), -2.20972, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Animation" id="Animation_hqeh1"]
+resource_name = "Appear"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particle:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_7fd3x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Particle:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gxqqc"]
+_data = {
+"Appear": SubResource("Animation_hqeh1"),
+"RESET": SubResource("Animation_7fd3x")
+}
+
+[node name="SummonParticle" type="Node3D"]
+
+[node name="Particle" type="CPUParticles3D" parent="."]
+amount = 32
+mesh = SubResource("QuadMesh_2tpj5")
+emission_shape = 3
+emission_box_extents = Vector3(0.5, 0, 0.5)
+direction = Vector3(0, 1, 0)
+spread = 30.0
+gravity = Vector3(0, 2, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 2.0
+scale_amount_curve = SubResource("Curve_4o2kh")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Appear"
+libraries = {
+"": SubResource("AnimationLibrary_gxqqc")
+}

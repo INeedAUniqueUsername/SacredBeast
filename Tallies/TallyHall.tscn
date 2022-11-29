@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3 uid="uid://mcadd06ntjmj"]
+
+[ext_resource type="PackedScene" uid="uid://globk6a68laj" path="res://Tallies/Joe.tscn" id="1_ufneh"]
+[ext_resource type="PackedScene" uid="uid://c277t2ff7hngi" path="res://Tallies/Rob.tscn" id="2_aof3o"]
+[ext_resource type="PackedScene" uid="uid://dl6fiv2xuxivb" path="res://Tallies/Andrew.tscn" id="3_6u5wu"]
+[ext_resource type="PackedScene" uid="uid://di2geo4g7esx3" path="res://Tallies/Zubin.tscn" id="4_y5jmq"]
+[ext_resource type="PackedScene" uid="uid://browso1sl5d70" path="res://Tallies/Ross.tscn" id="5_tef8v"]
+
+[node name="TallyHall" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+
+[node name="Joe" parent="." instance=ExtResource("1_ufneh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+
+[node name="Rob" parent="." instance=ExtResource("2_aof3o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="Andrew" parent="." instance=ExtResource("3_6u5wu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -2)
+
+[node name="Zubin" parent="." instance=ExtResource("4_y5jmq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="Ross" parent="." instance=ExtResource("5_tef8v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 2)

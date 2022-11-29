@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bys0mn7lle31f" path="res://TileStep.png" id="2_uy6d5"]
 [ext_resource type="Texture2D" uid="uid://dwteu5ao0hq2v" path="res://TileStepOutline.png" id="3_kiyde"]
 
-[sub_resource type="Animation" id="Animation_kjwtx"]
+[sub_resource type="Animation" id="Animation_hyefh"]
 resource_name = "Appear"
 length = 0.3
 tracks/0/type = "value"
@@ -17,7 +17,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.3),
 "transitions": PackedFloat32Array(0.5, 1),
 "update": 0,
-"values": [Vector3(0, 0.5, 0), Vector3(0, 0.001, 0)]
+"values": [Vector3(0, 0.5, 0), Vector3(0, 0.005, 0)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -32,7 +32,7 @@ tracks/1/keys = {
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_nl0hp"]
+[sub_resource type="Animation" id="Animation_ak0qu"]
 resource_name = "Disappear"
 length = 0.3
 tracks/0/type = "method"
@@ -62,7 +62,7 @@ tracks/1/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_tl6nx"]
+[sub_resource type="Animation" id="Animation_34456"]
 resource_name = "Hover"
 length = 0.001
 tracks/0/type = "value"
@@ -78,46 +78,34 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_4op6c"]
+[sub_resource type="Animation" id="Animation_k0uwn"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite3D:position")
+tracks/0/path = NodePath("Sprite3D/Outline:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, 0.016, 0)]
+"values": [Color(1, 1, 1, 0)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Sprite3D/Outline:modulate")
+tracks/1/path = NodePath("Sprite3D:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 0)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Sprite3D:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_ffl5n"]
+[sub_resource type="Animation" id="Animation_wfrs8"]
 resource_name = "Rest"
 length = 0.001
 tracks/0/type = "value"
@@ -133,23 +121,23 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 0)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_snay2"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vn7wb"]
 _data = {
-"Appear": SubResource("Animation_kjwtx"),
-"Disappear": SubResource("Animation_nl0hp"),
-"Hover": SubResource("Animation_tl6nx"),
-"RESET": SubResource("Animation_4op6c"),
-"Rest": SubResource("Animation_ffl5n")
+"Appear": SubResource("Animation_hyefh"),
+"Disappear": SubResource("Animation_ak0qu"),
+"Hover": SubResource("Animation_34456"),
+"RESET": SubResource("Animation_k0uwn"),
+"Rest": SubResource("Animation_wfrs8")
 }
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_6qtk8"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_lgva8"]
 size = Vector3(1, 0.016, 1)
 
 [node name="TileStep" type="Node3D"]
 script = ExtResource("1_tjl4e")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, 0)
 cast_shadow = 0
 pixel_size = 0.0313
 axis = 1
@@ -169,17 +157,17 @@ texture = ExtResource("3_kiyde")
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Appear"
 libraries = {
-"": SubResource("AnimationLibrary_snay2")
+"": SubResource("AnimationLibrary_vn7wb")
 }
 
 [node name="Hover" type="AnimationPlayer" parent="."]
 autoplay = "Appear"
 libraries = {
-"": SubResource("AnimationLibrary_snay2")
+"": SubResource("AnimationLibrary_vn7wb")
 }
 
 [node name="Area" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.016, 0)
-shape = SubResource("BoxShape3D_6qtk8")
+shape = SubResource("BoxShape3D_lgva8")

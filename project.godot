@@ -9,10 +9,10 @@
 config_version=5
 
 _global_script_classes=[{
-"base": "RefCounted",
-"class": &"Common",
+"base": "Node",
+"class": &"Battle",
 "language": &"GDScript",
-"path": "res://Common.gd"
+"path": "res://Battle.gd"
 }, {
 "base": "Node",
 "class": &"CustomRunner",
@@ -75,7 +75,7 @@ _global_script_classes=[{
 "path": "res://Tally.gd"
 }]
 _global_script_class_icons={
-"Common": "",
+"Battle": "",
 "CustomRunner": "",
 "Enemy": "",
 "EnemyType": "",
@@ -93,13 +93,15 @@ _global_script_class_icons={
 [application]
 
 config/name="Sacred Beast"
-run/main_scene="res://World.tscn"
+run/main_scene="res://TitleScreen.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://Icon.png"
 
 [autoload]
 
 Moves="*res://Moves.tscn"
+Helper="*res://Helper.tscn"
+TallyHall="*res://TallyHall.tscn"
 
 [display]
 

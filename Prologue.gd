@@ -24,30 +24,32 @@ func showText(st):
 	
 	var l = len(st)
 	$Label.visible_characters = 0
-	t.tween_property($Label, "visible_characters", l, l / 24.0)
+	t.tween_property($Label, "visible_characters", l, (l / 24.0) / scrollSpeed)
 	t.play()
 	await t.finished
 	
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5 / scrollSpeed).timeout
 	
 	t = get_tree().create_tween()
-	t.tween_property($Label, "modulate", Color(1, 1, 1, 0), 0.5)
+	t.tween_property($Label, "modulate", Color(1, 1, 1, 0), 0.5 / scrollSpeed)
 	t.play()
 	await t.finished
 	
 	await get_tree().create_timer(0.5).timeout
 	
+var scrollSpeed = 1
 func _ready():
 	for st in parts:
 		await showText(st)
+	next()
+func next():
 	$Anim.play("Disappear")
 	await $Anim.animation_finished
-	get_tree().quit()
-	get_tree().change_scene_to_file("res://World.tscn")
-	pass # Replace with function body.
+	get_tree().change_scene_to_file("res://Overworld.tscn")
 func _process(delta):
 	if Input.is_key_pressed(KEY_SPACE):
-		scroll.set_speed_scale(2)
-		pass
-	
+		scrollSpeed = 2
+		scroll.set_speed_scale(scrollSpeed)
+	if Input.is_key_pressed(KEY_ESCAPE):
+		next()
 	pass

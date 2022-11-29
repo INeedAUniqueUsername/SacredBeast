@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cee1dsjakg2nc"]
+
+[ext_resource type="Script" path="res://TallyHall.gd" id="1_ikx6g"]
+
+[node name="TallyHall" type="Node"]
+script = ExtResource("1_ikx6g")

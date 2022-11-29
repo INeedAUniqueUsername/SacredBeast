@@ -9,17 +9,21 @@ var follow: Node3D:
 		if n:
 			offset = (global_position - n.global_position)
 		follow = n
-
+var follow_pos: Vector3:
+	get:
+		return follow.global_position + offset 
 func move(delta: Vector3):
 	var tw = get_tree().create_tween()
 	tw.set_ease(Tween.EASE_OUT)
+	tw.set_trans(Tween.TRANS_QUAD)
 	tw.tween_property(self, "global_position", global_position + delta, 0.2)
 	
 	tw.play()
 	await tw.finished
 func _process(delta):
-	if follow:
-		global_position = follow.global_position + offset
+	if follow and is_instance_valid(follow):
+		global_position = follow_pos
+		return
 	if can_move:
 		var p = Input.is_key_pressed
 		var dirs = {

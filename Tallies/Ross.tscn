@@ -160,7 +160,7 @@ size = Vector2(0.125, 0.125)
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -3.38596, 0.0, 0, 0]
 point_count = 2
 
-[node name="Ross" type="Node3D" groups=["Tally"]]
+[node name="Ross" type="Node3D" groups=["Ross", "Tally"]]
 script = ExtResource("1_kp4n1")
 tally = 4
 

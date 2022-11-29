@@ -6,3 +6,5 @@
 script = ExtResource("1_8wdf2")
 title = "Crow"
 desc = null
+hp_max = 150
+hp_start = 100

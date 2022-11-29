@@ -4,5 +4,7 @@
 
 [resource]
 script = ExtResource("1_l0md3")
-title = "Crow"
+title = "Erlking"
 desc = null
+hp_max = 300
+hp_start = 200
