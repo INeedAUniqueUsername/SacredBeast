@@ -1,8 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://88xi05ckcy05"]
+[gd_scene load_steps=15 format=3 uid="uid://88xi05ckcy05"]
 
 [ext_resource type="Texture2D" uid="uid://cf5g4u65krnhx" path="res://TitleScreen.png" id="1_ak7ut"]
 [ext_resource type="Script" path="res://TitleScreen.gd" id="1_jgtls"]
-[ext_resource type="AudioStream" uid="uid://cxcsmam6oq1ps" path="res://TitleScreen.wav" id="2_p1neb"]
+[ext_resource type="AudioStream" uid="uid://dt78fbt0y2v4f" path="res://Music/SacredBeast.wav" id="3_mb5rx"]
 
 [sub_resource type="SystemFont" id="SystemFont_rl1yr"]
 font_names = PackedStringArray("Arial")
@@ -85,8 +85,24 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_s6o56"]
+resource_name = "Enter"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 2),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vm0ui"]
 _data = {
+"Enter": SubResource("Animation_s6o56"),
 "Exit": SubResource("Animation_6wgp4"),
 "RESET": SubResource("Animation_cytwf")
 }
@@ -101,6 +117,7 @@ grow_vertical = 2
 script = ExtResource("1_jgtls")
 
 [node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -110,6 +127,7 @@ texture = ExtResource("1_ak7ut")
 ignore_texture_size = true
 
 [node name="Button" type="Button" parent="."]
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -138,11 +156,12 @@ libraries = {
 }
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_p1neb")
+stream = ExtResource("3_mb5rx")
 volume_db = -3.0
 autoplay = true
 
 [node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Enter"
 libraries = {
 "": SubResource("AnimationLibrary_vm0ui")
 }

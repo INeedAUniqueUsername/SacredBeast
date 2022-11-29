@@ -382,7 +382,16 @@ func _ready():
 			if get_tree() and get_active_tallies().is_empty():
 				end_game()
 			)
-	await $Intro/Anim.animation_finished
+	
+	
+	$Turn/Msg.text = "Battle Start!"
+	$Turn/Anim.play("Show")
+	await $Turn/Anim.animation_finished
+	
+	(func():
+		await $Turn/Anim.animation_finished
+		showMessage("Objective: Defeat all enemies to win the battle!")
+		).call()
 	
 	get_tree().create_timer(4.5).timeout.connect(func():
 		$Smoke.emitting = true
