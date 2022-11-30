@@ -120,6 +120,8 @@ func take_banana():
 			await world.wait(0.5)
 var busy = false
 func retaliate(t:TallyChar):
+	if actor.timestop > 0:
+		return
 	if busy:
 		return
 	busy = true

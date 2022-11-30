@@ -98,6 +98,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(0, 0, 0, 1)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Audio:volume_db")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.5, 1),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [-3.0, -80.0]
+}
 
 [sub_resource type="Animation" id="Animation_iud6h"]
 length = 0.001
@@ -112,6 +124,18 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Audio:volume_db")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-3.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lof6i"]
@@ -189,7 +213,7 @@ theme_override_font_sizes/font_size = 64
 text = "AAAAAAAAAAAAAAAAAAAAAAAAA"
 autowrap_mode = 3
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="Audio" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_ue8md")
 volume_db = -3.0
 autoplay = true

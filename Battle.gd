@@ -22,7 +22,7 @@ func showMessage(t:String):
 		await $UI/Message/Anim.animation_finished
 		messageVisible = true
 	var tw = get_tree().create_tween()
-	tw.tween_property($UI/Message, "visible_ratio", 1, len(t)/64.0)
+	tw.tween_property($UI/Message, "visible_ratio", 1, len(t)/80.0)
 	tw.play()
 	await tw.finished
 	hideMessage()

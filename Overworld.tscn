@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://3qo0cl2vqeqc"]
+[gd_scene load_steps=11 format=3 uid="uid://3qo0cl2vqeqc"]
 
 [ext_resource type="Texture2D" uid="uid://gjx55ippvrsg" path="res://Map.png" id="1_flm0a"]
 [ext_resource type="Script" path="res://Overworld.gd" id="1_x6s0l"]
@@ -11,6 +11,21 @@ content_margin_left = 16.0
 content_margin_top = 16.0
 content_margin_right = 16.0
 content_margin_bottom = 16.0
+
+[sub_resource type="Animation" id="Animation_aavxg"]
+resource_name = "Enter"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_0xyas"]
 resource_name = "Exit"
@@ -45,6 +60,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_nan82"]
 _data = {
+"Enter": SubResource("Animation_aavxg"),
 "Exit": SubResource("Animation_0xyas"),
 "RESET": SubResource("Animation_i8b3s")
 }
@@ -58,27 +74,22 @@ position = Vector2(960, 540)
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("1_flm0a")
 
-[node name="Camera" type="Camera2D" parent="."]
-position = Vector2(960, 540)
-current = true
-
-[node name="Polygon2D" type="Polygon2D" parent="Camera"]
-position = Vector2(-1920, -1080)
-scale = Vector2(3840, 2160)
-z_index = -5
-color = Color(1, 0.992157, 0.909804, 1)
-polygon = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
-
-[node name="Control" type="Control" parent="Camera"]
+[node name="Control" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 960.0
+offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="Title" type="Label" parent="Camera/Control"]
+[node name="Title" type="Label" parent="Control"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -96,9 +107,11 @@ text = "Level Select"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="NinePatchRect" parent="Camera/Control/Title" instance=ExtResource("4_5a7hw")]
+[node name="NinePatchRect" parent="Control/Title" instance=ExtResource("4_5a7hw")]
+layout_mode = 1
 
-[node name="Desc" type="Label" parent="Camera/Control"]
+[node name="Desc" type="Label" parent="Control"]
+layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -114,7 +127,19 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_r336q")
 text = "Click a level marker to start"
 autowrap_mode = 3
 
-[node name="NinePatchRect" parent="Camera/Control/Desc" instance=ExtResource("4_5a7hw")]
+[node name="NinePatchRect" parent="Control/Desc" instance=ExtResource("4_5a7hw")]
+layout_mode = 1
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(960, 540)
+current = true
+
+[node name="Polygon2D" type="Polygon2D" parent="Camera"]
+position = Vector2(-1920, -1080)
+scale = Vector2(3840, 2160)
+z_index = -5
+color = Color(1, 0.992157, 0.909804, 1)
+polygon = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
 
 [node name="MapMarker" parent="." instance=ExtResource("5_sc2jf")]
 
@@ -125,9 +150,11 @@ position = Vector2(803, 406)
 position = Vector2(1259, 598)
 
 [node name="MapMarker4" parent="." instance=ExtResource("5_sc2jf")]
+visible = false
 position = Vector2(1515, 622)
 
 [node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Enter"
 libraries = {
 "": SubResource("AnimationLibrary_nan82")
 }

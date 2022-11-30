@@ -1,5 +1,4 @@
 extends Control
-
 const parts = [
 	'One day in 2010, the band was getting ready for a concert at the park when something strange happened.',
 	'"Guys!! Look what I just found!!" Joe said excitedly, pointing at a tornado that he had just found. "This will take us to the Kingdom of Good & Evil!"',
@@ -10,14 +9,10 @@ const parts = [
 	'Eventually, the winds stopped and the band began falling... but not towards the park.',
 	'When they landed, the band found themselves in a land above the clouds - Talhalla.',
 ]
-
-
 var scroll : Tween = null
-
 func showText(st):
 	$Label.modulate = Color(1, 1, 1, 1)
 	$Label.text = st
-	
 	
 	var t = get_tree().create_tween()
 	scroll = t

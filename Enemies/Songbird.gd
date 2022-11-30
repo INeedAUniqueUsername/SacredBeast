@@ -53,6 +53,7 @@ func do_turn():
 			
 		bananaMan = preload("res://Enemies/BananaMan.tscn").instantiate()
 		world.add_child(bananaMan)
+		world.register(bananaMan)
 		bananaMan.global_position = pos
 		await world.wait(0.3)
 		world.extra_turns.push_back(bananaMan)

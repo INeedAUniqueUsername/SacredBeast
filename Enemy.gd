@@ -101,8 +101,6 @@ func do_turn():
 		return
 	
 	var summon_no_eyed_girl = func():
-		show_message.emit(title + " summoned a No Eyed Girl!")
-		await get_tree().create_timer(0.5).timeout
 		
 		var pos
 		if self.enemyType == Enemies.NoEyedGirl:
@@ -113,7 +111,12 @@ func do_turn():
 			pos = target.get_all_standable_positions().filter(func(p):
 				return p != target.global_position and p.distance_to(self.global_position) < 5
 			).pick_random()
-			
+		
+		if not pos:
+			return
+		show_message.emit(title + " summoned a No Eyed Girl!")
+		await get_tree().create_timer(0.5).timeout
+		
 		var p = preload("res://SummonParticle.tscn").instantiate()
 		world.add_child(p)
 		p.global_position = pos
@@ -206,7 +209,7 @@ func do_turn():
 		await get_tree().create_timer(1).timeout
 		target.hp_max -= h.dmgTaken
 		show_message.emit(target.tallyName + " lost " + str(h.dmgTaken) + " Max HP!")
-		await get_tree().create_timer(2).timeout
+		await get_tree().create_timer(1.5).timeout
 		
 		for i in range(2):
 			await summon_no_eyed_girl.call()
@@ -364,7 +367,7 @@ func do_turn():
 	
 	return
 	
-	target = get_tree().get_nodes_in_group("Tally").pick_random() as Node3D
+	target = get_active_tallies().pick_random() as Node3D
 	if target:
 		await walk_towards(target.global_position, 4, 1)
 		if (global_position - target.global_position).length() < 1:
@@ -541,17 +544,6 @@ func std_take_damage(h:HitDesc, interrupt:bool = false):
 		return handle_damage
 	await handle_damage.call()
 
-
-
-
-
-
-
-
-
-
-
-
 func heal(amount:int):
 	hp += amount
 	return amount
@@ -598,20 +590,19 @@ func fall(h:HitDesc, extra_dmg:int = 0, announce:bool = true):
 			e.add_child(preload("res://HealParticle.tscn").instantiate())
 		playSound(preload("res://Sounds/staff_heal.wav"), get_parent(), func(a):
 			a.global_position = global_position)
-		show_message.emit("Nearby enemies regained HP!")		
+		show_message.emit("Nearby enemies regained HP!")
 	elif enemyType == Enemies.MaryKate:
 		await get_tree().create_timer(0.5).timeout
 		show_message.emit("Mary-Kate activated *How It's Gone and It's Gone and It's Gone*!")
 		await get_tree().create_timer(1.5).timeout
-		var tallies = get_tree().get_nodes_in_group("Tally")
+		var tallies = get_active_tallies()
 		extra_dmg /= len(tallies)
 		var callbacks = []
 		for t in tallies:
-			await get_tree().create_timer(0.1).timeout
 			callbacks.push_back(await t.take_damage(HitDesc.new(self, t.global_position, extra_dmg, null), true))
-			
+			await get_tree().create_timer(0.1).timeout
 		show_message.emit("The Tallies took damage!")
-		await get_tree().create_timer(2).timeout
+		await get_tree().create_timer(1.5).timeout
 		for c in callbacks:
 			await c.call()
 	fell.emit()
