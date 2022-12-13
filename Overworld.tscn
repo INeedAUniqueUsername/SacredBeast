@@ -1,10 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://3qo0cl2vqeqc"]
+[gd_scene load_steps=13 format=3 uid="uid://3qo0cl2vqeqc"]
 
 [ext_resource type="Texture2D" uid="uid://gjx55ippvrsg" path="res://Map.png" id="1_flm0a"]
 [ext_resource type="Script" path="res://Overworld.gd" id="1_x6s0l"]
 [ext_resource type="SystemFont" uid="uid://bg67fe8v36op0" path="res://ArialNova.tres" id="3_oyyu4"]
 [ext_resource type="PackedScene" uid="uid://d3p4pdf616e82" path="res://WhiteRect.tscn" id="4_5a7hw"]
+[ext_resource type="Script" path="res://SettingsItem.gd" id="4_nqhma"]
 [ext_resource type="PackedScene" uid="uid://ybw0oggyrwvf" path="res://MapMarker.tscn" id="5_sc2jf"]
+[ext_resource type="AudioStream" uid="uid://bwcju3cs26cr0" path="res://Music/VariousKitchenUtensils.wav" id="6_r4643"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r336q"]
 content_margin_left = 16.0
@@ -74,8 +76,22 @@ position = Vector2(960, 540)
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("1_flm0a")
 
+[node name="CheckBox" type="CheckBox" parent="."]
+offset_right = 24.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_oyyu4")
+theme_override_font_sizes/font_size = 32
+text = "Music"
+script = ExtResource("4_nqhma")
+
 [node name="Control" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,7 +105,6 @@ grow_vertical = 2
 mouse_filter = 1
 
 [node name="Title" type="Label" parent="Control"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -108,10 +123,8 @@ horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="NinePatchRect" parent="Control/Title" instance=ExtResource("4_5a7hw")]
-layout_mode = 1
 
 [node name="Desc" type="Label" parent="Control"]
-layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -128,7 +141,6 @@ text = "Click a level marker to start"
 autowrap_mode = 3
 
 [node name="NinePatchRect" parent="Control/Desc" instance=ExtResource("4_5a7hw")]
-layout_mode = 1
 
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(960, 540)
@@ -147,14 +159,21 @@ polygon = PackedVector2Array(0, 0, 1, 0, 1, 1, 0, 1)
 position = Vector2(803, 406)
 
 [node name="MapMarker3" parent="." instance=ExtResource("5_sc2jf")]
-position = Vector2(1259, 598)
+position = Vector2(1027, 742)
 
 [node name="MapMarker4" parent="." instance=ExtResource("5_sc2jf")]
-visible = false
-position = Vector2(1515, 622)
+position = Vector2(1267, 606)
+
+[node name="MapMarker5" parent="." instance=ExtResource("5_sc2jf")]
+position = Vector2(1291, 366)
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 autoplay = "Enter"
 libraries = {
 "": SubResource("AnimationLibrary_nan82")
 }
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_r4643")
+autoplay = true
+bus = &"Music"

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c7rc38jiyn8e3"]
+
+[ext_resource type="Script" path="res://EnemyType.gd" id="1_qfn2e"]
+
+[resource]
+script = ExtResource("1_qfn2e")
+title = "Sacred Beast"
+desc = null
+hp_max = 1000
+hp_start = 500

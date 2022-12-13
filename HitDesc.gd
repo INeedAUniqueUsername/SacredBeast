@@ -4,10 +4,10 @@ var pos: Vector3
 var dmg: int
 const MoveInfo = preload("res://Moves.gd").MoveInfo
 var move:MoveInfo
-var announce:bool
+var announce:bool = true
 
 var dmgTaken := 0
-
+var grapple = false
 func _init(attacker:Node, pos:Vector3, dmg: int, move:MoveInfo, announce:bool = true):
 	self.attacker = attacker
 	self.pos = pos

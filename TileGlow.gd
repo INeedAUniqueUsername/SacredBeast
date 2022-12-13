@@ -1,10 +1,7 @@
 extends Node3D
 @tool
 
-enum TileColor {
-	Red, Yellow, Green, Blue, Gray
-}
-@export var color: TileColor:
+@export var color: int:
 	set(t):
 		print("color set to " + str(t))
 		color = t
@@ -16,10 +13,12 @@ enum TileColor {
 			preload("res://TileGlowGreen.png"),
 			preload("res://TileGlowBlue.png"),
 			preload("res://TileGlowGray.png"),
+			preload("res://TileGlowOrange.png"),
+			preload("res://TileGlowBlack.png"),
 		][color]
 		
 		var c = [
-			Color.RED, Color.YELLOW, Color.GREEN, Color.DODGER_BLUE, Color(0.5, 0.5, 0.5)
+			Color.RED, Color.YELLOW, Color.GREEN, Color.DODGER_BLUE, Color(0.5, 0.5, 0.5), Color.ORANGE, Color.BLACK
 		][color]
 		$Particles.mesh.material.albedo_color = c
 		$Particles.mesh.material.emission = c

@@ -38,10 +38,12 @@ func showTally(t:TallyChar):
 		preload("res://YellowRect.png"),
 		preload("res://GreenRect.png"),
 		preload("res://BlueRect.png"),
-		preload("res://LightGrayRect.png")
+		preload("res://LightGrayRect.png"),
+		preload("res://OrangeRect.png"),
+		preload("res://WhiteRect.png")
 	][t.tally]
 	$Title/NinePatchRect.texture = texture
-	
+	$Stats.text = "HP: " + str(t.hp) + " / " + str(t.hp_max) + "\nRage (Aristotle's Denial): " + str(t.aristotlesDenialDmg)
 	$Actions/Act.clickable = t.moves_remaining > 0
 	
 	var index = 0
@@ -64,6 +66,7 @@ func showEnemy(enemy:Node3D):
 	$Title.text = enemy.title
 	$Title/NinePatchRect.texture = preload("res://BlackRect.png")
 	$Desc.text = enemy.desc
+	$Stats.text = "HP: " + str(enemy.hp) + " / " + str(enemy.hp_max)
 	set_opacity(0.7)
 func select(t: TallyChar):
 	tally = t

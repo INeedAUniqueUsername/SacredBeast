@@ -6,5 +6,5 @@
 script = ExtResource("1_l0md3")
 title = "Erlking"
 desc = null
-hp_max = 300
-hp_start = 200
+hp_max = 900
+hp_start = 600

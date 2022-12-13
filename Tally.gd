@@ -4,11 +4,12 @@ class_name TallyChar
 const TileGlow = preload("res://TileGlow.tscn")
 const MoveInfo = preload("res://Moves.gd").MoveInfo
 
-enum Tally { Joe, Rob, Andrew, Zubin, Ross }
+enum Tally { Joe, Rob, Andrew, Zubin, Ross, Bora, Casey }
 
-@export_enum(Joe, Rob, Andrew, Zubin, Ross) var tally
+@export_enum(Joe, Rob, Andrew, Zubin, Ross, Bora, Casey) var tally
 
 @onready var tallyName:String
+@onready var title:String
 @onready var desc:String
 @onready var move_list:Array[MoveInfo]
 
@@ -18,6 +19,7 @@ signal clicked
 func _ready():
 	var t = TallyHall.TallyHall[tally]
 	tallyName = t.title
+	title = t.title
 	desc = t.desc
 	move_list = t.move_list
 	
@@ -69,8 +71,7 @@ var aristotlesDenialDmg = 0
 var allOfMyFriends = 0
 var springAndAStorm = false
 
-var misfortune = 0
-var misfortuneTarget:Enemy = null
+var misfortune = []
 
 var seaCucumber = 0
 
@@ -82,6 +83,7 @@ var hp_max = 100
 var hp = 100
 var total_damage_taken = 0
 var surrenderTheirChemistryBooks :int = 0
+var surrenderTheirChemistryBooksMoves :Array[MoveInfo] = []
 
 var bleeding = {
 	duration = 0,
@@ -93,6 +95,8 @@ func begin_turn(rulerOfEverything:bool, turnTheLightsOff:bool):
 	self.turnTheLightsOff = turnTheLightsOff
 	if surrenderTheirChemistryBooks > 0:
 		surrenderTheirChemistryBooks -= 1
+		if surrenderTheirChemistryBooks < 1:
+			surrenderTheirChemistryBooksMoves.clear()
 	
 	if bleeding and bleeding.duration > 0:
 		bleeding.duration -= 1
@@ -105,14 +109,17 @@ func begin_turn(rulerOfEverything:bool, turnTheLightsOff:bool):
 		hotRodDuncan = false
 		seaCucumber += 1
 		aristotlesDenial = false
-		if misfortune > 0 and is_instance_valid(misfortuneTarget) and misfortuneTarget.is_inside_tree():
+		
+		for misfortuneTarget in misfortune:
+			if !(is_instance_valid(misfortuneTarget) and misfortuneTarget.is_inside_tree() and misfortuneTarget.alive):
+				continue
 			show_message.emit(misfortuneTarget.title + " was struck by *Misfortune*!")
 			await get_tree().create_timer(1).timeout
-			var d = HitDesc.new(self, misfortuneTarget.global_position + Vector3.UP/2, misfortune * hp, Moves.Misfortune)
+			var d = HitDesc.new(self, misfortuneTarget.global_position + Vector3.UP/2, hp, Moves.Misfortune)
 			await misfortuneTarget.take_damage(d)
 			await on_damage_dealt(d.dmgTaken)
+		misfortune = []
 		springAndAStorm = false
-		misfortune = 0
 		joeHawley = 0
 		if allOfMyFriends > 0:
 			allOfMyFriends = 0
@@ -138,9 +145,32 @@ func begin_turn(rulerOfEverything:bool, turnTheLightsOff:bool):
 		moves_remaining = 0
 		show_message.emit(tallyName + " is too mesmerized to fight!")
 		await get_tree().create_timer(1.5)
+func has_grapple():
+	return grapple and is_instance_valid(grapple) and grapple.grappled == self
 func end_turn(turnTheLightsOff:bool):
+	if has_grapple():
+		show_message.emit("*Inside the Mind of Simon* activated!")
+		await get_tree().create_timer(1.25).timeout
+		var h = HitDesc.new(self, grapple.global_position + Vector3.UP/2, floor(walk_remaining * 20 / 8.0), Moves.InsideTheMindOfSimon)
+		await grapple.take_damage(h)
+		
+	
 	self.turnTheLightsOff = turnTheLightsOff
 	pass
+	
+var magic_moves = [
+		Moves.AnotherMinute, Moves.GardenOfEden,
+		Moves.TheWholeWorldAndYou, Moves.TakenForARide, Moves.Misfortune, Moves.GoodDay,
+		Moves.SeaCucumber,
+		Moves.TheTrap, Moves.RulerOfEverything, Moves.TurnTheLightsOff, Moves.HotRodDuncan
+	]
+func pick_available_magic_move():
+	var magic = move_list.filter(func(m):
+		return magic_moves.has(m) and not surrenderTheirChemistryBooksMoves.has(m)
+		)
+	if magic.is_empty():
+		return null
+	return magic.pick_random()
 func can_use_move(m:MoveInfo):
 	var result = true
 	if (
@@ -151,13 +181,7 @@ func can_use_move(m:MoveInfo):
 		(hotRodDuncan		and m == Moves.HotRodDuncan		)
 		):
 		return false
-	var magic = [
-		Moves.AnotherMinute, Moves.GardenOfEden,
-		Moves.TheWholeWorldAndYou, Moves.TakenForARide, Moves.Misfortune, Moves.GoodDay,
-		Moves.SeaCucumber,
-		Moves.TheTrap, Moves.RulerOfEverything, Moves.TurnTheLightsOff, Moves.HotRodDuncan
-	]
-	if surrenderTheirChemistryBooks > 0 and m in magic:
+	if surrenderTheirChemistryBooksMoves.has(m):
 		return false
 	return true
 	
@@ -192,6 +216,15 @@ func get_walk_speed_at(p:Vector3):
 			result /= 4.0
 	
 	return result
+
+func release_grapple(announce:bool = true):
+	if grapple and is_instance_valid(grapple):
+		if grapple.grappled == self:
+			grapple.grappled = null
+			
+			if announce:
+				show_message.emit(title + " released the hold on " + grapple.title)
+		grapple = null
 func show_walk(flag:Node = null):
 	if !flag:
 		flag = Node.new()
@@ -208,6 +241,9 @@ func show_walk(flag:Node = null):
 		if !seen.has(t.global_position):
 			return
 		is_busy = true
+		$Anim.play("Idle")
+		release_grapple()
+		
 		self.walk_remaining -= distanceTo[t.global_position]
 		self.moved.emit()
 		var path = t.get_tile_path()
@@ -354,7 +390,8 @@ func use_move_joe_hawley():
 	
 	await on_damage_dealt(result.dmgDealt)
 func use_move_aristotles_denial():
-	aristotlesDenial = true
+	for t in get_tree().get_nodes_in_group("Tally"):
+		t.aristotlesDenial = true
 func use_move_all_of_my_friends():
 	await get_tree().create_timer(0.5).timeout
 	allOfMyFriends = len(get_tree().get_nodes_in_group("Tally"))
@@ -421,29 +458,16 @@ func use_move_taken_for_a_ride(e:Node3D, pos:Vector3):
 	show_message.emit(e.title + " was taken for a ride!")
 	
 	e.takenForARide = true
-	var tw = get_tree().create_tween()
-	tw.set_ease(Tween.EASE_OUT)
-	tw.set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(e, "global_position", pos, 0.5)
-	
-	tw.play()
-	
 	e.spin()
+	await e.teleport(pos, 0.5)
 	
 	await get_tree().create_timer(1).timeout
-func use_move_misfortune_1(e:Node3D):
+func use_move_misfortune(e:Node3D):
 	
 	$Anim.play("Raise")
 	await $Anim.animation_finished
 	$Anim.play("Idle")
-	misfortune = 1
-	misfortuneTarget = e
-func use_move_misfortune_2():
-	
-	$Anim.play("Raise")
-	await $Anim.animation_finished
-	$Anim.play("Idle")
-	misfortune = 2
+	misfortune.push_back(e)
 func use_move_good_day():
 	$Anim.play("Raise")
 	await $Anim.animation_finished
@@ -534,7 +558,30 @@ func use_move_rotary_park():
 	await get_tree().create_timer(2).timeout
 	
 	await on_damage_dealt(result.dmgDealt)
-func use_move_white_ball(p:Vector3):
+func use_move_white_ball():
+	$Anim.play("Smash")
+	await $Anim.animation_finished
+	get_tree().create_timer(1).timeout.connect($Anim.play.bind("Idle"))
+	$HammerHit.play()
+	
+	
+	var center = global_position + Vector3(1, 0, 0)
+	
+	var place_column = func(pos:Vector3):
+		var c = preload("res://Column.tscn").instantiate()
+		world.add_child(c)
+		c.global_position = pos
+	if can_walk(center):
+		place_column.call(center)
+	await get_tree().create_timer(0.5)
+	for i in range(2):
+		var offset = Vector3(0, 0, i + 1)
+		if can_walk(center + offset):
+			place_column.call(center + offset)
+		await get_tree().create_timer(0.5)
+		if can_walk(center - offset):
+			place_column.call(center - offset)
+		await get_tree().create_timer(0.5)
 	pass
 func use_move_sea_cucumber(t:TallyChar):
 	await get_tree().create_timer(1).timeout
@@ -639,6 +686,55 @@ func use_move_the_apologue_of_hot_rod_duncan(t: TallyChar):
 	t.moves_remaining += 2
 	
 	hotRodDuncan = true
+	
+
+var grapple:Enemy = null:
+	set(g):
+		grapple = g
+		if not g:
+			$Anim.play("Idle")
+# Bora
+func use_move_inside_the_mind_of_simon():
+	$Anim.play("Punch")
+	await $Anim.animation_finished
+	
+	
+	var param = PhysicsPointQueryParameters3D.new()
+	param.position = $Punch.global_position
+	param.collide_with_areas = true
+	param.collide_with_bodies = false
+	param.exclude = []
+	param.collision_mask = -1
+	
+	var dmg = 10
+	var result = {
+		dmgDealt = 0
+	}
+	
+	var hit = get_world_3d().direct_space_state.intersect_point(param, 32)
+	hit = hit.map(func(h):
+		return h.collider).filter(func(h):
+		return h.is_in_group("Hitbox")).map(func(h):
+		return h.get_parent()
+	)
+	release_grapple(false)
+	if len(hit) > 0:
+		var h = hit.front() as Enemy
+		
+		var d = HitDesc.new(self, param.position, dmg, Moves.InsideTheMindOfSimon)
+		d.grapple = true
+		await h.take_damage(d)
+		result.dmgDealt += d.dmgTaken
+		
+		if h.hp > 0 and h.grappled == self:
+			grapple = h
+			show_message.emit(title + " has a hold on " + str(h.title))
+	await get_tree().create_timer(0.5).timeout
+	if not grapple:
+		$Anim.play("Idle")
+	await on_damage_dealt(result.dmgDealt)
+	
+	
 func heal(amount:int):
 	var h = hp
 	hp = min(hp_max, hp + amount)
@@ -696,11 +792,8 @@ func take_damage(h:HitDesc, interrupt:bool = false):
 		if aristotlesDenial and h.attacker:
 			aristotlesDenial = false
 			var dmgLeft = 0
-			for t in get_tree().get_nodes_in_group("Tally"):
-				t = t as TallyChar
-				dmgLeft += t.aristotlesDenialDmg
-				t.aristotlesDenialDmg = 0
-			dmgLeft = dmgLeft / 2
+			dmgLeft = aristotlesDenialDmg / 2
+			aristotlesDenialDmg = 0
 			
 			if allOfMyFriends > 0:
 				dmgLeft *= (6 - allOfMyFriends) / 2.0
@@ -739,7 +832,7 @@ func take_damage(h:HitDesc, interrupt:bool = false):
 			queue_free()
 	if interrupt:
 		return handle
-	handle.call()
+	await handle.call()
 signal fell
 func fall():
 	await get_tree().create_timer(2).timeout

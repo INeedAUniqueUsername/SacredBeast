@@ -1,4 +1,5 @@
 extends Node
+
 func get_max(a:Array, c:Callable, min:int = -9223372036854775808):
 	var result = null
 	var value = min

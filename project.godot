@@ -111,3 +111,7 @@ window/size/viewport_height=1080
 [dotnet]
 
 project/assembly_name="Good&Evil"
+
+[editor]
+
+movie_writer/movie_file="C:/Users/alexm/OneDrive - email.ucr.edu/SacredBeast/Trailer/Movie.avi"

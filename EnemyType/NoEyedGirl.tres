@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_c8uwb")
-title = "No-Eyed Girl"
-desc = ""
+title = "No Eyed Girl"
+desc = "An otherworldly being from a universe of limitless light. When they attack, they lower a Tally's max HP, summon two more No Eyed Girls, and then disintegrate."
 hp_max = 500
 hp_start = 100

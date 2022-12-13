@@ -1,6 +1,7 @@
 extends Control
 func _ready():
-	$Button.pressed.connect(self.start_story)
+	if $Button:
+		$Button.pressed.connect(self.start_story)
 func start_story():
 	$Anim.play("Exit")
 	await $Anim.animation_finished

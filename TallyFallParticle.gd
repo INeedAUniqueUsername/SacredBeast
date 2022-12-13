@@ -8,7 +8,7 @@ enum Tally {
 		if not is_inside_tree():
 			await tree_entered
 		var c = [
-				Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE, Color(0.5, 0.5, 0.5)
+				Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE, Color(0.5, 0.5, 0.5), Color.ORANGE, Color.BLACK
 		][t]
 		$Particles.mesh.material.albedo_color = c
 		$Particles.mesh.material.emission = c

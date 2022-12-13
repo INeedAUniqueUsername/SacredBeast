@@ -1,0 +1,168 @@
+[gd_scene load_steps=14 format=3 uid="uid://csekgwsyihq7x"]
+
+[ext_resource type="Script" path="res://Enemy.gd" id="1_5bswx"]
+[ext_resource type="Resource" uid="uid://c7rc38jiyn8e3" path="res://EnemyType/SacredBeast.tres" id="2_yygt4"]
+[ext_resource type="Texture2D" uid="uid://bre5umrckqdgx" path="res://SacredBeast.png" id="3_e3au6"]
+[ext_resource type="PackedScene" uid="uid://detbjaff3hoq0" path="res://Effects/EnemyAuraDouble.tscn" id="4_u2tkd"]
+[ext_resource type="AnimationLibrary" uid="uid://bq8yotgmibwmh" path="res://Enemies/SpinSprite.tres" id="5_s1w3x"]
+[ext_resource type="Script" path="res://Enemies/SacredBeast.gd" id="6_gk7mn"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4dkww"]
+size = Vector3(2, 2, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pyjpp"]
+size = Vector3(2.8, 2, 1.8)
+
+[sub_resource type="Animation" id="Animation_4hpvv"]
+resource_name = "Die"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_fpd3n"]
+resource_name = "Hurt"
+length = 1.5
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.987576, 1.08758, 1.18758, 1.28758, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), Vector3(0, 0.2, 0), Vector3(0, -0.2, 0), Vector3(0, 0.1, 0), Vector3(0, -0.1, 0), Vector3(0, 0.1, 0), Vector3(0, -0.1, 0), Vector3(0, 0.05, 0), Vector3(0, -0.05, 0), Vector3(0, 0.05, 0), Vector3(0, -0.05, 0), Vector3(0, 0.025, 0), Vector3(0, -0.025, 0), Vector3(0, 0.025, 0), Vector3(0, -0.025, 0), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+
+[sub_resource type="Animation" id="Animation_3eqou"]
+resource_name = "Idle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+
+[sub_resource type="Animation" id="Animation_xovf6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4bp7v"]
+_data = {
+"Die": SubResource("Animation_4hpvv"),
+"Hurt": SubResource("Animation_fpd3n"),
+"Idle": SubResource("Animation_3eqou"),
+"RESET": SubResource("Animation_xovf6")
+}
+
+[node name="SacredBeast" type="Node3D" groups=["Enemy"]]
+script = ExtResource("1_5bswx")
+enemyType = ExtResource("2_yygt4")
+width = 1
+
+[node name="Sprite" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, -2.89599e-05, 0, 1, 0, 2.89599e-05, 0, 1, 0, 0, 0)
+visibility_range_begin = 4.0
+visibility_range_begin_margin = 2.0
+visibility_range_fade_mode = 1
+offset = Vector2(0, 1080)
+pixel_size = 0.001
+alpha_cut = 2
+texture_filter = 1
+texture = ExtResource("3_e3au6")
+hframes = 3
+
+[node name="Hitbox" type="Area3D" parent="." groups=["Hitbox"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_4dkww")
+
+[node name="NoWalk" type="Area3D" parent="." groups=["NoWalk"]]
+input_ray_pickable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NoWalk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_pyjpp")
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+libraries = {
+"": SubResource("AnimationLibrary_4bp7v")
+}
+
+[node name="Aura" parent="." instance=ExtResource("4_u2tkd")]
+
+[node name="Spin" type="AnimationPlayer" parent="."]
+libraries = {
+"": ExtResource("5_s1w3x")
+}
+
+[node name="Behavior" type="Node" parent="."]
+script = ExtResource("6_gk7mn")

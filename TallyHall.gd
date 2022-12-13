@@ -4,8 +4,8 @@ const MoveInfo = preload("res://Moves.gd").MoveInfo
 class TallyInfo:
 	var title:String
 	var desc:String
-	var move_list:Array[MoveInfo]
-	func _init(title:String, desc:String, move_list:Array[MoveInfo]):
+	var move_list:Array
+	func _init(title:String, desc:String, move_list:Array):
 		self.title = title
 		self.desc = desc
 		self.move_list = move_list
@@ -30,4 +30,7 @@ var Ross := TallyInfo.new("Ross",
 	"Class: Rhythmagician\nThis drummer can use musical magic to switch up the rhythm of battle.",
 	[Moves.TheTrap, Moves.TurnTheLightsOff, Moves.RulerOfEverything, Moves.HotRodDuncan]
 	)
-var TallyHall := [Joe, Rob, Andrew, Zubin, Ross]
+var Bora := TallyInfo.new("Bora",
+	"Class: Wrestler",
+	[Moves.Pluto, Moves.MoonWaltz, Moves.InsideTheMindOfSimon, Moves.IsleUntoThyself])
+var TallyHall := [Joe, Rob, Andrew, Zubin, Ross, Bora]

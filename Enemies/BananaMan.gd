@@ -64,13 +64,14 @@ func on_step():
 	world.add_child(f)
 	f.global_position = actor.global_position
 	world.turn_the_lights_off_ended.connect(f.get_node("Anim").play.bind("Disappear"))
+
 var spiritGame = false
-
-
 var songbirdChant = 0
 var bananas = 0
+
 var walkRange = 0
 var walkRemaining = 0
+
 func do_turn():
 	walkRange = 4 + songbirdChant * 4
 	walkRemaining = walkRange
@@ -93,8 +94,16 @@ func do_turn():
 		await take_banana()
 	world.showMessage(actor.title + " has " + str(bananas) + " bananas!")
 	await world.wait(2)
-	if bananas >= 8 and not spiritGame:
-		await use_spirit_game()
+	if not spiritGame:
+		if bananas >= 8:
+			await use_spirit_game()
+	else:
+		if bananas >= 8:
+			world.turnTheLightsOff = 4
+			world.set_background_brightness(0)
+			
+			world.showMessage("*Spirit Game* continues!")
+			await world.wait(2)
 	if spiritGame:
 		await actor.heal_announce(bananas * 5)
 		bananas = 0
@@ -120,9 +129,7 @@ func take_banana():
 			await world.wait(0.5)
 var busy = false
 func retaliate(t:TallyChar):
-	if actor.timestop > 0:
-		return
-	if busy:
+	if actor.timestop > 0 or busy or not spiritGame:
 		return
 	busy = true
 	var f = world.focus(actor)

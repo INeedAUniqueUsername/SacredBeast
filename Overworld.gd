@@ -4,22 +4,21 @@ func _ready():
 	var levels = [
 		{
 			title = "Banana Man",
-			desc = "The Tallies encounter a group of songbird statues. But who's that over there, hopping on the white hot sand?",
+			desc = "The Tallies encounter a bunch of songbird statues. But who's that over there, hopping on the white hot sand?",
 		}, {
 			title = "Two Wuv",
-			desc = "The Tallies encounter two girls with great eyes (emphasis on eyes).",
+			desc = "The Tallies encounter two girls with great eyes and some with none at all.",
 		}, {
-			title = "Murders",
-			desc = "",
+			title = "The Whole World and You",
+			desc = "The Tallies encounter a distant castle full of monsters",
 		},  {
 			title = "Murders",
 			desc = "A certain creature lurks around the black woods.",
 		}, {
 			title = "Sacred Beast",
-			desc = "",
+			desc = "The Tallies arrive upon the lair of the fearsome Sacred Beast.",
 		},
 	]
-	
 	var transition = func(level:String):
 		if $Anim.is_playing():
 			return

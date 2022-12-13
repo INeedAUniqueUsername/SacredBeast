@@ -5,7 +5,7 @@ extends Node3D
 var barColor:int:
 	set(n):
 		$Color.modulate = [
-			Color.RED, Color.YELLOW, Color.GREEN, Color.DODGER_BLUE, Color(0.5, 0.5, 0.5)
+			Color.RED, Color.YELLOW, Color.GREEN, Color.DODGER_BLUE, Color(0.5, 0.5, 0.5), Color.ORANGE, Color.BLACK
 		][n]
 var portion:float:
 	set(f):

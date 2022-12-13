@@ -27,7 +27,7 @@ var JoeHawley := MoveInfo.new("Joe Hawley Attacks",
 	"Punches a single enemy directly in front of Joe. Deals more damage when used repeatedly until the next enemy turn. When Joe Hawley attacks, no one makes it out alive."
 )
 var AristotlesDenial := MoveInfo.new("Aristotle's Denial",
-	"Tallies build up Rage from taking damage. If Joe takes damage during the next Enemy Turn, the attacker takes damage based on the Rage of all active Tallies."
+	"During the next Enemy Turn: if a Tally takes damage, they use Rage to counterattack. (Outside of this move, Tallies gain Rage from taking damage.)"
 )
 var AllOfMyFriends := MoveInfo.new("All of my Friends",
 	"Joe gains defense for each active Tally, and gains attack for each fallen Tally."
@@ -79,7 +79,7 @@ var TheTrap := MoveInfo.new("The Trap",
 	"Strikes an enemy with lightning. Also hits nearby enemies. Deals more damage if Ross is close to the enemy."
 )
 var RulerOfEverything := MoveInfo.new("Ruler of Everything",
-	"Adds a Part II to the current turn. The enemies get a Part II as well."
+	"Adds a Part II to the current Tally Turn as well as the next Enemy Turn."
 )
 var TurnTheLightsOff := MoveInfo.new("Turn the Lights Off",
 	"After this turn, the lights turn off for the next two turns. All damage dealt and taken is doubled while the lights are off."
@@ -87,7 +87,6 @@ var TurnTheLightsOff := MoveInfo.new("Turn the Lights Off",
 var HotRodDuncan := MoveInfo.new("The Apologue of Hot Rod Duncan",
 	"Gives a Tally two more actions for this turn. Can only be used once per Tally Turn."
 )
-
 # Casey
 var LifeInACube := MoveInfo.new("Life in a Cube",
 	"")
@@ -99,4 +98,6 @@ var MoonWaltz := MoveInfo.new("Moon Waltz",
 var Pluto := MoveInfo.new("134340 Pluto",
 	"")
 var InsideTheMindOfSimon := MoveInfo.new("Inside The Mind Of Simon",
+	"Grapples an enemy, preventing it from acting. Enemy takes damage at the start of every Enemy Turn while grappled.")
+var IsleUntoThyself := MoveInfo.new("Isle Unto Thyself",
 	"")

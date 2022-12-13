@@ -1,10 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://k8xt7haeub5n"]
+[gd_scene load_steps=7 format=3 uid="uid://k8xt7haeub5n"]
 
 [ext_resource type="Texture2D" uid="uid://ca5yl81im3ytv" path="res://Column.png" id="1_3wyew"]
 
-[sub_resource type="Animation" id="Animation_rdm3j"]
+[sub_resource type="Animation" id="Animation_38vbq"]
 resource_name = "Appear"
-length = 1.5
+length = 0.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -12,8 +12,24 @@ tracks/0/path = NodePath("Sprite:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.7, 1.5),
-"transitions": PackedFloat32Array(0.5, 1, 3, 2),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.3, 1),
+"update": 0,
+"values": [Vector3(0, -2, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_d4hgb"]
+resource_name = "Attack"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 2),
+"transitions": PackedFloat32Array(0.3, 1, 3, 2),
 "update": 0,
 "values": [Vector3(0, -2, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(0, -2, 0)]
 }
@@ -24,7 +40,7 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(1.5),
+"times": PackedFloat32Array(2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -32,7 +48,7 @@ tracks/1/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_3pd7a"]
+[sub_resource type="Animation" id="Animation_tx2i6"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -47,13 +63,14 @@ tracks/0/keys = {
 "values": [Vector3(0, 0, 0)]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_gxral"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jfg3y"]
 _data = {
-"Appear": SubResource("Animation_rdm3j"),
-"RESET": SubResource("Animation_3pd7a")
+"Appear": SubResource("Animation_38vbq"),
+"Attack": SubResource("Animation_d4hgb"),
+"RESET": SubResource("Animation_tx2i6")
 }
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_d8sel"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_8q2ce"]
 size = Vector3(1.4, 2, 0.5)
 
 [node name="Column" type="Node3D"]
@@ -66,12 +83,13 @@ texture_filter = 2
 texture = ExtResource("1_3wyew")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Appear"
 libraries = {
-"": SubResource("AnimationLibrary_gxral")
+"": SubResource("AnimationLibrary_jfg3y")
 }
 
 [node name="Area3D" type="Area3D" parent="." groups=["NoWalk"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-shape = SubResource("BoxShape3D_d8sel")
+shape = SubResource("BoxShape3D_8q2ce")

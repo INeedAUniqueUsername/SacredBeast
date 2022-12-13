@@ -178,8 +178,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_cqi26")
-volume_db = -8.0
 autoplay = true
+bus = &"Music"
 
 [editable path="Board/RedSongbird"]
 [editable path="Board/YellowSongbird"]

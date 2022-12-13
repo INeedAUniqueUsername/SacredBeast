@@ -12,20 +12,40 @@ var follow: Node3D:
 var follow_pos: Vector3:
 	get:
 		return follow.global_position + offset 
-func move(delta: Vector3):
+func move(delta: Vector3, dur:float = 0.2):
 	var tw = get_tree().create_tween()
 	tw.set_ease(Tween.EASE_OUT)
 	tw.set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(self, "global_position", global_position + delta, 0.2)
+	tw.tween_property(self, "global_position", global_position + delta, dur)
 	
 	tw.play()
 	await tw.finished
+func move_to(pos: Vector3):
+	var tw = get_tree().create_tween()
+	tw.set_ease(Tween.EASE_OUT)
+	tw.set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "global_position", pos, 0.2)
+	
+	tw.play()
+	await tw.finished
+	
 func _process(delta):
 	if follow and is_instance_valid(follow):
 		global_position = follow_pos
 		return
 	if can_move:
 		var p = Input.is_key_pressed
+		
+		var sh = p.call(KEY_SHIFT)
+		var mult = {
+			true:8,
+			false:1
+		}[sh]
+		var dur = {
+			true:0.5,
+			false:0.2
+		}[sh]
+		
 		var dirs = {
 			KEY_UP: Vector3(0, 0, -1),
 			KEY_DOWN: Vector3(0, 0, 1),
@@ -35,7 +55,7 @@ func _process(delta):
 		for key in dirs:
 			if p.call(key):
 				can_move = false
-				await move(dirs[key])
+				await move(dirs[key] * mult, dur)
 				can_move = true
 			
 func shake():

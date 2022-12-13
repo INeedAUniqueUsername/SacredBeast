@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://mcadd06ntjmj"]
+[gd_scene load_steps=7 format=3 uid="uid://mcadd06ntjmj"]
 
 [ext_resource type="PackedScene" uid="uid://globk6a68laj" path="res://Tallies/Joe.tscn" id="1_ufneh"]
 [ext_resource type="PackedScene" uid="uid://c277t2ff7hngi" path="res://Tallies/Rob.tscn" id="2_aof3o"]
 [ext_resource type="PackedScene" uid="uid://dl6fiv2xuxivb" path="res://Tallies/Andrew.tscn" id="3_6u5wu"]
 [ext_resource type="PackedScene" uid="uid://di2geo4g7esx3" path="res://Tallies/Zubin.tscn" id="4_y5jmq"]
 [ext_resource type="PackedScene" uid="uid://browso1sl5d70" path="res://Tallies/Ross.tscn" id="5_tef8v"]
+[ext_resource type="PackedScene" uid="uid://cclxs0vr8hpqk" path="res://Tallies/Bora.tscn" id="6_upu5o"]
 
 [node name="TallyHall" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
@@ -23,3 +24,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
 
 [node name="Ross" parent="." instance=ExtResource("5_tef8v")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 2)
+
+[node name="Bora" parent="." instance=ExtResource("6_upu5o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 4)

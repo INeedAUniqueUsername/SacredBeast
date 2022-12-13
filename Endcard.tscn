@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://bmupvqx3my34b"]
+
+[ext_resource type="SystemFont" uid="uid://bg67fe8v36op0" path="res://ArialNova.tres" id="1_r71tf"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_4c6lq"]
+
+[node name="Endcard" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0, 0, 0, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("CanvasTexture_4c6lq")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("1_r71tf")
+theme_override_font_sizes/font_size = 80
+text = "A Tally Hall fangame"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("1_r71tf")
+theme_override_font_sizes/font_size = 80
+text = "
+
+12/12/22"
+horizontal_alignment = 1
+vertical_alignment = 1

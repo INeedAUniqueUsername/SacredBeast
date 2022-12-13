@@ -107,7 +107,12 @@ func get_active_enemies() -> Array[Enemy]:
 		return e as Enemy
 	)
 func request_target(targets: Array, f: Callable, subtask:bool = false):
+	
+	if targets.is_empty():
+		return
+	
 	var action = Node.new()
+	$UI/Target.visible = true
 	if subtask:
 		current_action.add_child(action)
 	else:
@@ -115,6 +120,21 @@ func request_target(targets: Array, f: Callable, subtask:bool = false):
 	var selection = Node.new()
 	add_child(selection)
 	action.tree_exiting.connect(selection.queue_free)
+	selection.tree_exiting.connect($UI/Target.hide)
+	$UI/Target/CancelAction.clicked.connect(action.queue_free)
+	
+	var selectTarget:String = "Select target"
+	var first = targets[0]
+	if first is Vector3:
+		selectTarget = "Select location"
+	elif first is TallyChar:
+		selectTarget = "Select Tally"
+	elif first is Enemy:
+		selectTarget = "Select Enemy"
+	$UI/Target/Title.text = selectTarget
+	$UI/Target/Desc.visible = false
+	
+	
 	var attack = Node.new()
 	add_child(attack)
 	for e in targets:
@@ -131,7 +151,21 @@ func request_target(targets: Array, f: Callable, subtask:bool = false):
 			if is_instance_valid(action):
 				action.queue_free()
 			)
+		
 		selection.tree_exiting.connect(marker.queue_free)
+		
+		var area = marker.get_node("Area") as Area3D
+		area.mouse_entered.connect(func():
+			if e is Node3D:
+				$UI/Target/Title.text = e.title
+				$UI/Target/Desc.text = e.desc
+				$UI/Target/Desc.visible = true
+			)
+		area.mouse_exited.connect(func():
+			$UI/Target/Title.text = selectTarget
+			$UI/Target/Desc.visible = false
+			)
+		
 	await action.tree_exiting
 func focus(e:Enemy):
 	if e:
@@ -156,7 +190,7 @@ func focus(e:Enemy):
 		t.tween_property($Camera, "offset", offset, 0.5)
 		t.play()
 		return flag
-func register(enemy:Enemy):
+func register(enemy:Enemy, extraTurn:bool = false):
 	var h = enemy.get_node("Hitbox")
 	h.mouse_entered.connect(func():
 		if !self.selectedTally:
@@ -174,11 +208,23 @@ func register(enemy:Enemy):
 			await get_tree().process_frame
 			end_game()
 		)
+	if extraTurn:
+		extra_turns.push_back(enemy)
 var extra_turns : Array[Enemy] = []
 
 func wait(time:float):
 	await get_tree().create_timer(time).timeout
+	
+@export var cameraPos: NodePath
 func _ready():
+	$UI/Quit.clicked.connect(func():
+		if Input.is_key_pressed(KEY_ESCAPE):
+			get_tree().change_scene_to_file("res://Overworld.tscn")
+		)
+	(func():
+		if cameraPos:
+			$Camera.global_position = get_node(cameraPos).global_position
+		).call_deferred()
 	flameBorder = false
 	busy = true
 	Moves.print_all()
@@ -186,15 +232,12 @@ func _ready():
 		var c = $UI/Tally/MoveList.get_child(i)
 		c.clicked.connect(func():
 			var t := self.selectedTally as TallyChar
-			
-			
 			if !t or t.is_busy:
 				return
 			if i >= len(t.move_list):
 				return
 			var m = t.move_list[i]
 			var begin_move = func():
-				self.selectedTally.moves_remaining -= 1
 				$UI/Tally.refresh()
 				$UI/Tally/Actions/Act.clickable = false
 				c.mouse_exited.emit()
@@ -202,7 +245,9 @@ func _ready():
 				t.is_busy = true
 				self.busy = true
 			var announceMove = func():
+				self.selectedTally.moves_remaining -= 1
 				await showMessage(t.tallyName + " used *" + m.title + "*")
+				
 			# Joe
 			if m == Moves.JoeHawley:
 				begin_move.call()
@@ -271,16 +316,11 @@ func _ready():
 				await request_target(get_active_enemies(), act)
 			elif m == Moves.Misfortune:
 				begin_move.call()
-				if t.misfortune == 0:
-					var act = func(e):
-						await announceMove.call()
-						await t.use_move_misfortune_1(e)
-						await showMessage(e.title + " is cursed with Misfortune!")
-					await request_target(get_active_enemies(), act)
-				elif t.misfortune == 1:
+				var act = func(e):
 					await announceMove.call()
-					await t.use_move_misfortune_2()
-					await showMessage(t.misfortuneTarget.title + " is cursed with even more Misfortune!")
+					await t.use_move_misfortune(e)
+					await showMessage(e.title + " is cursed with Misfortune!")
+				await request_target(get_active_enemies(), act)
 			elif m == Moves.GoodDay:
 				begin_move.call()
 				await announceMove.call()
@@ -296,13 +336,9 @@ func _ready():
 				await announceMove.call()
 				await t.use_move_rotary_park()
 			elif m == Moves.WhiteBall:
-				#begin_move.call()
-				#var positions = get_all_empty_positions()
-				#var act2 = func(pos: Vector3):
-				#	await announceMove.call()
-				#	await t.use_move_white_ball(pos)
-				#await request_target(positions, act2, true)
-				pass
+				begin_move.call()
+				await announceMove.call()
+				await t.use_move_white_ball()
 			elif m == Moves.SeaCucumber:
 				begin_move.call()
 				var act = func(e):
@@ -323,7 +359,6 @@ func _ready():
 				await announceMove.call()
 				await t.use_move_turn_the_lights_off()
 				
-				
 				if turnTheLightsOff == 0:
 					showMessage("The lights begin to dim. The lights will be off at the end of this turn.")
 				else:
@@ -343,6 +378,10 @@ func _ready():
 					await t.use_move_the_apologue_of_hot_rod_duncan(e)
 					await showMessage(e.tallyName + " gained two more actions for this turn!")
 				await request_target(get_active_tallies(), act)
+			elif m == Moves.InsideTheMindOfSimon:
+				begin_move.call()
+				announceMove.call()
+				t.use_move_inside_the_mind_of_simon()
 				
 			self.busy = false
 			t.is_busy = false
@@ -388,6 +427,8 @@ func _ready():
 	$Turn/Anim.play("Show")
 	await $Turn/Anim.animation_finished
 	
+	#await $Camera.move(get_tree().get_first_node_in_group("Zubin").global_position, 1)
+	
 	(func():
 		await $Turn/Anim.animation_finished
 		showMessage("Objective: Defeat all enemies to win the battle!")
@@ -418,6 +459,7 @@ func _ready():
 		$UI/Tally.refresh()
 		
 		await $UI/EndTurn.clicked
+		
 		
 		self.busy = true
 		self.selectedTally = null
@@ -503,6 +545,8 @@ func _ready():
 					$Camera3D.global_position += Vector3(delta.x, 0, delta.y) / 1080.0
 				prev_position = pos
 			)
+func _process(delta):
+	$UI/Quit.visible = Input.is_key_pressed(KEY_ESCAPE)
 func end_game():
 	
 	active = false

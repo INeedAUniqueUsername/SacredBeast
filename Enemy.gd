@@ -31,7 +31,7 @@ var timestop = 0:
 		if t > 0:
 			$Anim.play("Hurt")
 		else:
-			$Anim.play("Idle")
+			play_idle_anim()
 
 
 @onready var title = enemyType.title
@@ -42,7 +42,7 @@ var timestop = 0:
 
 
 func _ready():
-	if $Behavior:
+	if has_node("Behavior"):
 		$Behavior.init(self)
 var turnTheLightsOff = false
 var takenForARide = false
@@ -67,6 +67,10 @@ func begin_turn(turnTheLightsOff = false):
 		show_message.emit(title + " is timestopped and cannot act!")
 		await get_tree().create_timer(1).timeout
 		return
+	if grappled:
+		show_message.emit(title + " is grappled and cannot act!")
+		await get_tree().create_timer(1).timeout
+		return
 	
 	is_turn_active = true
 	await do_turn()
@@ -86,11 +90,19 @@ func playSound(stream:AudioStream, parent:Node3D = null, action = null):
 	a.finished.connect(a.queue_free)
 func get_active_tallies():
 	return get_tree().get_nodes_in_group("Tally")
-func teleport(dest:Vector3):
+func release_grappler(announce:bool = true):
+	if grappled and is_instance_valid(grappled) and grappled.grapple == self:
+		if announce:
+			show_message.emit(title + " broke out of " + grappled.title + "'s grasp!")
+		grappled.grapple = null
+	grappled = null
+	
+func teleport(dest:Vector3, dur:float = 1.0):
+	release_grappler(true)
 	var tw = get_tree().create_tween()
 	tw.set_ease(Tween.EASE_OUT)
 	tw.set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(self, "global_position", dest, 1)
+	tw.tween_property(self, "global_position", dest, dur)
 	tw.play()
 	await tw.finished
 var shadowOfNobodyThere = false
@@ -102,7 +114,7 @@ func do_turn():
 	
 	var summon_no_eyed_girl = func():
 		
-		var pos
+		var pos = null
 		if self.enemyType == Enemies.NoEyedGirl:
 			pos = get_all_standable_positions().filter(func(p):
 				return p != global_position and p.distance_to(self.global_position) < 5
@@ -112,7 +124,7 @@ func do_turn():
 				return p != target.global_position and p.distance_to(self.global_position) < 5
 			).pick_random()
 		
-		if not pos:
+		if pos == null:
 			return
 		show_message.emit(title + " summoned a No Eyed Girl!")
 		await get_tree().create_timer(0.5).timeout
@@ -250,19 +262,19 @@ func do_turn():
 			
 			if is_instance_valid(target):
 				target.willingVictim = 2
-			$Anim.play("Idle")
+			play_idle_anim()
 			
 			turn_priority = 100
 			return
 			
-
-		if !turnTheLightsOff and !waitingForTheDarkness and randi()%2 == 0:
-			show_message.emit(title + " used *Waiting for the Darkness*!")
-			waitingForTheDarkness = true
-			await get_tree().create_timer(2).timeout
-			show_message.emit(title + " will heal if the lights are off next turn")
-			await get_tree().create_timer(1).timeout
-			return
+		var unused = func():
+			if !turnTheLightsOff and !waitingForTheDarkness and randi()%2 == 0:
+				show_message.emit(title + " used *Waiting for the Darkness*!")
+				waitingForTheDarkness = true
+				await get_tree().create_timer(2).timeout
+				show_message.emit(title + " will heal if the lights are off next turn")
+				await get_tree().create_timer(1).timeout
+				return
 			
 		show_message.emit("Cannibal used *Willing Victim* on " + target.tallyName)
 		get_tree().create_timer(0.5).timeout.connect($CurseInhale.play)
@@ -278,7 +290,7 @@ func do_turn():
 		var useShadow = func():
 			show_message.emit(title + " used *Shadow of Nobody There*!")
 			await get_tree().create_timer(1.5).timeout
-			shadowOfNobodyThere = true
+			shadowOfNobodyThere = global_position
 			show_message.emit(title + " prepares to teleport away!")
 			await get_tree().create_timer(1).timeout
 			
@@ -295,8 +307,15 @@ func do_turn():
 				tar.remove_child(get_node("LeavesBrokeAbove"))
 				show_message.emit(title + " used *Fell Below* on " + tar.tallyName + "!")
 				await get_tree().create_timer(1).timeout
-				await tar.take_damage(HitDesc.new(self, tar.global_position + Vector3.UP/2, 40, null, false))
-				await get_tree().create_timer(1).timeout
+				
+				
+				for i in range(4):
+					if tar.hp < 1:
+						break
+					await get_tree().create_timer(0.1).timeout
+					await tar.take_damage(HitDesc.new(self, tar.global_position + Vector3.UP/2, 20, null, false))
+				
+				
 				return
 			show_message.emit(title + " used *Broke Above* on " + tar.tallyName + "!")
 			await get_tree().create_timer(1).timeout
@@ -324,23 +343,24 @@ func do_turn():
 				show_message.emit(title + " used *Darker Terrors*!")
 				await get_tree().create_timer(1).timeout
 				await teleport(dest)
-				await get_tree().create_timer(0.5).timeout
+				show_message.emit(title + " moved towards " + target.title + "!")
+				await get_tree().create_timer(1).timeout
 				await slashAttack.call()
 				return
-		await walk_towards(target.global_position, 4, 1)
+		await walk_towards(target.global_position, 8, 1)
 		if global_position.distance_to(target.global_position) < 2.5:
 			await slashAttack.call()
 		return
 	elif enemyType == Enemies.Misery:
 		
-		if not (target and is_instance_valid(target)):
-			for t in ["Andrew", "Ross", "Rob", "Joe", "Zubin"]:
-				target = get_tree().get_first_node_in_group(t)
-				if target:
-					break
-			if not target:
-				return
+		if turnTheLightsOff:
+			show_message.emit(title + " is unable to act while the lights are off!")
+			await get_tree().create_timer(1.5).timeout
+			return
+		
 		if randi()%2 == 0:
+			var target = get_active_tallies().filter(func(t): return t.hp > 0).pick_random()
+			
 			show_message.emit(title + " used *Faith in Above* on " + target.tallyName + "!")
 			await get_tree().create_timer(2).timeout
 			
@@ -351,17 +371,26 @@ func do_turn():
 			await target.take_damage(d)
 			await get_tree().create_timer(1).timeout
 			return
-			
-		if turnTheLightsOff:
-			show_message.emit(title + " is unable to act while the lights are off!")
-			await get_tree().create_timer(2).timeout
-			return
+		
+		var target_move = null
+		if not (target and is_instance_valid(target)):
+			for t in ["Andrew", "Ross", "Rob", "Joe", "Zubin"]:
+				target = get_tree().get_first_node_in_group(t) as TallyChar
+				target_move = target.pick_available_magic_move()
+				if target and target_move:
+					break
+			if not target:
+				return
+		
+
 		show_message.emit(title + " used *Surrender Their Chemistry Books* on " + target.tallyName + "!")
-		await get_tree().create_timer(2).timeout
+		await get_tree().create_timer(1.5).timeout
 		
 		target.surrenderTheirChemistryBooks = 2
-		show_message.emit(target.tallyName + " is unable to use magic!")
-		await get_tree().create_timer(1).timeout
+		target.surrenderTheirChemistryBooksMoves.push_back(target_move)
+		show_message.emit(target.tallyName + " is unable to use " + target_move.title)
+		
+		await get_tree().create_timer(1.5).timeout
 		return
 	
 	
@@ -378,7 +407,7 @@ func do_turn():
 				await $Anim.animation_finished
 			#target.take_damage(HitDesc.new(self, self.global_position, 10))
 			await get_tree().create_timer(1).timeout
-			$Anim.play("Idle")
+			play_idle_anim()
 var stepTime:float = 0.3
 func walk_towards(target_pos: Vector3, range:int, separation:int, onStep = null):
 	var distanceTo = {
@@ -476,7 +505,7 @@ func spin():
 	if timestop < 1:
 		$Anim.play("Hurt")
 		await $Anim.animation_finished
-		$Anim.play("Idle")
+		play_idle_anim()
 signal fell
 var total_damage_taken = 0
 
@@ -487,13 +516,15 @@ func take_damage(h:HitDesc, interrupt:bool = false):
 		return await std_take_damage(h, interrupt)
 
 
+func play_idle_anim():
+	if timestop < 1 and not grappled:
+		$Anim.play("Idle")
 
-
-
-
-
-
-
+var grappled: TallyChar = null:
+	set(g):
+		grappled = g
+		if not grappled:
+			play_idle_anim()
 func std_take_damage(h:HitDesc, interrupt:bool = false):
 	
 	h.dmgTaken = h.dmg
@@ -501,16 +532,15 @@ func std_take_damage(h:HitDesc, interrupt:bool = false):
 		h.dmgTaken *= 2
 	if takenForARide:
 		h.dmgTaken *= 2
+		
+	if h.grapple:
+		grappled = h.attacker
 	var msg = ""
-	if shadowOfNobodyThere and not (takenForARide or timestop > 0):	
+	if shadowOfNobodyThere and not (takenForARide or timestop > 0 or grappled):	
 		msg += "*Shadow of Nobody There* activated! " + title + " teleported away! "
-		var dest = Helper.get_max(get_all_standable_positions(),
-		(func(p):
-			return p.distance_to(h.attacker.global_position)
-		), 10)
-		if dest:
-			teleport(dest)
-		shadowOfNobodyThere = false
+		await teleport(shadowOfNobodyThere)
+		shadowOfNobodyThere = null
+		h.dmgTaken /= 2
 	var extra = h.dmgTaken - hp
 	h.dmgTaken = min(h.dmgTaken, hp)
 	hp -= h.dmgTaken
@@ -526,15 +556,15 @@ func std_take_damage(h:HitDesc, interrupt:bool = false):
 	add_child(au)
 	au.play()
 	au.finished.connect(au.queue_free)
-	
 	if timestop < 1:
 		(func():
 			$Anim.play("Hurt")
 			await $Anim.animation_finished
-			$Anim.play("Idle")
+			play_idle_anim()
 		).call()
 	var handle_damage = func():
 		msg += title + " took " + str(h.dmgTaken) + " damage! "
+		
 		if h.announce:
 			show_message.emit(msg)
 			await get_tree().create_timer(1).timeout
@@ -547,19 +577,22 @@ func std_take_damage(h:HitDesc, interrupt:bool = false):
 func heal(amount:int):
 	hp += amount
 	return amount
-func heal_announce(amount:int):
+func heal_announce(amount:int, announce:bool = true):
 	
-	show_message.emit(title + " healed " + str(amount) + " HP!")
 	add_child(preload("res://HealParticle.tscn").instantiate())
 	playSound(preload("res://Sounds/staff_heal.wav"))
 	heal(amount)
-	await get_tree().create_timer(1.5).timeout
+	if announce:
+		show_message.emit(title + " healed " + str(amount) + " HP!")
+		await get_tree().create_timer(1.5).timeout
 var alive = true
 @onready var world = get_tree().get_first_node_in_group("World")
 func fall(h:HitDesc, extra_dmg:int = 0, announce:bool = true):
 	alive = false
 	if announce:
 		show_message.emit(title + " fell!")
+	
+	release_grappler(false)
 	
 	var a = AudioStreamPlayer3D.new()
 	world.add_child(a)

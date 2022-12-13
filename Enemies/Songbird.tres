@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_l338r")
 title = "Songbird Statue"
-desc = "This enemy only takes damage when attacked by a Tally of the same color."
+desc = "This enemy only takes damage when attacked by a Tally of the same color. Uses *Chant* to increase Banana Man's walk range or summon Banana Man. Restores HP during Spirit Game."
 hp_max = 300
 hp_start = 150
